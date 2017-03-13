@@ -1,10 +1,10 @@
 var app = angular.module('testApp', ['ngRoute', 'ui.bootstrap']);
   app.config(['$routeProvider', function($routeProvider) {
     $routeProvider
-      .when('/main/', {templateUrl: '../html/main.html'})
-      .when('/employee', {templateUrl: '../html/employee.html', controller: 'confirmCtrl'})
-      .when('/group/', {templateUrl: '../html/group.html'})
-      .when('/confirm', {templateUrl: '../html/confirm.html', controller: 'confirmCtrl'})
+      .when('/main/', {templateUrl: '/main.html'})
+      .when('/employee', {templateUrl: '/employee.html', controller: 'confirmCtrl'})
+      .when('/group/', {templateUrl: '/group.html'})
+      .when('/confirm', {templateUrl: '/confirm.html', controller: 'confirmCtrl'})
       .otherwise({redirectTo: '/main/'});
    }]);
   app.controller('myController',['$http', '$location', function($http, $location) {
