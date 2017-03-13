@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app="testApp">
+  <head>
+    <meta charset="utf-8">
+    <style>
+      ul.nav li {
+        cursor: pointer;
+      }
+      div.page-header h1 {
+        text-align: center;
+      }
+    </style>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="../js/controller.js"></script>
+    <title>緊急メール配信</title
+  </head>
+  <body ng-controller="myController as myCtrl">
+    <div id="top">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="page-header">
+            <h1>緊急メール配信サービス</h1>
+          </div>
+          <div class="navbar-header headerMenu">
+            <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarEexample">
+              <span class="sr-only">Toggle navigation</span>
+      				<span class="icon-bar"></span>
+      				<span class="icon-bar"></span>
+      				<span class="icon-bar"></span>
+            </button>
+          </div>
+          <div class="collapse navbar-collapse" id="navbarEexample">
+            <ul class="nav nav-justified">
+              <li route ng-click="click()">
+                <a id="bar" class="list-group-item">TOP</a>
+              </li>
+              <li route ng-click="click()">
+                <a id="employee" class="list-group-item">従業員管理</a>
+              </li>
+              <li route ng-click="click()">
+                <a id="group" class="list-group-item">グループ管理</a>
+              </li>
+              <li route ng-click="click()">
+                <a id="confirm" class="list-group-item">安否確認</a>
+              </li>
+              <li ng-click="myCtrl.sendMail()">
+                <a id="sendMail" class="list-group-item list-group-item-danger">緊急メール送信</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div ng-view></div>
+      <div class="modal" id="succsesModal" tabindex="-1">
+      	<div class="modal-dialog">
+      		<div class="modal-content">
+      			<div class="modal-header"></div>
+      			<div class="modal-body">
+              <h1>送信されました</h1>
+      			</div>
+      			<div class="modal-footer">
+      				<button type="button" class="btn btn-default" ng-click="myCtrl.modalToggle()">閉じる</button>
+      			</div>
+      		</div>
+      	</div>
+      </div>
+    </div>
+  </body>
+</html>

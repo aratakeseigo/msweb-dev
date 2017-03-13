@@ -1,0 +1,22 @@
+<div class="container-fluid">
+  <div class="row">
+    <h1 class="col-xs-10 col-xs-offset-4">従業員一覧</h1>
+    <table class="table table-bordered table-striped table-condensed">
+      <th class="cell-fixed">ID</th>
+      <th class="cell-fixed">氏名</th>
+      <tr ng-repeat="data in json">
+        <td>
+          <p ng-model="data._id">{{data._id}}</p>
+        </td>
+        <td>
+          <p ng-model="data.name">{{data.name}}</p>
+        </td>
+      </tr>
+    </table>
+      <div class="btn-component form-inline">
+        <button type="button" class="btn btn-primary">新規登録</button>
+        <button type="button" class="btn btn-primary">更新</button>
+        <button type="button" class="btn btn-primary">削除</button>
+      </div>
+  </div>
+</div>

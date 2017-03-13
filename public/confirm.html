@@ -1,0 +1,25 @@
+<div class="container-fluid">
+  <div class="row">
+    <h1 class="col-xs-10 col-xs-offset-4">リアクション一覧</h1>
+    <table class="table table-bordered table-striped table-condensed">
+      <th class="cell-fixed">#</th>
+      <th class="cell-fixed">氏名</th>
+      <th class="cell-fixed">状態</th>
+      <th class="cell-fixed">コメント</th>
+      <tr ng-repeat="data in json">
+        <td>
+          <p ng-model="data._id">{{data._id}}</p>
+        </td>
+        <td>
+          <p ng-model="data.name">{{data.name}}</p>
+        </td>
+        <td>
+          <p ng-model="data.condition">{{data.condition}}</p>
+        </td>
+        <td>
+          <p ng-model="data.comment">{{data.comment}}</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
