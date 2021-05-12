@@ -1,0 +1,33 @@
+default: &default
+  adapter: <%= ENV['DB_ADAPTER'] ||= "mysql2" %>
+  pool: <%= ENV["DATABASE_POOL"] %>
+  timeout: 1500
+  encoding: utf8mb4
+  charset: utf8mb4
+  collation: utf8mb4_general_ci
+  reconnect: false
+
+development:
+  <<: *default
+  host: <%= ENV["DATABASE_HOST"] %>
+  port: <%= ENV["DATABASE_PORT"] %>
+  database: <%= ENV["DATABASE_NAME"] %>
+  username: <%= ENV["DATABASE_USERNAME"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  strict: false
+
+test:
+  <<: *default
+  host: <%= ENV["TEST_DATABASE_HOST"] %>
+  port: <%= ENV["TEST_DATABASE_PORT"] %>
+  database: <%= ENV["TEST_DATABASE_NAME"] %>
+  username: <%= ENV["TEST_DATABASE_USERNAME"] %>
+  password: <%= ENV["TEST_DATABASE_PASSWORD"] %>
+
+production:
+  <<: *default
+  host: <%= ENV["DATABASE_HOST"] %>
+  port: <%= ENV["DATABASE_PORT"] %>
+  database: <%= ENV["DATABASE_NAME"] %>
+  username: <%= ENV["DATABASE_USERNAME"] %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
