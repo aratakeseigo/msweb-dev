@@ -1,15 +1,21 @@
 locals{
   # イメージはタグを指定しないとlatestがついてエラーになるため、
   # 古いタグを指定しています。適宜変更するか、環境変更後にデプロイする必要があります。
-  resource_prefix = "securebox-${ var.stage }"
+  resource_prefix = "sb-${ var.stage }"
   securebox={
     lb_name = "${local.resource_prefix}"
     ecs_task_name = "${local.resource_prefix}"
     ecs_service_name = "${local.resource_prefix}-service"
+    ecs_cluster_name = "${local.resource_prefix}-cluster"
     domain = "${ var.stage == "production" ? "" : "${ var.stage }." }securebox.${var.domain}"
-    ecr_image_url = "843409087087.dkr.ecr.ap-northeast-1.amazonaws.com/securebox/sb:develop-1b26ebe6c0885f97b358c6614dc776742cf459c3"
+    ecr_image_url = "843409087087.dkr.ecr.ap-northeast-1.amazonaws.com/securebox/sb:develop-67f7a99a87389049359e02c25b698839fc791450"
     log_group = "/ecs/${var.stage}/securebox/sb"
   }
+}
+
+# クラスター
+resource "aws_ecs_cluster" "securebox" {
+  name = "${local.securebox.ecs_cluster_name}"
 }
 
 
