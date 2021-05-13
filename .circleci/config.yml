@@ -34,7 +34,7 @@ jobs:
       - restore_cache:
           # Restore cache
           # sb/vendorに書き戻される
-          key: bundle-{{ checksum "sb/Gemfile.lock" }}-1
+          key: bundle-{{ checksum "sb/Gemfile.lock" }}
       - run:
           name: Build Docker Images
           no_output_timeout: 10m
@@ -52,7 +52,7 @@ jobs:
             docker cp `docker-compose --file .circleci/docker-compose.yml ps -q sb`:/app/vendor/bundle ./sb/vendor/
             ls -l ./sb/vendor/bundle/ruby/2.7.0/gems/
       - save_cache:
-          key: bundle-{{ checksum "sb/Gemfile.lock" }}-1
+          key: bundle-{{ checksum "sb/Gemfile.lock" }}
           paths:
             - sb/vendor/
       # - run:
@@ -84,7 +84,7 @@ jobs:
       - restore_cache:
           # Restore cache
           # sb/vendorに書き戻される
-          key: bundle-{{ checksum "sb/Gemfile.lock" }}-1
+          key: bundle-{{ checksum "sb/Gemfile.lock" }}
       - aws-ecr/build-and-push-image:
           region: AWS_REGION
           account-url: AWS_ECR_ACCOUNT_URL
