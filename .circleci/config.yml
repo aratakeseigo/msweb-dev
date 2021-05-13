@@ -106,6 +106,7 @@ workflows:
               only:
                 - develop
                 - main
+      - aws-ecs/deploy-service-update:
           context: AWS_ENV
           requires:
               - build-image
