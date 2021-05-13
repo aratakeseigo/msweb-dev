@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  sb:
+    build:
+      context: ../sb
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - 10301:3000
+    links:
+      - db
+    env_file:
+      - .env.ci
+  db:
+    image: mysql:5.7
+    ports:
+      - 10302:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password

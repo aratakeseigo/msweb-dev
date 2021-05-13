@@ -1,0 +1,131 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.1.0
+  aws-ecs: circleci/aws-ecs@0.0.8
+
+executors:
+  default:
+    docker:
+      - image: circleci/buildpack-deps:stable
+        environment:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+
+commands:
+  setup:
+    steps:
+      - setup_remote_docker:
+          version: 19.03.12
+          docker_layer_caching: true
+
+jobs:
+  test:
+    docker:
+      - image: circleci/buildpack-deps:stable
+        environment:
+          DOCKER_BUILDKIT: 1
+          COMPOSE_DOCKER_CLI_BUILD: 1
+    steps:
+      - setup_remote_docker:
+          version: 19.03.12
+          docker_layer_caching: true
+      - checkout
+      - restore_cache:
+          # Restore cache
+          # sb/vendorに書き戻される
+          key: bundle-{{ checksum "sb/Gemfile.lock" }}-1
+      - run:
+          name: Build Docker Images
+          no_output_timeout: 10m
+          command: |
+            docker-compose --file .circleci/docker-compose.yml build --progress=plain
+      - run:
+          name: Setup Docker Compose Enviroment
+          no_output_timeout: 10m
+          command: docker-compose --file .circleci/docker-compose.yml up -d
+      - run:
+          # Dockerからホストにコピー
+          name: copy sb/vendor/bundle for cache
+          no_output_timeout: 5m
+          command: |
+            docker cp `docker-compose --file .circleci/docker-compose.yml ps -q sb`:/app/vendor/bundle ./sb/vendor/
+            ls -l ./sb/vendor/bundle/ruby/2.7.0/gems/
+      - save_cache:
+          key: bundle-{{ checksum "sb/Gemfile.lock" }}-1
+          paths:
+            - sb/vendor/
+      # - run:
+      #     name: Rubocop
+      #     no_output_timeout: 5m
+      #     command:
+      #       docker-compose --file .circleci/docker-compose.yml exec sb bundle exec rubocop  --fail-level W --display-only-fail-level-offense
+      - run:
+          name: Initalize DB
+          command: docker-compose --file .circleci/docker-compose.yml exec sb bundle exec rails db:drop db:create RAILS_ENV=test
+      # - run:
+      #     name: Migrate DB
+      #     command: docker-compose --file .circleci/docker-compose.yml exec sb bundle exec ridgepole -c config/database.yml -E test --apply --dump-with-default-fk-name
+      # - run:
+      #     name: Run sb test
+      #     no_output_timeout: 5m
+      #     command: |
+      #       docker-compose --file .circleci/docker-compose.yml exec sb bundle exec rspec --format progress --format RspecJunitFormatter -o /app/rspec/rspec.xml
+      #       mkdir ~/rspec
+      #       docker cp `docker-compose --file .circleci/docker-compose.yml ps -q sb`:/app/rspec/rspec.xml ~/rspec/rspec.xml
+      #     when: always
+      # - store_test_results:
+      #     path: ~/rspec
+  build-image:
+    executor: default
+    steps:
+      - setup
+      - checkout
+      - restore_cache:
+          # Restore cache
+          # sb/vendorに書き戻される
+          key: bundle-{{ checksum "sb/Gemfile.lock" }}-1
+      - aws-ecr/build-and-push-image:
+          region: AWS_REGION
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: 'securebox/sb'
+          tag: "${CIRCLE_BRANCH}-${CIRCLE_SHA1}"
+          dockerfile: ./sb/Dockerfile
+          path: ./sb
+
+workflows:
+  build-and-push-image:
+    jobs:
+      - test
+      - build-image:
+          context: AWS_ENV
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - develop
+                - main
+          context: AWS_ENV
+          requires:
+              - build-image
+          filters:
+            branches:
+              only:
+                - develop
+          family: 'sb-staging'
+          cluster-name: 'sb-staging-cluster'
+          service-name: 'sb-staging-service'
+          container-image-name-updates: 'container=sb-staging,tag=${CIRCLE_BRANCH}-${CIRCLE_SHA1}'
+      # - aws-ecs/deploy-service-update:
+      #     context: AWS_ENV
+      #     requires:
+      #         - build-image
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
+      #     family: 'sb-production'
+      #     cluster-name: 'sb-production-cluster'
+      #     service-name: 'sb-production-service'
+      #     container-image-name-updates: 'container=sb-production,tag=${CIRCLE_BRANCH}-${CIRCLE_SHA1}'
