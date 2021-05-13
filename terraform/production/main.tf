@@ -19,8 +19,8 @@ provider "aws" {
 data "aws_s3_bucket" "securebox-terraform" {
   bucket = "securebox-terraform"
 }
-module "ab-api" {
-  source   = "../module/ab-api"
+module "sb" {
+  source   = "../module/sb"
   aws_account_id = "843409087087"
   aws_region = "ap-northeast-1"
 

@@ -145,7 +145,7 @@ resource "aws_lb_target_group" "securebox" {
   # コンテナへの死活監視設定
   health_check  {
     port = 3000
-    path = "/"
+    path = "/ok.html"
   }
 }
 
