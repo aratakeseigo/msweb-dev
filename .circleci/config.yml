@@ -101,19 +101,19 @@ workflows:
           context: AWS_ENV
           requires:
             - test
-          # filters:
-          #   branches:
-          #     only:
-          #       - develop
-          #       - main
+          filters:
+            branches:
+              only:
+                - develop
+                - main
       - aws-ecs/deploy-service-update:
           context: AWS_ENV
           requires:
               - build-image
-          # filters:
-          #   branches:
-          #     only:
-          #       - develop
+          filters:
+            branches:
+              only:
+                - develop
           family: 'sb-staging'
           cluster-name: 'sb-staging-cluster'
           service-name: 'sb-staging-service'
