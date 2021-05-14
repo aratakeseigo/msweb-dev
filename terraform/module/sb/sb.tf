@@ -179,7 +179,7 @@ resource "aws_ecs_service" "securebox" {
   }
 
   # ECSタスクの起動数を定義
-  desired_count = "2"
+  desired_count = "1"
 
   # 起動するECSタスクのタスク定義
   task_definition = "${aws_ecs_task_definition.securebox.arn}"
