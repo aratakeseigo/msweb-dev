@@ -12,9 +12,12 @@ build:  ## docker build
 	docker compose -f ../docker-compose.sb.yml build
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle install
 
-.PHONY: install
-install:  ## copy env & ruby install & create db
+.PHONY: update
+update:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle install
+
+.PHONY: db_create
+db_create:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rails db:create
 
 .PHONY: run
