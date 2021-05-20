@@ -8,7 +8,7 @@ build-mac:  ## docker build
 .PHONY: build
 build:  ## docker build
 	if not exist .\sb\.env copy .\sb\.env.sample .\sb\.env
-	if not exist ../docker-compose.sb.yml copy ./docker-compose.sb.yml.sample ../docker-compose.sb.yml
+	if not exist ..\docker-compose.sb.yml copy .\docker-compose.sb.yml.sample ..\docker-compose.sb.yml
 	docker compose -f ../docker-compose.sb.yml build
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle install
 
