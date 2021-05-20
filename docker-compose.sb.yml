@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  sb:
+    build:
+      context: ./securebox/sb
+      dockerfile: Dockerfile
+    tty: true
+    privileged: true
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - 3000:3000
+    volumes:
+      - ./securebox/sb:/app:cached
+      - bundle_path:/app/vendor/bundle
+      - assets_path:/app/public/assets
+      - tmp_path:/app/tmp
+    links:
+      - db
+    env_file:
+      - ./securebox/sb/.env
+  db:
+    image: mysql:5.7
+    command:
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+    ports:
+      - 10101:3306
+    environment:
+      MYSQL_DATABASE: alarmbox_develop
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: alarmbox
+      MYSQL_PASSWORD: alarmbox
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./db/mysql:/var/lib/mysql:delegated
+      # - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+volumes:
+  bundle_path:
+  assets_path:
+  tmp_path:
