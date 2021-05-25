@@ -40,6 +40,7 @@ class DeviseCreateInternalUsers < ActiveRecord::Migration[5.2]
     end
 
     add_index :internal_users, :email, unique: true
+    add_index :internal_users, :login_id, unique: true
     add_index :internal_users, :reset_password_token, unique: true
     # add_index :internal_users, :confirmation_token,   unique: true
     # add_index :internal_users, :unlock_token,         unique: true
