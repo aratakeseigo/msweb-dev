@@ -25,9 +25,11 @@
   </head>
 
   <body>
-  <p class="notice"><%= notice %></p>
-  <p class="alert"><%= alert %></p>
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
 
-    <%= yield %>
+    <div class="container-fluid py-4 mw-md">
+      <%= yield %>
+    </div>
   </body>
 </html>
