@@ -8,7 +8,6 @@ Rails.application.routes.draw do
                                 confirmations: "internal_users/confirmations",
                                 passwords: "internal_users/passwords",
                                 registrations: "internal_users/registrations",
-                                sessions: "internal_users/sessions",
                                 unlocks: "internal_users/unlocks",
                                 omniauth: "internal_users/omniauth",
                               }

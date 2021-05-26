@@ -19,6 +19,8 @@ update:
 .PHONY: db_create
 db_create:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rails db:create
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --apply --dump-with-default-fk-name
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E test --apply --dump-with-default-fk-name
 
 .PHONY: run
 run:
@@ -34,8 +36,7 @@ recreate-db:
 
 .PHONY: migrate
 migrate:
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --apply --dump-with-default-fk-name
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E test --apply --dump-with-default-fk-name
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake db:migrate
 
 .PHONY: reset-db
 reset-db: recreate-db migrate
