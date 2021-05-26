@@ -38,8 +38,9 @@ recreate-db:
 migrate:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake db:migrate
 
-.PHONY: reset-db
-reset-db: recreate-db migrate
+.PHONY: seed
+seed:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake db:seed
 
 .PHONY: console
 console:
