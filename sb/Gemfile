@@ -68,3 +68,6 @@ gem "devise"
 gem "bootstrap", "~> 4.5"
 gem "jquery-rails"
 gem "devise-bootstrap-views", "~> 1.0"
+# AdminLTE 3
+gem 'font-awesome-rails'
+gem 'popper_js', '~> 1.14'

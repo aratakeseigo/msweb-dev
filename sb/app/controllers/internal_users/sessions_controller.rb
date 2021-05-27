@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class InternalUsers::SessionsController < Devise::SessionsController
+  layout "login"
+
   # before_action :configure_sign_in_params, only: [:create]
 
   # GET /resource/sign_in
