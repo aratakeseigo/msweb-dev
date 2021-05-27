@@ -34,10 +34,10 @@ module "sb" {
 
   #下記2つはセット
   # 内部のみ
-  # alb_seculity_group_id = "sg-feb1f798"
-  # ecs_seculity_group_id = "sg-0b2cf46c410ce1838"
+  alb_seculity_group_id = "sg-feb1f798"
+  ecs_seculity_group_id = "sg-0b2cf46c410ce1838"
   # 外部OK
-  alb_seculity_group_id = "sg-7bc5131c"
-  ecs_seculity_group_id = "sg-0dbc205bd7f019b12"
+  # alb_seculity_group_id = "sg-7bc5131c"
+  # ecs_seculity_group_id = "sg-0dbc205bd7f019b12"
 
 }
