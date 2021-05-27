@@ -50,6 +50,10 @@ console:
 routes:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake routes
 
+.PHONY: precompile
+precompile:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake assets:precompile
+
 .PHONY: test
 test:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rspec
