@@ -63,6 +63,5 @@ test-with-prof:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rspec --format progress --profile 10
 
 .PHONY: lint
-lint:
+lint: ## docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rubocop  --display-cop-names --extra-details --display-style-guide --parallel
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rubocop  --fail-level W --display-only-fail-level-offense
-	# docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rubocop  --display-cop-names --extra-details --display-style-guide --parallel
