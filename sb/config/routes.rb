@@ -11,5 +11,9 @@ Rails.application.routes.draw do
                                 unlocks: "internal_users/unlocks",
                                 omniauth: "internal_users/omniauth",
                               }
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  namespace :clients do
+    get "/", action: "list"
+    get "/list", action: "list"
+    get "/upload", action: "upload"
+  end
 end
