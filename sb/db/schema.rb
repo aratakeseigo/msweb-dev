@@ -750,35 +750,6 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
     t.string "address", comment: "住所"
   end
 
-  create_table "client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "client_id", null: false
-    t.string "tanto_name"
-    t.string "tanto_kana"
-    t.string "email"
-    t.string "department"
-    t.string "position"
-    t.string "tel"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["client_id"], name: "index_client_users_on_client_id"
-  end
-
-  create_table "clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "client_name"
-    t.integer "area_code"
-    t.integer "sb_user_id"
-    t.string "daihyo_name"
-    t.string "zip_code"
-    t.integer "prefecture_code"
-    t.string "address1"
-    t.string "address2"
-    t.string "tel"
-    t.string "industry_code1"
-    t.string "industry_code2"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "code_prtimes", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "AIによる詳細コードの予測値", force: :cascade do |t|
     t.integer "crawl_prtimes_check_list_id", null: false, comment: "クロールリストID"
     t.integer "code_details", null: false, comment: "コード"
@@ -2039,6 +2010,51 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
+  create_table "sb_agents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "entity_id", null: false
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "sb_client_id", null: false
+    t.string "name"
+    t.string "kana"
+    t.string "email"
+    t.string "department"
+    t.string "position"
+    t.string "contact_tel"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sb_client_id"], name: "index_sb_client_users_on_sb_client_id"
+  end
+
+  create_table "sb_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "entity_id", null: false
+    t.string "name", null: false
+    t.integer "status_id"
+    t.string "taxagency_corporate_number"
+    t.integer "area_id"
+    t.integer "sb_user_id"
+    t.string "daihyo_name", null: false
+    t.string "zip_code"
+    t.integer "prefecture_code"
+    t.string "address"
+    t.string "tel"
+    t.string "industry_code1"
+    t.string "industry_code2"
+    t.string "established"
+    t.integer "annual_sales"
+    t.integer "channel_id"
+    t.bigint "sb_agent_id"
+    t.boolean "anti_social_check", default: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
+  end
+
   create_table "screening_statuses", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査期間", force: :cascade do |t|
     t.integer "status", comment: "状態"
   end
@@ -2493,7 +2509,6 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
   add_foreign_key "by_things", "employees", name: "FK_BY_THN_EMPLOYEE"
   add_foreign_key "card_masters", "members"
   add_foreign_key "cards", "card_masters"
-  add_foreign_key "client_users", "clients"
   add_foreign_key "code_prtimes", "crawl_prtimes_check_lists", name: "code_prtimes_ibfk_1"
   add_foreign_key "corporation_watchers", "customer_masters", name: "corporation_watchers_ibfk_2"
   add_foreign_key "corporation_watchers", "entities", name: "corporation_watchers_ibfk_1", on_update: :cascade, on_delete: :cascade
@@ -2549,6 +2564,8 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
   add_foreign_key "relational_alarm_candidates", "customer_masters", name: "fk_rel_alarm_candidate_customer_master_id"
   add_foreign_key "rpa_exam_results", "customers", name: "FK_RPA_RESULT_CUSTOMER"
   add_foreign_key "rpa_exam_targets", "customers", name: "FK_RPA_TARGET_CUSTOMER"
+  add_foreign_key "sb_client_users", "sb_clients"
+  add_foreign_key "sb_clients", "sb_agents"
   add_foreign_key "site_watcher_histories", "site_watchers", name: "site_watcher_histories_ibfk_1"
   add_foreign_key "tenshokukaigi_masters", "customer_masters", name: "tenshokukaigi_masters_ibfk_1"
   add_foreign_key "tenshokukaigi_options", "tenshokukaigi_masters", name: "tenshokukaigi_options_ibfk_1"
