@@ -2010,46 +2010,46 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "sb_agents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "entity_id", null: false
-    t.string "name"
+  create_table "sb_agents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", comment: "SB代理店", force: :cascade do |t|
+    t.integer "entity_id", null: false, comment: "法人ID"
+    t.string "name", null: false, comment: "代理店名"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "sb_client_id", null: false
-    t.string "name"
-    t.string "kana"
-    t.string "email"
-    t.string "department"
-    t.string "position"
-    t.string "contact_tel"
+  create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", comment: "SBクライアントユーザー", force: :cascade do |t|
+    t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
+    t.string "name", null: false, comment: "担当者名"
+    t.string "kana", comment: "担当者名カナ"
+    t.string "email", comment: "メールアドレス"
+    t.string "department", comment: "部署"
+    t.string "position", comment: "役職"
+    t.string "contact_tel", comment: "希望連絡先"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sb_client_id"], name: "index_sb_client_users_on_sb_client_id"
   end
 
-  create_table "sb_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "entity_id", null: false
-    t.string "name", null: false
-    t.integer "status_id"
-    t.string "taxagency_corporate_number"
-    t.integer "area_id"
-    t.integer "sb_user_id"
-    t.string "daihyo_name", null: false
-    t.string "zip_code"
-    t.integer "prefecture_code"
-    t.string "address"
-    t.string "tel"
-    t.string "industry_code1"
-    t.string "industry_code2"
-    t.string "established"
-    t.integer "annual_sales"
-    t.integer "channel_id"
-    t.bigint "sb_agent_id"
-    t.boolean "anti_social_check", default: false
-    t.text "content"
+  create_table "sb_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", comment: "SBクライアント", force: :cascade do |t|
+    t.integer "entity_id", null: false, comment: "法人ID"
+    t.string "name", null: false, comment: "クライアント名"
+    t.integer "status_id", comment: "ステータスID"
+    t.string "taxagency_corporate_number", comment: "法人番号"
+    t.integer "area_id", comment: "エリアID"
+    t.integer "sb_user_id", comment: "SB担当者ID"
+    t.string "daihyo_name", null: false, comment: "代表者名"
+    t.string "zip_code", comment: "郵便番号"
+    t.integer "prefecture_code", comment: "都道府県コード"
+    t.string "address", comment: "住所"
+    t.string "tel", comment: "電話番号"
+    t.string "industry_code1", comment: "業種コード1"
+    t.string "industry_code2", comment: "業種コード2"
+    t.string "established", comment: "設立年月"
+    t.integer "annual_sales", comment: "年商（千円）"
+    t.integer "channel_id", comment: "媒体ID"
+    t.bigint "sb_agent_id", comment: "SB代理店ID"
+    t.boolean "anti_social_flag", default: false, comment: "反社チェックフラグ"
+    t.text "content", comment: "内容"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
