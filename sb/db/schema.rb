@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_22_100158) do
+ActiveRecord::Schema.define(version: 2021_06_01_175511) do
 
-  create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
+  create_table "ab_alarm_mail_settings", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.boolean "alarm_level1_flag", default: true, null: false, comment: "チェックアラーム受信設定"
     t.boolean "alarm_level2_flag", default: true, null: false, comment: "注意アラーム受信設定"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["user_id"], name: "user_id", unique: true
   end
 
-  create_table "ab_alarm_monthly_totals", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "マスター毎の月次アラーム数合計", force: :cascade do |t|
+  create_table "ab_alarm_monthly_totals", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "マスター毎の月次アラーム数合計", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスターID"
     t.integer "alarm_level_1", comment: "アラームレベル1合計"
     t.integer "alarm_level_2", comment: "アラームレベル2合計"
@@ -33,27 +33,19 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id", "target_month"], name: "cmid_tm_index", unique: true
   end
 
-  create_table "ab_alarm_totals", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "半期ごとの取引先別アラーム数合計", force: :cascade do |t|
+  create_table "ab_alarm_totals", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "半期ごとの取引先別アラーム数合計", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先ID"
     t.integer "alarm_level_1", comment: "アラームレベル1合計"
     t.integer "alarm_level_2", comment: "アラームレベル2合計"
     t.integer "alarm_level_3", comment: "アラームレベル3合計"
-    t.date "start_month", comment: "開始月"
+    t.date "start_month", null: false, comment: "開始月"
     t.date "end_month", comment: "終了月"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
     t.index ["customer_master_id", "start_month"], name: "cmid_sd_index", unique: true
   end
 
-  create_table "ab_annual_payment_investigate_limits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "AB年払い会員過去調査期日確認テーブル", force: :cascade do |t|
-    t.integer "member_id", null: false, comment: "メンバーID"
-    t.datetime "alarm_investigate_limit", null: false, comment: "過去調査有効期限"
-    t.datetime "created_at", null: false, comment: "登録日時"
-    t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["member_id"], name: "member_id", unique: true
-  end
-
-  create_table "ab_credit_mail_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "信用状況更新通知のためのメール送信リスト", force: :cascade do |t|
+  create_table "ab_credit_mail_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "信用状況更新通知のためのメール送信リスト", force: :cascade do |t|
     t.integer "before_credit_id", null: false, comment: "更新前の信用状況ID"
     t.integer "after_credit_id", null: false, comment: "更新後の信用状況ID"
     t.integer "member_id", null: false, comment: "会員ID"
@@ -67,7 +59,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_ACML_MID"
   end
 
-  create_table "ab_customer_memo_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "メモ履歴情報", force: :cascade do |t|
+  create_table "ab_customer_memo_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "メモ履歴情報", force: :cascade do |t|
     t.integer "customer_id", null: false, comment: "取引先ID"
     t.string "member_memo", limit: 400, null: false, comment: "メモ"
     t.datetime "member_memo_at", null: false, comment: "メモされた日時"
@@ -76,7 +68,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_id"], name: "customer_id"
   end
 
-  create_table "ab_selectbox_value_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "セレクトボックス値", force: :cascade do |t|
+  create_table "ab_selectbox_value_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "セレクトボックス値", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.integer "period_in_top", comment: "トップ画面の期間"
     t.integer "number_in_top", comment: "トップ画面の表示件数"
@@ -88,7 +80,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["user_id"], name: "user_id"
   end
 
-  create_table "accounting_kanpou_items", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計情報（官報）数値", force: :cascade do |t|
+  create_table "accounting_kanpou_items", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計情報（官報）数値", force: :cascade do |t|
     t.integer "accounting_kanpou_root_id", null: false, comment: "官報主要ID"
     t.string "item", comment: "勘定科目"
     t.bigint "value", comment: "値"
@@ -98,7 +90,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["accounting_kanpou_root_id"], name: "FK_AKI_ROOT"
   end
 
-  create_table "accounting_kanpou_roots", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計情報（官報）主要", force: :cascade do |t|
+  create_table "accounting_kanpou_roots", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計情報（官報）主要", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.string "company_name", limit: 200, comment: "会社名"
     t.integer "prefecture_code", comment: "都道府県コード"
@@ -116,7 +108,31 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "FK_AKR_ENTITY"
   end
 
-  create_table "accs_bl_infos", primary_key: "bi_serial_number", id: :integer, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセスＢＬ情報", force: :cascade do |t|
+  create_table "accountings", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計情報", force: :cascade do |t|
+    t.integer "entity_id", null: false, comment: "法人ID"
+    t.date "disclosed_date", comment: "開示日"
+    t.date "as_of_date", comment: "基準日"
+    t.integer "source_id", comment: "情報源ID"
+    t.string "source_type", comment: "情報源タイプ"
+    t.string "currency_code", limit: 3, comment: "通貨"
+    t.string "item1", comment: "勘定科目1（売上高）"
+    t.string "item2", comment: "勘定科目2（当期純利益）"
+    t.string "item3", comment: "勘定科目3（総資産）"
+    t.string "item4", comment: "勘定科目4（純資産）"
+    t.string "item5", comment: "勘定科目5"
+    t.string "item6", comment: "勘定科目6"
+    t.bigint "value1", comment: "値1"
+    t.bigint "value2", comment: "値2"
+    t.bigint "value3", comment: "値3"
+    t.bigint "value4", comment: "値4"
+    t.bigint "value5", comment: "値5"
+    t.bigint "value6", comment: "値6"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["entity_id"], name: "entity_id"
+  end
+
+  create_table "accs_bl_infos", primary_key: "bi_serial_number", id: :integer, comment: "シリアルNo", default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセスＢＬ情報", force: :cascade do |t|
     t.string "corporate_code", limit: 11, comment: "企業コード"
     t.string "bl_out_date", comment: "BL出力日"
     t.string "bl_out_date_japan", comment: "BL出力日_日本"
@@ -137,7 +153,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["corporate_code"], name: "IDX_ACCS_BL"
   end
 
-  create_table "accs_clients", primary_key: "client_code", id: :string, limit: 11, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセスクライアント情報", force: :cascade do |t|
+  create_table "accs_clients", primary_key: "client_code", id: :string, limit: 11, comment: "クライアントコード", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセスクライアント情報", force: :cascade do |t|
     t.string "client_name", comment: "クライアント名"
     t.string "spread_sheet_id", limit: 80, comment: "スプレッドシートID"
     t.string "client_entry_date", comment: "クライアント登録日"
@@ -149,7 +165,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["client_code"], name: "IDX_ACCS_CL"
   end
 
-  create_table "accs_hosho_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセス保証開始情報", force: :cascade do |t|
+  create_table "accs_hosho_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセス保証開始情報", force: :cascade do |t|
     t.string "hosho_no", null: false, comment: "保証開始NO"
     t.string "kyoten", comment: "拠点"
     t.string "client_name", comment: "クライアント名"
@@ -169,13 +185,13 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["hosho_no"], name: "IDX_ACCS_HOSHO"
   end
 
-  create_table "accs_imp_mngs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセス情報取込管理", force: :cascade do |t|
+  create_table "accs_imp_mngs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセス情報取込管理", force: :cascade do |t|
     t.datetime "imp_date", null: false, comment: "取込日時"
     t.integer "ins_count", null: false, comment: "登録件数"
     t.integer "upd_count", null: false, comment: "更新件数"
   end
 
-  create_table "accs_sinsa_kekkas", primary_key: "ID", id: :integer, default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセス審査結果", force: :cascade do |t|
+  create_table "accs_sinsa_kekkas", primary_key: "ID", id: :integer, comment: "ID", default: nil, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アクセス審査結果", force: :cascade do |t|
     t.string "ukebi", comment: "受け日"
     t.string "kessaibi", comment: "決済日"
     t.string "shinsa_code", comment: "審査コード"
@@ -249,10 +265,30 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "oys_hp", comment: "親会社HP"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["corporate_code"], name: "IDX_ACCS_SK"
   end
 
-  create_table "alarm_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報の候補", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "alarm_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報の候補", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスターID"
     t.string "crawler_table_name", limit: 127, null: false, comment: "テーブル名"
     t.integer "crawler_record_id", null: false, comment: "元データのID"
@@ -280,7 +316,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["judge_id"], name: "judge_id"
   end
 
-  create_table "alarm_mail_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール送信リスト", force: :cascade do |t|
+  create_table "alarm_mail_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール送信リスト", force: :cascade do |t|
     t.integer "alarm_id", comment: "アラームID"
     t.integer "member_id", comment: "会員ID"
     t.integer "customer_master_id", comment: "取引先マスターID"
@@ -290,21 +326,19 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "alarm_prtimes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PRTIMESアラームレベルの予測値", force: :cascade do |t|
+  create_table "alarm_prtimes", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PRTIMESアラームレベルの予測値", force: :cascade do |t|
     t.integer "crawl_prtimes_check_list_id", null: false, comment: "クロールリストID"
     t.integer "alarm_level", null: false, comment: "アラームレベル"
     t.float "alarm_proba", null: false, comment: "予測確率"
     t.index ["crawl_prtimes_check_list_id"], name: "crawl_prtimes_check_list_id"
   end
 
-  create_table "alarms", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報", force: :cascade do |t|
+  create_table "alarms", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報", force: :cascade do |t|
     t.integer "customer_master_id", comment: "取引先マスターID"
     t.integer "alarm_level", comment: "アラームレベル"
     t.string "alarm_source_code", limit: 4, comment: "アラームソースコード"
     t.string "detail_code_1", limit: 4, comment: "内容コード１"
     t.string "detail_code_2", limit: 4, comment: "内容コード２"
-    t.string "association_code_1", limit: 4, comment: "関連コード１"
-    t.string "association_code_2", limit: 4, comment: "関連コード２"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
     t.text "link", comment: "リンク"
@@ -319,7 +353,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "fk_rails_3ee6a3ebcd"
   end
 
-  create_table "alliance_members", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "提携会員", force: :cascade do |t|
+  create_table "alliance_members", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "提携会員", force: :cascade do |t|
     t.integer "alliance_type", null: false, comment: "提携種別\t1:roborobo"
     t.string "alliance_unq_id", limit: 20, null: false, comment: "提携先ユニークID"
     t.integer "member_id", null: false, comment: "会員ID"
@@ -336,20 +370,49 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "member_id"
   end
 
-  create_table "api_access_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "APIのアクセスログ", force: :cascade do |t|
-    t.datetime "called_at", comment: "呼び出し日時"
-    t.string "token", comment: "トークン"
-    t.string "ip_address", comment: "IPアドレス"
-    t.integer "user_id", comment: "ユーザーID"
-    t.integer "member_id", comment: "会員ID"
-    t.string "method", comment: "HTTPメソッド"
-    t.string "path", comment: "アクセス先パス"
-    t.text "parameters", comment: "リクエストパラメータ"
-    t.integer "response_code", comment: "レスポンスコード"
-    t.datetime "created_at", comment: "作成日時"
+  create_table "alliance_notices", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "提携通知管理", force: :cascade do |t|
+    t.integer "alliance_type", null: false, comment: "提携種別\t1:roborobo"
+    t.boolean "lotate_flag", default: false, null: false, comment: "ローテーションフラグ"
+    t.datetime "notice_date", null: false, comment: "通知日時"
+    t.integer "notice_count", null: false, comment: "通知件数"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "blogs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ブログ", force: :cascade do |t|
+  create_table "archive_corporation_suggest_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業サジェスト辞書", force: :cascade do |t|
+    t.string "house_company_code", comment: "内部企業コード"
+    t.string "corporation_number", comment: "法人番号"
+    t.string "corporation_name", comment: "法人名"
+    t.string "corporation_name_short", comment: "法人名略"
+    t.string "zip_code", comment: "郵便番号"
+    t.integer "prefecture_code", comment: "都道府県コード"
+    t.string "address1", comment: "住所１"
+    t.string "daihyo_name", comment: "代表者名"
+    t.string "daihyo_tel", comment: "代表電話番号"
+    t.boolean "show_flag", default: false, null: false, comment: "表示フラグ"
+    t.integer "prefecture_order", default: 99, null: false, comment: "都道府県オーダー"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.string "corporation_name_kana", comment: "会社名カナ"
+    t.string "corporation_url", comment: "コーポレートサイト"
+    t.string "daihyo_fax", comment: "代表FAX番号"
+    t.string "industry", comment: "業界"
+    t.bigint "capital", comment: "資本金"
+    t.string "account_closing_month", comment: "決算月"
+    t.integer "employee_number", comment: "従業員数"
+    t.string "established", comment: "設立年月"
+    t.string "listed_division", comment: "上場区分"
+    t.integer "securities_code", comment: "証券コード"
+    t.string "stock_market", comment: "上場市場"
+    t.index ["corporation_name"], name: "csm_cn"
+    t.index ["corporation_name_short"], name: "IDX_CSM_NAME_SHORT"
+    t.index ["corporation_number"], name: "index_corporation_suggest_masters_on_corporation_number"
+    t.index ["house_company_code"], name: "IDX_CSM_HOUSE_COMPANY_CODE"
+    t.index ["prefecture_code", "address1"], name: "IDX_CSM_ADDRESS"
+    t.index ["prefecture_order", "corporation_name"], name: "IDX_CSM_ORDER"
+  end
+
+  create_table "blogs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ブログ", force: :cascade do |t|
     t.string "title", limit: 40, null: false, comment: "タイトル"
     t.text "link", null: false, comment: "リンク"
     t.datetime "start_date", null: false, comment: "表示開始日時"
@@ -359,9 +422,9 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["id", "start_date"], name: "IDX_BLOG"
   end
 
-  create_table "by_agents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY取次店", force: :cascade do |t|
+  create_table "by_agents", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY取次店", force: :cascade do |t|
     t.string "agent_code", limit: 3, comment: "取次店コード"
-    t.string "agent_name", limit: 50, null: false, comment: "取次店名"
+    t.string "agent_name", limit: 100, null: false, comment: "取次店名"
     t.integer "agent_type", null: false, comment: "取次店区分\t1:一般・共同商品、2:再保証"
     t.float "init_charge_rate", comment: "初回保証料 率"
     t.integer "init_charge_min", comment: "初回保証料 最低額"
@@ -369,6 +432,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.float "init_reassurance_rate", comment: "初回再保証料 率"
     t.integer "init_reassurance_min", comment: "初回再保証料 最低額"
     t.integer "init_reassurance_default", comment: "初回再保証料 固定額"
+    t.float "fee_rate", comment: "手数料 率"
     t.float "yearly_charge_rate", comment: "年間保証料 率"
     t.integer "yearly_charge_min", comment: "年間保証料 最低額"
     t.integer "yearly_charge_def", comment: "年間保証料 固定額"
@@ -379,10 +443,21 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "restoration_costs", comment: "原状回復費用"
     t.integer "removal_remnant_costs", comment: "残置物撤去費用"
     t.integer "litigation_costs", comment: "訴訟費用"
-    t.boolean "num_set_flag", comment: "番号設定フラグ\ttrue:必須"
+    t.boolean "num_set_flag", default: false, comment: "番号設定フラグ\ttrue:必須"
+    t.boolean "charge_advance_flag", default: false, comment: "保証料前受フラグ    true:前受"
     t.integer "approval_num", comment: "稟議/承認番号"
     t.text "mail_address", comment: "メール送付先"
     t.string "zip_password", limit: 20, comment: "ZIPパスワード"
+    t.integer "month_term", comment: "期間月数"
+    t.integer "guarantee_term", comment: "保証期間月数"
+    t.string "init_billing_target", limit: 1, comment: "初回請求 対象項目\t1:発行日、2:保証開始日"
+    t.integer "init_billing_month", comment: "初回請求 月数"
+    t.string "init_billing_day_type", limit: 1, comment: "初回請求 日種別\t0：入力値、1：末日、2：当日"
+    t.integer "init_billing_day", comment: "初回請求 日"
+    t.string "year_billing_target", limit: 1, comment: "年間請求 対象項目\t1:発行日、2:保証開始日"
+    t.integer "year_billing_month", comment: "年間請求 月数"
+    t.string "year_billing_day_type", limit: 1, comment: "年間請求 日種別\t0：入力値、1：末日、2：当日"
+    t.integer "year_billing_day", comment: "年間請求 日"
     t.text "memo", comment: "メモ"
     t.integer "employee_id", comment: "入力者ID"
     t.boolean "delete_flag", comment: "削除フラグ"
@@ -391,10 +466,34 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["employee_id"], name: "FK_BY_AGT_EMPLOYEE"
   end
 
-  create_table "by_customers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人", force: :cascade do |t|
+  create_table "by_budgets", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY予算", force: :cascade do |t|
+    t.integer "agent_type", null: false, comment: "取次店区分    1:一般・共同商品、2:再保証"
+    t.string "budget_year_month", limit: 6, null: false, comment: "年月"
+    t.integer "budget_amount", comment: "予算金額"
+    t.integer "budget_number", comment: "予算件数"
+    t.integer "employee_id", comment: "入力者ID"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["agent_type", "budget_year_month"], name: "agent_type", unique: true
+    t.index ["employee_id"], name: "FK_BY_BUD_EMPLOYEE"
+  end
+
+  create_table "by_customer_urls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人URL", force: :cascade do |t|
+    t.integer "by_customer_id", comment: "申込人ID"
+    t.integer "url_type", null: false, comment: "URL区分\t1：ホームページ"
+    t.string "url", limit: 1000, null: false, comment: "URL"
+    t.text "memo", comment: "メモ"
+    t.integer "employee_id", comment: "入力者ID"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["by_customer_id"], name: "FK_BY_CST_URL_CUSTOMER"
+    t.index ["employee_id"], name: "FK_BY_CST_URL_EMPLOYEE"
+  end
+
+  create_table "by_customers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.string "customer_name", limit: 50, null: false, comment: "申込人名(顧客入力)"
-    t.integer "prefecture_code", comment: "都道県コード"
+    t.integer "prefecture_code", default: 0, comment: "都道県コード"
     t.string "address", comment: "住所"
     t.string "daihyo_name", limit: 30, comment: "代表者名"
     t.string "daihyo_name2", limit: 30, comment: "代表者名2"
@@ -402,6 +501,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "daihyo_name4", limit: 30, comment: "代表者名4"
     t.string "daihyo_name5", limit: 30, comment: "代表者名5"
     t.string "daihyo_tel", limit: 11, comment: "代表電話番号"
+    t.string "daihyo_tel2", limit: 11, comment: "代表電話番号2"
     t.string "established", limit: 20, comment: "設立年月"
     t.bigint "capital", comment: "資本金"
     t.bigint "annual_sales", comment: "年商"
@@ -409,12 +509,10 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "tanto_name", limit: 30, comment: "担当者名"
     t.string "tanto_tel", limit: 11, comment: "担当者電話番号"
     t.string "industry_code", limit: 2, comment: "業種コード"
-    t.string "url", limit: 1000, comment: "URL"
-    t.string "url2", limit: 1000, comment: "URL2"
-    t.string "url3", limit: 1000, comment: "URL3"
     t.text "memo", comment: "メモ"
     t.integer "employee_id", comment: "入力者ID"
     t.integer "lock_employee_id", comment: "ロック保持者ID"
+    t.integer "created_employee_id", comment: "登録者ID"
     t.boolean "temporarily_save_flag", comment: "一時保存フラグ"
     t.boolean "delete_flag", comment: "削除フラグ"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -423,7 +521,19 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "FK_BY_CST_ENTITY"
   end
 
-  create_table "by_examinations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY審査", force: :cascade do |t|
+  create_table "by_examination_urls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人調査URL", force: :cascade do |t|
+    t.integer "by_examination_id", comment: "申込人調査ID"
+    t.integer "url_type", null: false, comment: "URL区分    1：BL情報、2：破産等情報、3：反社情報"
+    t.string "url", limit: 1000, null: false, comment: "URL"
+    t.text "memo", comment: "メモ"
+    t.integer "employee_id", comment: "入力者ID"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["by_examination_id"], name: "FK_BY_EXM_URL_EXAMINATION"
+    t.index ["employee_id"], name: "FK_BY_EXM_URL_EMPLOYEE"
+  end
+
+  create_table "by_examinations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY審査", force: :cascade do |t|
     t.integer "by_customer_id", null: false, comment: "申込人ID"
     t.boolean "latest_flag", default: false, null: false, comment: "申込人別最新フラグ"
     t.date "examination_date", comment: "審査日"
@@ -438,17 +548,8 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.text "other_memo", comment: "他保証メモ"
     t.text "past_memo", comment: "過去審査メモ"
     t.text "bl_memo", comment: "不芳情報メモ"
-    t.string "bl_url1", limit: 1000, comment: "不芳情報URL1"
-    t.string "bl_url2", limit: 1000, comment: "不芳情報URL2"
-    t.string "bl_url3", limit: 1000, comment: "不芳情報URL3"
     t.text "bankrupt_memo", comment: "倒産メモ"
-    t.string "bankrupt_url1", limit: 1000, comment: "倒産情報URL1"
-    t.string "bankrupt_url2", limit: 1000, comment: "倒産情報URL2"
-    t.string "bankrupt_url3", limit: 1000, comment: "倒産情報URL3"
     t.text "anti_social_memo", comment: "反社メモ"
-    t.string "anti_social_url1", limit: 1000, comment: "反社情報URL1"
-    t.string "anti_social_url2", limit: 1000, comment: "反社情報URL2"
-    t.string "anti_social_url3", limit: 1000, comment: "反社情報URL3"
     t.text "memo", comment: "メモ"
     t.string "fin1_month", limit: 6, comment: "財務１年月(YYYYMM)"
     t.integer "fin1_assets", comment: "財務１資産(万円)"
@@ -470,6 +571,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "fin3_profits", comment: "財務３純利益(万円)"
     t.integer "employee_id", comment: "入力者ID"
     t.integer "lock_employee_id", comment: "ロック保持者ID"
+    t.integer "created_employee_id", comment: "登録者ID"
     t.boolean "delete_flag", comment: "削除フラグ"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
@@ -477,9 +579,10 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["employee_id"], name: "FK_BY_EXM_EMPLOYEE"
   end
 
-  create_table "by_guarantees", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY保証", force: :cascade do |t|
+  create_table "by_guarantees", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY保証", force: :cascade do |t|
     t.integer "by_thing_id", null: false, comment: "物件ID"
     t.integer "by_customer_id", null: false, comment: "申込人ID"
+    t.integer "renewal_id", comment: "更新保証ID"
     t.date "start_date", comment: "保証開始日"
     t.date "end_date", comment: "保証終了日"
     t.string "accounting_month", limit: 6, comment: "売上計上年月"
@@ -489,10 +592,23 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "deposit_ammount", comment: "入金額"
     t.date "delivery_date", comment: "請求書送付日"
     t.date "deposit_date", comment: "入金日"
-    t.string "deposit_status", limit: 1, default: "0", comment: "入金ステータス\t0:未、1:一部、2:全"
+    t.integer "sep_deposit_ammount_1", comment: "分割入金額１"
+    t.date "sep_delivery_date_1", comment: "分割請求書送付日１"
+    t.date "sep_deposit_date_1", comment: "分割入金日１"
+    t.integer "sep_deposit_ammount_2", comment: "分割入金額２"
+    t.date "sep_delivery_date_2", comment: "分割請求書送付日２"
+    t.date "sep_deposit_date_2", comment: "分割入金日２"
+    t.integer "sep_deposit_ammount_3", comment: "分割入金額３"
+    t.date "sep_delivery_date_3", comment: "分割請求書送付日３"
+    t.date "sep_deposit_date_3", comment: "分割入金日３"
+    t.string "deposit_status", limit: 1, default: "0", comment: "入金ステータス    0:未、1:一部、2:全"
+    t.boolean "first_flag", default: false, comment: "初回保証フラグ\ttrue:初回分"
+    t.boolean "add_flag", default: false, comment: "追加保証フラグ\ttrue:追加分"
+    t.boolean "renewal_flag", default: false, null: false, comment: "更新済フラグ"
     t.text "memo", comment: "メモ"
     t.integer "employee_id", comment: "入力者ID"
     t.integer "lock_employee_id", comment: "ロック保持者ID"
+    t.integer "created_employee_id", comment: "登録者ID"
     t.boolean "delete_flag", comment: "削除フラグ"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
@@ -500,13 +616,25 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["employee_id"], name: "FK_BY_GRT_EMPLOYEE"
   end
 
-  create_table "by_things", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY物件", force: :cascade do |t|
+  create_table "by_thing_urls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY物件URL", force: :cascade do |t|
+    t.integer "by_thing_id", comment: "物件ID"
+    t.integer "url_type", null: false, comment: "URL区分\t1：緊急連絡先、2：連帯保証人"
+    t.string "url", limit: 1000, null: false, comment: "URL"
+    t.text "memo", comment: "メモ"
+    t.integer "employee_id", comment: "入力者ID"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["by_thing_id"], name: "FK_BY_THN_URL_THING"
+    t.index ["employee_id"], name: "FK_BY_THN_URL_EMPLOYEE"
+  end
+
+  create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY物件", force: :cascade do |t|
     t.integer "by_agent_id", null: false, comment: "取次店ID"
     t.integer "by_customer_id", null: false, comment: "申込人ID"
     t.string "thing_name", limit: 50, comment: "物件名"
     t.string "base_agent_name", limit: 50, comment: "再保証取次店名"
-    t.integer "thing_type", comment: "物件種別\t1:店舗、2:事務所"
-    t.integer "prefecture_code", comment: "都道県コード"
+    t.integer "thing_type", comment: "物件種別    1:店舗、2:事務所"
+    t.integer "prefecture_code", default: 0, comment: "都道県コード"
     t.string "address", comment: "住所"
     t.string "industry_code", limit: 2, comment: "業種コード"
     t.integer "deposit", comment: "保証金額"
@@ -523,8 +651,11 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.float "init_charge_rate", comment: "初回保証料 率"
     t.integer "init_reassurance", comment: "初回再保証料"
     t.float "init_reassurance_rate", comment: "初回再保証料 率"
+    t.integer "fee", comment: "手数料"
+    t.float "fee_rate", comment: "手数料 率"
     t.integer "yearly_charge", comment: "年間保証料"
     t.float "yearly_charge_rate", comment: "年間保証料 率"
+    t.boolean "yc_manual_def_flag", comment: "年間保証料固定フラグ"
     t.integer "yearly_reassurance", comment: "年間再保証料"
     t.float "yearly_reassurance_rate", comment: "年間再保証料 率"
     t.integer "restoration_costs", comment: "原状回復費用"
@@ -536,23 +667,25 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "emergency_contact", limit: 30, comment: "緊急連絡先"
     t.string "emergency_contact_tel", limit: 11, comment: "緊急連絡先電話番号"
     t.text "emergency_contact_memo", comment: "緊急連絡先メモ"
-    t.string "emergency_contact_url1", limit: 1000, comment: "緊急連絡先URL1"
-    t.string "emergency_contact_url2", limit: 1000, comment: "緊急連絡先URL2"
-    t.string "emergency_contact_url3", limit: 1000, comment: "緊急連絡先URL3"
+    t.string "emergency_contact2", limit: 30, comment: "緊急連絡先2"
+    t.string "emergency_contact_tel2", limit: 11, comment: "緊急連絡先電話番号2"
+    t.text "emergency_contact_memo2", comment: "緊急連絡先メモ2"
     t.string "rentai_name", limit: 30, comment: "連帯保証人名"
     t.string "rentai_tel", limit: 11, comment: "連帯保証人電話番号"
     t.text "rentai_memo", comment: "連帯保証人メモ"
-    t.string "rentai_url1", limit: 1000, comment: "連帯保証人URL1"
-    t.string "rentai_url2", limit: 1000, comment: "連帯保証人URL2"
-    t.string "rentai_url3", limit: 1000, comment: "連帯保証人URL3"
+    t.string "rentai_name2", limit: 30, comment: "連帯保証人名2"
+    t.string "rentai_tel2", limit: 11, comment: "連帯保証人電話番号2"
+    t.text "rentai_memo2", comment: "連帯保証人メモ2"
     t.string "map_url", limit: 1000, comment: "物件地図URL"
     t.text "tel_memo", comment: "電話確認メモ"
     t.text "memo", comment: "メモ"
     t.text "communicate_memo", comment: "連絡メモ"
     t.float "substance_deposit", comment: "敷金/保証金額（実質）"
-    t.boolean "pass_flag", comment: "可決フラグ\ttrue:可決、false:否決"
+    t.boolean "pass_flag", comment: "可決フラグ    true:可決、false:否決"
+    t.date "reception_date", comment: "受付日"
     t.date "approval_request_date", comment: "稟議申請日"
     t.date "approval_date", comment: "承認日"
+    t.date "guarantee_cancel_date", comment: "保証解約日"
     t.string "reject_reason_code1", limit: 2, comment: "否決理由コード1"
     t.string "reject_reason_code2", limit: 2, comment: "否決理由コード2"
     t.text "approval_reason_text", comment: "決済理由 文章"
@@ -560,14 +693,18 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "agent_issue_num", limit: 20, comment: "取次店発行番号"
     t.boolean "combined_housing", default: false, comment: "兼住宅フラグ"
     t.text "approval_condition", comment: "決済条件"
-    t.boolean "export_flag", default: false, comment: "出力フラグ\ttrue:済、false:未"
+    t.boolean "approval_condition_only_flag", default: false, comment: "回答書：決裁条件のみ表示"
+    t.boolean "export_flag", default: false, comment: "出力フラグ    true:済、false:未"
     t.string "status", limit: 2, null: false, comment: "ステータス"
-    t.integer "approval_request_id", comment: "稟議申請者ID"
+    t.integer "first_approval_request_id", comment: "初回稟議申請者ID"
+    t.integer "latest_approval_request_id", comment: "直近稟議申請者ID"
     t.boolean "cancel_flag", comment: "キャンセルフラグ    true:キャンセル"
     t.integer "pre_by_customer_id", comment: "前回申込人ID"
-    t.integer "authorizer_id", comment: "決裁者ID"
+    t.integer "first_authorizer_id", comment: "初回決裁者ID"
+    t.integer "latest_authorizer_id", comment: "直近決裁者ID"
     t.integer "employee_id", comment: "入力者ID"
     t.integer "lock_employee_id", comment: "ロック保持者ID"
+    t.integer "created_employee_id", comment: "登録者ID"
     t.boolean "delete_flag", comment: "削除フラグ"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
@@ -576,7 +713,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["employee_id"], name: "FK_BY_THN_EMPLOYEE"
   end
 
-  create_table "cache_nikkei_articles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "日経新聞記事保存用", force: :cascade do |t|
+  create_table "cache_nikkei_articles", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "日経新聞記事保存用", force: :cascade do |t|
     t.string "permalink", null: false, comment: "パーマリンク"
     t.string "title", null: false, comment: "タイトル"
     t.text "body", null: false, comment: "本文"
@@ -587,7 +724,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["permalink"], name: "permalink", unique: true
   end
 
-  create_table "card_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "カードマスター", force: :cascade do |t|
+  create_table "card_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "カードマスター", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.string "payjp_customer_id", null: false, comment: "PAYJP顧客ID"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -595,7 +732,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "fk_rails_1a0f342e44"
   end
 
-  create_table "cards", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "カード情報", force: :cascade do |t|
+  create_table "cards", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "カード情報", force: :cascade do |t|
     t.integer "card_master_id", comment: "カードマスターID"
     t.string "payjp_card_id", null: false, comment: "PAYJPカードID"
     t.boolean "default_flag", default: false, null: false, comment: "デフォルトカードフラグ"
@@ -604,26 +741,52 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["card_master_id"], name: "fk_rails_48f0be08ba"
   end
 
-  create_table "chk_entity", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ID", force: :cascade do |t|
+  create_table "chk_entity", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.integer "match_type", comment: "一致タイプ"
     t.integer "entity_id", comment: "エンティティID"
     t.string "corporation_number", comment: "法人番号"
     t.string "corporation_name", comment: "法人名"
     t.integer "prefecture_code", comment: "都道府県コード"
     t.string "address", comment: "住所"
-    t.index ["corporation_number"], name: "IDX_0719_02"
-    t.index ["entity_id"], name: "IDX_0719_01"
-    t.index ["match_type"], name: "IDX_0719_03"
   end
 
-  create_table "code_prtimes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PRTIMES詳細コードの予測値", force: :cascade do |t|
+  create_table "client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.string "tanto_name"
+    t.string "tanto_kana"
+    t.string "email"
+    t.string "department"
+    t.string "position"
+    t.string "tel"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_client_users_on_client_id"
+  end
+
+  create_table "clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "client_name"
+    t.integer "area_code"
+    t.integer "sb_user_id"
+    t.string "daihyo_name"
+    t.string "zip_code"
+    t.integer "prefecture_code"
+    t.string "address1"
+    t.string "address2"
+    t.string "tel"
+    t.string "industry_code1"
+    t.string "industry_code2"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "code_prtimes", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "AIによる詳細コードの予測値", force: :cascade do |t|
     t.integer "crawl_prtimes_check_list_id", null: false, comment: "クロールリストID"
     t.integer "code_details", null: false, comment: "コード"
     t.float "code_proba", comment: "予測確率"
     t.index ["crawl_prtimes_check_list_id"], name: "crawl_prtimes_check_list_id"
   end
 
-  create_table "company_scores", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会社番付情報", force: :cascade do |t|
+  create_table "company_scores", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会社番付情報", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.string "cs_id", limit: 20, null: false, comment: "会社番付ID"
     t.string "company_name", limit: 150, null: false, comment: "企業名"
@@ -645,7 +808,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "IDX_CSCR_ENT_ID"
   end
 
-  create_table "contact_sikihou_datas", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "上場四季報情報", force: :cascade do |t|
+  create_table "contact_sikihou_datas", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "上場四季報情報", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.integer "securities_code", comment: "証券コード"
     t.string "company_name", limit: 200, comment: "会社名"
@@ -659,7 +822,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "corporation_watchers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人ウォッチャー", force: :cascade do |t|
+  create_table "corporation_watchers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人ウォッチャー", force: :cascade do |t|
     t.integer "process", null: false, comment: "区分処理"
     t.text "change_cause", comment: "変更事由の詳細"
     t.string "close_cause", comment: "登記記録の閉鎖等の事由"
@@ -677,7 +840,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "corporation_watchers_ibfk_1"
   end
 
-  create_table "coupons", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "クーポン情報", force: :cascade do |t|
+  create_table "coupons", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "クーポン情報", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.string "coupon_code", comment: "クーポンコード"
     t.datetime "created_at", comment: "登録日時"
@@ -697,7 +860,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "fk_rails_457355659c"
   end
 
-  create_table "crawl_google_difference_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "グーグル検索差分リスト", force: :cascade do |t|
+  create_table "crawl_google_difference_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "グーグル検索差分リスト", force: :cascade do |t|
     t.integer "customer_master_id", comment: "取引先マスターID"
     t.string "title", comment: "タイトル"
     t.text "link", comment: "リンク"
@@ -713,18 +876,14 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.boolean "alarm_pred_flag", default: false, null: false, comment: "機械学習実施フラグ"
     t.float "alarm_pred", default: 0.0, null: false, comment: "アラーム確立"
     t.boolean "later_flag", default: false, comment: "後回しフラグ"
-    t.text "text_extraction_value", comment: "本文自体を保持"
-    t.text "text_extraction_word_set", comment: "カンマ区切りwordセット（名詞、動詞、形容詞）"
-    t.integer "already_reported_pred", default: 0, null: false, comment: "既報確率（四捨五入）"
     t.integer "alarm_bert_prob", default: 0, null: false, comment: "BERT判定確立：小数点第一位を四捨五入"
     t.integer "learning_code", default: 1, null: false, comment: "機械学習状態制御コード(1:対象 2:処理中 3:完了)"
-    t.index ["alarm_learning_code"], name: "idx_cgdl_alc"
     t.index ["check_flag"], name: "cgdl_cf"
     t.index ["created_at"], name: "idx_cgdl_created_at"
     t.index ["customer_master_id"], name: "fk_rails_a3df897a75"
   end
 
-  create_table "crawl_lighthouse_check_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "Lighthouseの口コミ情報", force: :cascade do |t|
+  create_table "crawl_lighthouse_check_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "Lighthouseの口コミ情報", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスタID"
     t.datetime "post_date", null: false, comment: "投稿日"
     t.integer "experienced_year", comment: "在籍年"
@@ -737,19 +896,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "customer_master_id"
   end
 
-  create_table "crawl_nikkei_check_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "日経新聞記事情報", force: :cascade do |t|
-    t.integer "customer_master_id", null: false, comment: "取引先マスタID"
-    t.datetime "published_at", null: false, comment: "公開日時"
-    t.string "title", null: false, comment: "表題"
-    t.string "link", null: false, comment: "URLリンク"
-    t.boolean "check_flag", default: false, comment: "確認済フラグ"
-    t.datetime "created_at", null: false, comment: "登録日時"
-    t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["check_flag"], name: "index_crawl_nikkei_check_lists"
-    t.index ["customer_master_id"], name: "customer_master_id"
-  end
-
-  create_table "crawl_prtimes_check_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PRTimes記事情報", force: :cascade do |t|
+  create_table "crawl_prtimes_check_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PRTimes記事情報", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスタID"
     t.datetime "release_date", null: false, comment: "リリース時刻"
     t.string "title", null: false, comment: "表題"
@@ -763,7 +910,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "customer_master_id"
   end
 
-  create_table "crawl_tdnet_check_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "TDnet開示情報", force: :cascade do |t|
+  create_table "crawl_tdnet_check_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "TDnet開示情報", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスターID"
     t.datetime "disclosed_date", null: false, comment: "開示時刻"
     t.integer "securities_code", null: false, comment: "銘柄コード"
@@ -776,7 +923,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "fk_customer_master"
   end
 
-  create_table "crawl_tenshokukaigi_check_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議の評判情報", force: :cascade do |t|
+  create_table "crawl_tenshokukaigi_check_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議の評判情報", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスタID"
     t.datetime "post_date", null: false, comment: "投稿時刻"
     t.integer "experienced_year", comment: "在籍年"
@@ -786,11 +933,10 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.boolean "check_flag", default: false, comment: "確認済フラグ"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["check_flag"], name: "index_crawl_tenshokukaigi_check_lists"
     t.index ["customer_master_id"], name: "customer_master_id"
   end
 
-  create_table "crawl_twitter_check_lists", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ツイッター検索結果リスト", force: :cascade do |t|
+  create_table "crawl_twitter_check_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ツイッター検索結果リスト", force: :cascade do |t|
     t.integer "customer_master_id", comment: "取引先マスターID"
     t.string "tw_id", comment: "ツイッターID"
     t.string "screen_name", comment: "画面名"
@@ -803,11 +949,10 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.boolean "check_flag", default: true, null: false, comment: "チェックフラグ"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["check_flag"], name: "index_crawl_twitter_check_lists"
     t.index ["customer_master_id"], name: "fk_rails_c16ce0bdc2"
   end
 
-  create_table "crawler_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "クローラーログ", force: :cascade do |t|
+  create_table "crawler_logs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "クローラーログ", force: :cascade do |t|
     t.integer "crawler_type", null: false, comment: "クローラーの種類"
     t.string "exec_options", default: "", null: false, comment: "クローラー起動時のオプション"
     t.integer "status", null: false, comment: "クローラーステータス(処理中、正常終了、異常終了)"
@@ -820,7 +965,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["id", "crawler_type"], name: "IDX_CRAWLERLOG"
   end
 
-  create_table "credits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "信用状況", force: :cascade do |t|
+  create_table "credits", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "信用状況", force: :cascade do |t|
     t.integer "customer_master_id", comment: "取引先マスターID"
     t.integer "credit_level", comment: "評価レベル"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -828,7 +973,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "fk_rails_8ef2662ca3"
   end
 
-  create_table "crm_kairos_lead_infos", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "CRM_Kairosリード情報", force: :cascade do |t|
+  create_table "crm_kairos_lead_infos", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "CRM_Kairosリード情報", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.integer "employee_id", comment: "担当社員ID"
     t.string "user_name", comment: "氏名"
@@ -849,7 +994,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_KAIROS_LEAD_MEMBER"
   end
 
-  create_table "crm_member_lead_infos", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "CRM_会員リード情報", force: :cascade do |t|
+  create_table "crm_member_lead_infos", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "CRM_会員リード情報", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.integer "employee_id", comment: "担当社員ID"
     t.string "area", limit: 1, comment: "エリア\t1:東京、2:大阪、3:名古屋"
@@ -861,7 +1006,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_MEMBER_LEAD_MEMBER"
   end
 
-  create_table "customer_master_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先マスター履歴", force: :cascade do |t|
+  create_table "customer_master_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先マスター履歴", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスターID"
     t.string "customer_name", comment: "取引先名"
     t.string "daihyo_name", comment: "代表者名"
@@ -876,7 +1021,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "customer_master_id"
   end
 
-  create_table "customer_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先マスター", force: :cascade do |t|
+  create_table "customer_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先マスター", force: :cascade do |t|
     t.string "house_company_code", comment: "内部企業コード"
     t.string "daihyo_name", comment: "代表者名"
     t.string "corporation_number", comment: "法人番号"
@@ -899,7 +1044,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["house_company_code"], name: "house_company_code", unique: true
   end
 
-  create_table "customer_registration_counts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先登録数", force: :cascade do |t|
+  create_table "customer_registration_counts", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先登録数", force: :cascade do |t|
     t.integer "customer_master_id", comment: "取引先マスターID"
     t.datetime "registration_month", null: false, comment: "登録年月"
     t.integer "count", default: 0, null: false, comment: "回数"
@@ -908,7 +1053,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id", "registration_month"], name: "cmrm_index", unique: true
   end
 
-  create_table "customers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先", force: :cascade do |t|
+  create_table "customers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "取引先", force: :cascade do |t|
     t.integer "user_id", comment: "ユーザーID"
     t.integer "member_id", comment: "会員ID"
     t.string "house_company_code", comment: "内部企業コード"
@@ -942,13 +1087,12 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.boolean "recommended_flag", default: false, comment: "レコメンド判別フラグ"
     t.boolean "robo_past_flag", default: false, comment: "ロボロボ過去審査フラグ"
     t.datetime "related_to_cm_at", comment: "取引先設定完了日時"
-    t.datetime "alarm_investigate_limit", null: false, comment: "過去調査有効期限"
     t.datetime "alarm_investigate_before_limit", comment: "過去調査有効期限(閲覧期限解除前)"
     t.index ["customer_master_id"], name: "idx_cs_cmi"
     t.index ["member_id"], name: "fk_rails_ca7932d44f"
   end
 
-  create_table "dialogs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "顧客対話", force: :cascade do |t|
+  create_table "dialogs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "顧客対話", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "v1_employee_id", null: false, comment: "社員ID"
     t.string "topic_code", limit: 2, comment: "トピックコード"
@@ -959,7 +1103,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["v1_employee_id"], name: "dialogs_ibfk_2"
   end
 
-  create_table "employees", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "社員情報", force: :cascade do |t|
+  create_table "employees", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "社員情報", force: :cascade do |t|
     t.string "employee_name", limit: 30, null: false, comment: "社員名"
     t.string "password", limit: 20, null: false, comment: "パスワード"
     t.string "auth_flags", limit: 20, comment: "権限フラグ"
@@ -968,7 +1112,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人", force: :cascade do |t|
+  create_table "entities", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人", force: :cascade do |t|
     t.string "house_company_code", comment: "内部企業コード"
     t.string "corporation_number", comment: "法人番号"
     t.boolean "show_flag", default: false, null: false, comment: "表示フラグ"
@@ -982,7 +1126,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["securities_code"], name: "IDX_E_SECURITIES_CODE"
   end
 
-  create_table "entity_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "エンティティ候補", force: :cascade do |t|
+  create_table "entity_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "エンティティ候補", force: :cascade do |t|
     t.string "data_type", limit: 1, null: false, comment: "データ種別"
     t.integer "data_id", null: false, comment: "データID"
     t.integer "entity_id", null: false, comment: "エンティティID"
@@ -992,7 +1136,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["data_type", "data_id", "accuracy"], name: "IDX_ECD_DISP_ORDER"
   end
 
-  create_table "entity_profiles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人概要", force: :cascade do |t|
+  create_table "entity_profiles", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人概要", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "エンティティID"
     t.string "corporation_name", comment: "法人名"
     t.string "corporation_name_short", comment: "法人名略"
@@ -1030,7 +1174,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["prefecture_code", "address"], name: "IDX_EP_ADDRESS"
   end
 
-  create_table "entity_relations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人関係", force: :cascade do |t|
+  create_table "entity_relations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人関係", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "法人ID"
     t.integer "relation_entity_id", null: false, comment: "関係先 法人ID"
     t.boolean "parent_flag", default: false, null: false, comment: "親関係フラグ"
@@ -1041,7 +1185,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["relation_entity_id"], name: "relation_entity_id"
   end
 
-  create_table "entity_tags", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人タグ", force: :cascade do |t|
+  create_table "entity_tags", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人タグ", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "法人ID"
     t.string "tag_code", limit: 4, null: false, comment: "タグコード"
     t.boolean "main_flag", default: false, comment: "主タグフラグ"
@@ -1052,7 +1196,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["tag_code"], name: "tag_code"
   end
 
-  create_table "entity_task_es_updates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "EntitiesテーブルEs更新バッチ履歴", force: :cascade do |t|
+  create_table "entity_task_es_updates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "EntitiesテーブルEs更新バッチ履歴", force: :cascade do |t|
     t.datetime "started_at", null: false, comment: "開始日時"
     t.datetime "entity_ended_at", comment: "Entity更新終了日時"
     t.datetime "entity_profile_ended_at", comment: "EntityProfile更新終了日時"
@@ -1062,7 +1206,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "exam_details", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "調査詳細情報", force: :cascade do |t|
+  create_table "exam_details", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "調査詳細情報", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "取引先ID"
     t.integer "disp_order", null: false, comment: "表示順"
     t.text "link", comment: "リンク"
@@ -1074,7 +1218,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "FK_EXD_ENTITY"
   end
 
-  create_table "examinations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査情報", force: :cascade do |t|
+  create_table "examinations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査情報", force: :cascade do |t|
     t.integer "customer_id", comment: "取引先ID"
     t.integer "purchase_id", comment: "企業購入情報ID"
     t.string "daihyo_name", comment: "代表者名"
@@ -1093,7 +1237,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["purchase_id"], name: "IDX_EXM_PUR_ID"
   end
 
-  create_table "exclude_entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "除外法人", force: :cascade do |t|
+  create_table "exclude_entities", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "除外法人", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "法人ID"
     t.text "memo", comment: "メモ"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -1101,8 +1245,8 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "entity_id"
   end
 
-  create_table "fixed_phrase_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "定型文マスター", force: :cascade do |t|
-    t.integer "phrase_type", null: false, comment: "文章種別\t1:アラーム通知内容、2:財務補足"
+  create_table "fixed_phrase_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "定型文マスター", force: :cascade do |t|
+    t.integer "phrase_type", null: false, comment: "文章種別    1:アラーム通知内容、2:財務補足"
     t.integer "disp_order", null: false, comment: "表示順"
     t.string "title", limit: 20, null: false, comment: "タイトル"
     t.text "content", null: false, comment: "文言"
@@ -1110,7 +1254,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "grabs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ユーザー(審査員)、取引先関連付け", force: :cascade do |t|
+  create_table "grabs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ユーザー(審査員)、取引先関連付け", force: :cascade do |t|
     t.integer "judge_id", null: false, comment: "ユーザーID"
     t.integer "customer_master_id", null: false, comment: "取引先マスタID"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -1119,7 +1263,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["judge_id"], name: "judge_id"
   end
 
-  create_table "improvements", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "改善箱", force: :cascade do |t|
+  create_table "improvements", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "改善箱", force: :cascade do |t|
     t.integer "user_id", comment: "ユーザーID"
     t.integer "member_id", comment: "会員ID"
     t.string "name", comment: "名前"
@@ -1130,7 +1274,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "fk_rails_8a9d9759a7"
   end
 
-  create_table "internal_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "internal_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "login_id", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -1150,7 +1294,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["reset_password_token"], name: "index_internal_users_on_reset_password_token", unique: true
   end
 
-  create_table "internalonly_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "社内用作業依頼", force: :cascade do |t|
+  create_table "internalonly_requests", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "社内用作業依頼", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "v1_employee_id", comment: "社員ID"
     t.integer "requester_v1_employee_id", comment: "依頼社員ID"
@@ -1162,7 +1306,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "internalonly_requests_ibfk_1"
   end
 
-  create_table "job_talks", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議情報", force: :cascade do |t|
+  create_table "job_talks", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議情報", force: :cascade do |t|
     t.string "corporation_number", limit: 13, comment: "法人番号"
     t.string "industry", comment: "業界"
     t.bigint "capital", comment: "資本金"
@@ -1191,7 +1335,16 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["id"], name: "IDX_NOTIFICATION"
   end
 
-  create_table "jqgrid_col_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "JqGridテンプレートマスタ", force: :cascade do |t|
+  create_table "jqgrid_col_orders", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "JqGridカラム順序", force: :cascade do |t|
+    t.integer "jq_id", null: false, comment: "テンプレートID"
+    t.integer "emplyee_id", null: false, comment: "社員ID"
+    t.text "jq_order", null: false, comment: "順序"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["id"], name: "IDX_NOTIFICATION"
+  end
+
+  create_table "jqgrid_col_templates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "JqGridテンプレートマスタ", force: :cascade do |t|
     t.string "jq_temp_name", comment: "テンプレート名"
     t.text "jq_temp_model", null: false, comment: "テンプレート内容"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -1199,7 +1352,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["id"], name: "IDX_NOTIFICATION"
   end
 
-  create_table "jqgrid_user_infos", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "JqGridカラム順序", force: :cascade do |t|
+  create_table "jqgrid_user_infos", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "JqGridカラム順序", force: :cascade do |t|
     t.integer "jq_id", null: false, comment: "テンプレートID"
     t.integer "emplyee_id", null: false, comment: "社員ID"
     t.text "jq_order", null: false, comment: "順序"
@@ -1209,7 +1362,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["id"], name: "IDX_NOTIFICATION"
   end
 
-  create_table "judges", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査者情報", force: :cascade do |t|
+  create_table "judges", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査者情報", force: :cascade do |t|
     t.string "email", default: "", null: false, comment: "Eメールアドレス"
     t.string "encrypted_password", default: "", null: false, comment: "暗号化パスワード"
     t.string "name", default: "", null: false
@@ -1233,7 +1386,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["reset_password_token"], name: "index_judges_on_reset_password_token", unique: true
   end
 
-  create_table "kanpou_posts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "官報情報", force: :cascade do |t|
+  create_table "kanpou_posts", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "官報情報", force: :cascade do |t|
     t.integer "customer_master_id", comment: "取引先マスターID"
     t.string "post_date", comment: "送信日"
     t.string "post_category", comment: "送信カテゴリ"
@@ -1248,7 +1401,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "fk_rails_f60e80273e"
   end
 
-  create_table "keisin_datas", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "経審情報", force: :cascade do |t|
+  create_table "keisin_datas", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "経審情報", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.string "sinsa_code", limit: 8, null: false, comment: "審査コード"
     t.string "sinsa_date", limit: 10, null: false, comment: "審査日"
@@ -1279,7 +1432,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["sinsa_code"], name: "IDX_KEISIN_CS_ID"
   end
 
-  create_table "kpi_activations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "活性化KPI", force: :cascade do |t|
+  create_table "kpi_activations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "活性化KPI", force: :cascade do |t|
     t.integer "phase_code", null: false, comment: "コンバージョン段階"
     t.date "signup", null: false, comment: "基準月"
     t.date "as_of_month", null: false, comment: "計測月"
@@ -1293,7 +1446,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "kr_accounting_clearings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計消込情報", force: :cascade do |t|
+  create_table "kr_accounting_clearings", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会計消込情報", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "kr_sale_id", null: false, comment: "売上ID"
     t.integer "kr_deposit_id", null: false, comment: "入金ID"
@@ -1306,7 +1459,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_KR_CLN_MEMBER"
   end
 
-  create_table "kr_deposits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "入金情報", force: :cascade do |t|
+  create_table "kr_deposits", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "入金情報", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "deposit_type", null: false, comment: "入金種別\t1：MNT、2：PS定期、3：PS追加課金、9：その他"
     t.string "target_year_month", limit: 6, null: false, comment: "対象年月"
@@ -1324,7 +1477,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_KR_DEPO_MEMBER"
   end
 
-  create_table "kr_sale_closes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "売上締め情報", force: :cascade do |t|
+  create_table "kr_sale_closes", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "売上締め情報", force: :cascade do |t|
     t.string "target_year_month", limit: 6, null: false, comment: "対象年月"
     t.integer "count_mnt", null: false, comment: "MNT件数"
     t.integer "count_ps", null: false, comment: "PS件数"
@@ -1338,7 +1491,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "kr_sales", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "売上情報", force: :cascade do |t|
+  create_table "kr_sales", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "売上情報", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "sale_type", null: false, comment: "売上種別\t1：MNT、2：PS定期、3：PS追加課金、9：その他"
     t.string "plan_name", limit: 30, comment: "プラン名"
@@ -1357,7 +1510,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_KR_SALES_MEMBER"
   end
 
-  create_table "kr_sales_bases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "売上基礎情報", force: :cascade do |t|
+  create_table "kr_sales_bases", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "売上基礎情報", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "sale_type", null: false, comment: "売上種別\t1：MNT、2：PS"
     t.string "plan_name", limit: 30, comment: "プラン名"
@@ -1373,7 +1526,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "FK_KR_SLBASE_MEMBER"
   end
 
-  create_table "leave_forms", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "退会フォーム", force: :cascade do |t|
+  create_table "leave_forms", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "退会フォーム", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "plan_history_id", comment: "最終会員MNプラン履歴ID"
     t.integer "ps_plan_history_id", comment: "最終会員PSプラン履歴ID"
@@ -1409,7 +1562,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "member_id"
   end
 
-  create_table "lighthouse_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "Lighthouseの企業マスタ候補", force: :cascade do |t|
+  create_table "lighthouse_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "Lighthouseの企業マスタ候補", force: :cascade do |t|
     t.integer "lighthouse_master_id", null: false, comment: "LighthouseマスタID"
     t.string "lighthouse_id", null: false, comment: "LighthouseID"
     t.string "name", null: false, comment: "企業名"
@@ -1422,7 +1575,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["lighthouse_master_id"], name: "lighthouse_master_id"
   end
 
-  create_table "lighthouse_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "Lighthouseの企業マスタ", force: :cascade do |t|
+  create_table "lighthouse_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "Lighthouseの企業マスタ", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスタID"
     t.string "lighthouse_id", comment: "LighthouseID"
     t.integer "reputation_count", default: 0, comment: "口コミ数"
@@ -1432,7 +1585,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "customer_master_id"
   end
 
-  create_table "mail_templates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "メールテンプレート", force: :cascade do |t|
+  create_table "mail_templates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "メールテンプレート", force: :cascade do |t|
     t.string "category", limit: 2, comment: "カテゴリー"
     t.string "title", comment: "title"
     t.text "content", comment: "本文"
@@ -1440,7 +1593,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "member_monthly_totals", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会員月次集計情報", force: :cascade do |t|
+  create_table "member_monthly_totals", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会員月次集計情報", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.datetime "target_month", null: false, comment: "対象年月"
     t.integer "alarm_customer_count", comment: "アラーム取引先設定件数"
@@ -1455,7 +1608,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "members", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会員情報", force: :cascade do |t|
+  create_table "members", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会員情報", force: :cascade do |t|
     t.string "member_name", comment: "会員名"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
@@ -1493,7 +1646,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "v1_employee_id", comment: "社員ID"
   end
 
-  create_table "monthly_mails", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "月次メール情報", force: :cascade do |t|
+  create_table "monthly_mails", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "月次メール情報", force: :cascade do |t|
     t.datetime "mail_month", null: false, comment: "メール年月"
     t.datetime "task_total_date", comment: "集計日"
     t.datetime "delivery_date", comment: "配信日"
@@ -1511,7 +1664,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "notifications", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "お知らせ", force: :cascade do |t|
+  create_table "notifications", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "お知らせ", force: :cascade do |t|
     t.string "title", limit: 40, null: false, comment: "タイトル"
     t.text "content", null: false, comment: "内容"
     t.integer "target_type", null: false, comment: "対象種別\t1:全て, 2:モニタリング, 3:パワーサーチ"
@@ -1520,55 +1673,10 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "output_type", null: false, comment: "出力タイプ\t1:通常, 2:HTML"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["id", "start_date"], name: "IDX_NOTIFICATION"
+    t.index ["id", "start_date"], name: "IDX_NOTICE"
   end
 
-  create_table "oauth_access_grants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.integer "resource_owner_id", null: false
-    t.bigint "application_id", null: false
-    t.string "token", null: false
-    t.integer "expires_in", null: false
-    t.text "redirect_uri", null: false
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
-    t.string "scopes", default: "", null: false
-    t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
-    t.index ["resource_owner_id"], name: "fk_rails_330c32d8d9"
-    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
-  end
-
-  create_table "oauth_access_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.integer "resource_owner_id"
-    t.bigint "application_id", null: false
-    t.string "token", null: false
-    t.string "refresh_token"
-    t.integer "expires_in"
-    t.datetime "revoked_at"
-    t.datetime "created_at", null: false
-    t.string "scopes"
-    t.string "previous_refresh_token", default: "", null: false
-    t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
-    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
-    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
-    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
-  end
-
-  create_table "oauth_applications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "uid", null: false
-    t.string "secret", null: false
-    t.text "redirect_uri", null: false
-    t.string "scopes", default: "", null: false
-    t.boolean "confidential", default: true, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "owner_id"
-    t.string "owner_type"
-    t.index ["owner_id", "owner_type"], name: "index_oauth_applications_on_owner_id_and_owner_type"
-    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
-  end
-
-  create_table "out_sb_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部ＳＢ審査要求情報", force: :cascade do |t|
+  create_table "out_sb_requests", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部ＳＢ審査要求情報", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.integer "outside_type", null: false, comment: "外部種別\t1:ラクスル"
     t.string "client_code", limit: 11, comment: "クライアントコード"
@@ -1604,7 +1712,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["outside_type", "outside_id"], name: "IDX_OSR_OUT_ID"
   end
 
-  create_table "out_site_evals", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部サイト評価情報", force: :cascade do |t|
+  create_table "out_site_evals", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部サイト評価情報", force: :cascade do |t|
     t.integer "customer_id", comment: "取引先ID"
     t.integer "purchase_id", comment: "企業購入情報ID"
     t.integer "outside_type", null: false, comment: "外部サイト種別"
@@ -1622,7 +1730,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["purchase_id"], name: "IDX_OSE_PUR_ID"
   end
 
-  create_table "outside_api_calls", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部api連携用テーブル", force: :cascade do |t|
+  create_table "outside_api_calls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部api連携用テーブル", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.string "tanto_name", null: false, comment: "ご担当者名"
     t.string "company_name", null: false, comment: "会社名"
@@ -1637,7 +1745,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "payment_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "支払履歴", force: :cascade do |t|
+  create_table "payment_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "支払履歴", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.integer "payment_type_code", comment: "支払方法コード"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -1648,11 +1756,11 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id"], name: "fk_rails_22ad00d93e"
   end
 
-  create_table "payment_types", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "支払方法", force: :cascade do |t|
+  create_table "payment_types", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "支払方法", force: :cascade do |t|
     t.string "payment_name", comment: "支払方法名称"
   end
 
-  create_table "plan_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会員プラン履歴", force: :cascade do |t|
+  create_table "plan_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "会員プラン履歴", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.integer "plan_type_code", comment: "プラン種別コード"
     t.integer "max_customer_register", default: 1, null: false, comment: "取引先最大登録件数"
@@ -1661,10 +1769,9 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
     t.index ["member_id"], name: "fk_rails_b4d711bb69"
-    t.index ["plan_type_code", "end_date"], name: "index_plan_histories_type_end"
   end
 
-  create_table "ps_browse_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS閲覧記録", force: :cascade do |t|
+  create_table "ps_browse_logs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS閲覧記録", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.integer "entity_id", null: false, comment: "エンティティID"
@@ -1673,7 +1780,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["user_id"], name: "FK_PS_BRS_LOG_USER"
   end
 
-  create_table "ps_entity_finances", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人財務情報", force: :cascade do |t|
+  create_table "ps_entity_finances", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人財務情報", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "法人ID"
     t.integer "source_type", null: false, comment: "情報源タイプ\t0:手入力、1:四季報、2:官報、3:経審"
     t.integer "source_id", null: false, comment: "情報源ID"
@@ -1695,7 +1802,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "ps_payment_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS支払履歴", force: :cascade do |t|
+  create_table "ps_payment_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS支払履歴", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "payment_type_code", null: false, comment: "支払方法コード\t1:クレカ、2:振替、3:振込"
     t.integer "payment_unit_type_code", null: false, comment: "支払単位コード\t1:月払い、2:年払い"
@@ -1703,20 +1810,18 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "end_date", comment: "終了日時"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["member_id"], name: "FK_PS_PYHS_MEMEBER"
   end
 
-  create_table "ps_plan_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PSプラン履歴", force: :cascade do |t|
+  create_table "ps_plan_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PSプラン履歴", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "ps_plan_type_code", comment: "プラン種別コード\t0:お試し、1:本利用"
     t.datetime "start_date", null: false, comment: "開始日時"
     t.datetime "end_date", comment: "終了日時"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["member_id"], name: "FK_PS_PLHS_MEMEBER"
   end
 
-  create_table "ps_plan_reservations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PSプラン変更予約", force: :cascade do |t|
+  create_table "ps_plan_reservations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PSプラン変更予約", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.boolean "check_flag", default: false, null: false, comment: "処理フラグ"
@@ -1727,7 +1832,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["user_id"], name: "user_id"
   end
 
-  create_table "ps_points", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PSポイント", force: :cascade do |t|
+  create_table "ps_points", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PSポイント", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "point_type", null: false, comment: "種別\t1:月次、2：追加購入、3:初回分、4:その他"
     t.integer "point", null: false, comment: "ポイント"
@@ -1740,7 +1845,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["member_id", "available_flag", "expiration_date"], name: "IDX_PS_PTS"
   end
 
-  create_table "ps_purchase_social_check_usage_points", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS反社チェック購入とPS利用明細の紐付け", force: :cascade do |t|
+  create_table "ps_purchase_social_check_usage_points", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS反社チェック購入とPS利用明細の紐付け", force: :cascade do |t|
     t.integer "purchase_social_check_id", null: false, comment: "反社チェック購入ID"
     t.integer "usage_point_id", null: false, comment: "PS利用明細ID"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -1749,7 +1854,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["usage_point_id"], name: "usage_point_id"
   end
 
-  create_table "ps_purchase_social_checks", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS反社チェックオプション購入", force: :cascade do |t|
+  create_table "ps_purchase_social_checks", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS反社チェックオプション購入", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.integer "entity_id", null: false, comment: "法人ID"
     t.integer "status", default: 0, null: false, comment: "状態 0:未着手 1:調査中 2:完了"
@@ -1762,7 +1867,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["user_id"], name: "user_id"
   end
 
-  create_table "ps_social_check_target_persons", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS反社チェックターゲット人物", force: :cascade do |t|
+  create_table "ps_social_check_target_persons", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS反社チェックターゲット人物", force: :cascade do |t|
     t.integer "purchase_social_check_id", null: false, comment: "反社チェック購入ID"
     t.string "name", null: false, comment: "名前"
     t.integer "position", null: false, comment: "関係性 0:代表取締役 1:取締役 2:株主 3:従業員 99:その他"
@@ -1774,7 +1879,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["purchase_social_check_id"], name: "purchase_social_check_id"
   end
 
-  create_table "ps_survey_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS法人調査依頼", force: :cascade do |t|
+  create_table "ps_survey_requests", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS法人調査依頼", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.boolean "check_flag", default: false, null: false, comment: "処理フラグ"
@@ -1797,7 +1902,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "member_id", null: false, comment: "会員ID"
   end
 
-  create_table "ps_tmp_finances", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "一時法人財務情報", force: :cascade do |t|
+  create_table "ps_tmp_finances", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "一時法人財務情報", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "法人ID"
     t.integer "purchase_id", null: false, comment: "企業購入ID"
     t.integer "source_type", null: false, comment: "情報源タイプ\t0:手入力、1:四季報、2:官報、3:経審"
@@ -1820,7 +1925,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "ps_usage_points", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS利用明細", force: :cascade do |t|
+  create_table "ps_usage_points", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "PS利用明細", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "point_id", null: false, comment: "ポイントID"
     t.integer "purchase_id", null: false, comment: "企業購入情報ID"
@@ -1828,12 +1933,9 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "usage_type", null: false, comment: "種別 1:情報購入 2:調査依頼 3: 失効 4: 反社チェック購入"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["member_id"], name: "FK_PS_USAGE_MEMEBER"
-    t.index ["point_id"], name: "FK_PS_USAGE_POINT"
-    t.index ["purchase_id"], name: "FK_PS_USAGE_PURCHASE"
   end
 
-  create_table "purchases", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業購入情報", force: :cascade do |t|
+  create_table "purchases", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業購入情報", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "entity_id", null: false, comment: "エンティティID"
     t.boolean "examination_order_flag", default: false, comment: "審査依頼フラグ"
@@ -1856,7 +1958,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "relational_alarm_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "関連会社アラーム情報の候補", force: :cascade do |t|
+  create_table "relational_alarm_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "関連会社アラーム情報の候補", force: :cascade do |t|
     t.integer "alarm_candidate_id", comment: "アラーム候補ID"
     t.string "crawler_table_name", limit: 127, null: false, comment: "テーブル名"
     t.integer "crawler_record_id", null: false, comment: "元データのID"
@@ -1884,7 +1986,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "fk_rel_alarm_candidate_customer_master_id"
   end
 
-  create_table "rpa_exam_results", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "RPA調査結果", force: :cascade do |t|
+  create_table "rpa_exam_results", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "RPA調査結果", force: :cascade do |t|
     t.integer "customer_id", null: false, comment: "取引先ID"
     t.integer "site_type", null: false, comment: "サイト種別\t1:エンライトハウス、2:xxxx"
     t.text "url", null: false, comment: "URL"
@@ -1895,7 +1997,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_id"], name: "FK_RPA_RESULT_CUSTOMER"
   end
 
-  create_table "rpa_exam_targets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "RPA調査対象", force: :cascade do |t|
+  create_table "rpa_exam_targets", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "RPA調査対象", force: :cascade do |t|
     t.integer "customer_id", null: false, comment: "取引先ID"
     t.string "house_company_code", comment: "内部企業コード"
     t.string "corporation_number", comment: "法人番号"
@@ -1907,7 +2009,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_id"], name: "FK_RPA_TARGET_CUSTOMER"
   end
 
-  create_table "salesforce_syncs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部連携アラームテーブル", force: :cascade do |t|
+  create_table "salesforce_syncs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部連携アラームテーブル", force: :cascade do |t|
     t.integer "customer_id", comment: "取引先ID"
     t.string "account_id", comment: "salesforce側の取引先テーブルID"
     t.integer "salesforce_user_id", comment: "salesforce_usersテーブルのID"
@@ -1924,7 +2026,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "salesforce_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "セールスフォースユーザー", force: :cascade do |t|
+  create_table "salesforce_users", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "セールスフォースユーザー", force: :cascade do |t|
     t.integer "user_id", comment: "ユーザーID"
     t.integer "member_id", comment: "会員ID"
     t.string "connect_user_name", comment: "接続ユーザー名"
@@ -1937,20 +2039,20 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "screening_statuses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査期間", force: :cascade do |t|
+  create_table "screening_statuses", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査期間", force: :cascade do |t|
     t.integer "status", comment: "状態"
   end
 
-  create_table "seq_house_company_codes", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "シーケンステーブル（内部企業コード作成用）", force: :cascade do |t|
+  create_table "seq_house_company_codes", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "シーケンステーブル（内部企業コード作成用）", force: :cascade do |t|
   end
 
-  create_table "shokuba_labo_mngs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "しょくばらぼ取込管理情報", force: :cascade do |t|
+  create_table "shokuba_labo_mngs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "しょくばらぼ取込管理情報", force: :cascade do |t|
     t.datetime "imp_date", null: false, comment: "取込日時"
     t.integer "ins_count", null: false, comment: "登録件数"
     t.integer "upd_count", null: false, comment: "更新件数"
   end
 
-  create_table "shokuba_labos", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "しょくばらぼ情報", force: :cascade do |t|
+  create_table "shokuba_labos", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "しょくばらぼ情報", force: :cascade do |t|
     t.integer "mng_id", null: false, comment: "取込管理番号"
     t.string "corporation_number", limit: 13, null: false, comment: "法人番号"
     t.integer "rev_no", null: false, comment: "改訂No"
@@ -1973,7 +2075,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["corporation_number", "latest_flag"], name: "IDX_SLB_CORP_NO"
   end
 
-  create_table "sikihou_datas", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "四季報情報", force: :cascade do |t|
+  create_table "sikihou_datas", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "四季報情報", force: :cascade do |t|
     t.integer "entity_id", comment: "エンティティID"
     t.string "sikihou_number", limit: 10, comment: "四季報番号"
     t.integer "page", comment: "ページ数"
@@ -2005,7 +2107,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["entity_id"], name: "IDX_SIKI_ENT_ID"
   end
 
-  create_table "sikihou_finances", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "四季報財務情報", force: :cascade do |t|
+  create_table "sikihou_finances", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "四季報財務情報", force: :cascade do |t|
     t.integer "sikihou_id", null: false, comment: "四季報ID"
     t.string "announce_month", limit: 6, null: false, comment: "告知年月"
     t.integer "desc_position", null: false, comment: "記載位置"
@@ -2018,7 +2120,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["sikihou_id"], name: "IDX_SIKI_FNC_PRNT_ID"
   end
 
-  create_table "site_watcher_histories", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "サイトウォッチャー履歴", force: :cascade do |t|
+  create_table "site_watcher_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "サイトウォッチャー履歴", force: :cascade do |t|
     t.integer "site_watcher_id", null: false, comment: "サイトウォッチャーID"
     t.datetime "replacement_date", null: false, comment: "サイトの更新日時"
     t.integer "average_updated_time", comment: "サイト更新の平均日数"
@@ -2027,7 +2129,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["site_watcher_id"], name: "site_watcher_id"
   end
 
-  create_table "site_watchers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "サイトウォッチャー情報", force: :cascade do |t|
+  create_table "site_watchers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "サイトウォッチャー情報", force: :cascade do |t|
     t.text "title", comment: "タイトル"
     t.text "url", comment: "URL"
     t.string "css_selector", limit: 2000, comment: "選択箇所"
@@ -2049,7 +2151,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["check_flag"], name: "index_site_watchers_check_flag"
   end
 
-  create_table "tags", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "タグ", force: :cascade do |t|
+  create_table "tags", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "タグ", force: :cascade do |t|
     t.string "tag_code", limit: 4, null: false, comment: "タグコード"
     t.string "tag_name", comment: "タグ名"
     t.datetime "created_at", null: false, comment: "登録日時"
@@ -2057,19 +2159,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["tag_code"], name: "tag_code", unique: true
   end
 
-  create_table "tenshokukaigi_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議の企業マスタ候補", force: :cascade do |t|
-    t.integer "tenshokukaigi_master_id", null: false, comment: "転職会議マスタID"
-    t.integer "tenshokukaigi_id", null: false, comment: "転職会議ID"
-    t.string "name", null: false, comment: "企業名"
-    t.string "address", comment: "本社住所"
-    t.string "category", comment: "業界"
-    t.string "url", comment: "URL"
-    t.datetime "created_at", null: false, comment: "登録日時"
-    t.datetime "updated_at", null: false, comment: "更新日時"
-    t.index ["tenshokukaigi_master_id"], name: "tenshokukaigi_master_id"
-  end
-
-  create_table "tenshokukaigi_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議の企業マスタ", force: :cascade do |t|
+  create_table "tenshokukaigi_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議の企業マスタ", force: :cascade do |t|
     t.integer "customer_master_id", null: false, comment: "取引先マスタID"
     t.integer "tenshokukaigi_id", comment: "転職会議ID"
     t.integer "reputation_count", default: 0, comment: "評判数"
@@ -2078,7 +2168,16 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["customer_master_id"], name: "customer_master_id"
   end
 
-  create_table "test_site_watchers", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ID", force: :cascade do |t|
+  create_table "tenshokukaigi_options", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "転職会議の企業マスタ候補", force: :cascade do |t|
+    t.integer "tenshokukaigi_master_id", null: false, comment: "転職会議マスタID"
+    t.integer "tenshokukaigi_id", null: false, comment: "転職会議ID"
+    t.string "name", null: false, comment: "社名"
+    t.datetime "created_at", null: false, comment: "登録日時"
+    t.datetime "updated_at", null: false, comment: "更新日時"
+    t.index ["tenshokukaigi_master_id"], name: "tenshokukaigi_master_id"
+  end
+
+  create_table "test_site_watchers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.text "title", comment: "タイトル"
     t.text "url", comment: "URL"
     t.string "css_selector", limit: 2000, comment: "選択箇所"
@@ -2096,7 +2195,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.boolean "available_flag", default: true, comment: "有効フラグ"
   end
 
-  create_table "tmp_alarms", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム一時情報", force: :cascade do |t|
+  create_table "tmp_alarms", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム一時情報", force: :cascade do |t|
     t.integer "customer_id", comment: "取引先ID"
     t.integer "purchase_id", comment: "企業購入情報ID"
     t.integer "disp_order", null: false, comment: "表示順"
@@ -2116,7 +2215,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["purchase_id", "disp_order"], name: "IDX_TMP_ALM_PUR_ID"
   end
 
-  create_table "tmp_profiles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "一時法人概要", force: :cascade do |t|
+  create_table "tmp_profiles", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "一時法人概要", force: :cascade do |t|
     t.integer "entity_id", null: false, comment: "エンティティID"
     t.integer "purchase_id", null: false, comment: "企業購入情報ID"
     t.string "daihyo_name", comment: "代表者名"
@@ -2143,7 +2242,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["purchase_id"], name: "IDX_TPRF_PURCHASE"
   end
 
-  create_table "tmp_specific_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業候補一時情報", force: :cascade do |t|
+  create_table "tmp_specific_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業候補一時情報", force: :cascade do |t|
     t.integer "customer_id", comment: "取引先ID"
     t.integer "purchase_id", comment: "企業購入情報ID"
     t.integer "entity_id", comment: "エンティティID"
@@ -2167,7 +2266,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["purchase_id"], name: "IDX_TSC_PUR_ID"
   end
 
-  create_table "tmp_specific_corporations", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業特定一時情報", force: :cascade do |t|
+  create_table "tmp_specific_corporations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "企業特定一時情報", force: :cascade do |t|
     t.integer "customer_id", null: false, comment: "取引先ID"
     t.string "house_company_code", comment: "内部企業コード"
     t.string "corporation_number", comment: "法人番号"
@@ -2217,17 +2316,17 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.integer "cont_employee_id", comment: "調査請負社員ID"
     t.integer "chk_employee_id", comment: "審査社員ID"
     t.integer "conf_employee_id", comment: "確認社員ID"
-    t.integer "inp_employee_id", comment: "入力ユーザーID"
+    t.integer "inp_employee_id", default: 0, comment: "入力ユーザーID"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "trust_legal_entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "信頼法人格", force: :cascade do |t|
+  create_table "trust_legal_entities", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "信頼法人格", force: :cascade do |t|
     t.string "legal_entity", limit: 200, null: false, comment: "法人格"
     t.boolean "trust_flag", default: false, comment: "信頼フラグ"
   end
 
-  create_table "unsubscribe_forms", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "有料プラン解除フォーム", force: :cascade do |t|
+  create_table "unsubscribe_forms", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "有料プラン解除フォーム", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "plan_history_id", null: false, comment: "最終会員プラン履歴ID"
     t.string "question1", comment: "質問1"
@@ -2263,7 +2362,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["plan_history_id"], name: "plan_history_id"
   end
 
-  create_table "user_receive_alarm_sources", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ユーザー受信アラームソース", force: :cascade do |t|
+  create_table "user_receive_alarm_sources", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ユーザー受信アラームソース", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
     t.string "word_code", limit: 4, null: false, comment: "ワードコード"
     t.integer "alarm_level", null: false, comment: "アラームレベル"
@@ -2274,7 +2373,7 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["word_code"], name: "user_receive_alarm_sources_ibfk_2"
   end
 
-  create_table "users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ユーザー情報", force: :cascade do |t|
+  create_table "users", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ユーザー情報", force: :cascade do |t|
     t.string "email", default: "", null: false, comment: "Eメールアドレス"
     t.string "encrypted_password", default: "", null: false, comment: "暗号化パスワード"
     t.string "reset_password_token", comment: "リセットパスワードトークン"
@@ -2292,15 +2391,15 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "omniauth_uid", comment: "ソーシャル認証ユーザーID"
     t.string "omniauth_token", comment: "ソーシャル認証トークン"
     t.boolean "available_flag", default: true, null: false, comment: "有効フラグ"
-    t.integer "sine_in_type", comment: "サインインタイプ\t1:モニタリング、2:パワーサーチ"
     t.boolean "owner_flag", default: true, comment: "オーナーユーザー"
+    t.integer "sine_in_type", comment: "サインインタイプ\t1:モニタリング、2:パワーサーチ"
     t.boolean "support_send_flag", default: false, comment: "フォローメール送信フラグ"
     t.boolean "lead_to_ps_flag", default: true, comment: "MNからPSへの導線表示判定フラグ 0:非表示,1:表示"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "v1_employee_mails", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "メール", force: :cascade do |t|
+  create_table "v1_employee_mails", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "メール", force: :cascade do |t|
     t.integer "member_id", null: false, comment: "会員ID"
     t.integer "v1_employee_id", null: false, comment: "社員ID"
     t.integer "mail_template_id", comment: "メールテンプレートID"
@@ -2311,13 +2410,13 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.string "from", comment: "From"
     t.string "title", comment: "title"
     t.text "content", comment: "本文"
-    t.string "attachment", comment: "添付"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
+    t.string "attachment"
     t.index ["member_id"], name: "mails_ibfk_1"
   end
 
-  create_table "v1_employees", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "社員情報", force: :cascade do |t|
+  create_table "v1_employees", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "社員情報", force: :cascade do |t|
     t.string "email", default: "", null: false, comment: "Eメールアドレス"
     t.string "encrypted_password", default: "", null: false, comment: "暗号化パスワード"
     t.string "name", null: false, comment: "氏名"
@@ -2340,18 +2439,18 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "withdraws", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "退会理由", force: :cascade do |t|
+  create_table "withdraws", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "退会理由", force: :cascade do |t|
     t.integer "member_id", comment: "会員ID"
     t.string "reason", comment: "退会理由"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
   end
 
-  create_table "word_category_masters", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "文言カテゴリマスター", force: :cascade do |t|
+  create_table "word_category_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "文言カテゴリマスター", force: :cascade do |t|
     t.integer "category_type", null: false, comment: "カテゴリ種別"
     t.integer "disp_order", null: false, comment: "表示順"
     t.string "word_code", limit: 4, comment: "コード"
-    t.string "word", comment: "文言"
+    t.string "word"
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
     t.index ["word_code"], name: "IDX_WCM_CODE"
@@ -2368,30 +2467,39 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
   add_foreign_key "ab_selectbox_value_lists", "users", name: "ab_selectbox_value_lists_ibfk_1"
   add_foreign_key "accounting_kanpou_items", "accounting_kanpou_roots", name: "FK_AKI_ROOT"
   add_foreign_key "accounting_kanpou_roots", "entities", name: "FK_AKR_ENTITY"
+  add_foreign_key "accountings", "entities", name: "accountings_ibfk_1"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "alarm_candidates", "customer_masters", name: "fk_alarm_candidate_customer_master_id"
   add_foreign_key "alarm_candidates", "judges", name: "fk_alarm_candidate_judge_id"
   add_foreign_key "alarm_prtimes", "crawl_prtimes_check_lists", name: "alarm_prtimes_ibfk_1"
   add_foreign_key "alarms", "customer_masters"
   add_foreign_key "alliance_members", "members", name: "alliance_members_ibfk_1"
   add_foreign_key "by_agents", "employees", name: "FK_BY_AGT_EMPLOYEE"
+  add_foreign_key "by_budgets", "employees", name: "FK_BY_BUD_EMPLOYEE"
+  add_foreign_key "by_customer_urls", "by_customers", name: "FK_BY_CST_URL_CUSTOMER"
+  add_foreign_key "by_customer_urls", "employees", name: "FK_BY_CST_URL_EMPLOYEE"
   add_foreign_key "by_customers", "employees", name: "FK_BY_CST_EMPLOYEE"
   add_foreign_key "by_customers", "entities", name: "FK_BY_CST_ENTITY"
+  add_foreign_key "by_examination_urls", "by_examinations", name: "FK_BY_EXM_URL_EXAMINATION"
+  add_foreign_key "by_examination_urls", "employees", name: "FK_BY_EXM_URL_EMPLOYEE"
   add_foreign_key "by_examinations", "by_customers", name: "FK_BY_EXM_CUSTOMER"
   add_foreign_key "by_examinations", "employees", name: "FK_BY_EXM_EMPLOYEE"
   add_foreign_key "by_guarantees", "by_things", name: "FK_BY_GRT_THING"
   add_foreign_key "by_guarantees", "employees", name: "FK_BY_GRT_EMPLOYEE"
+  add_foreign_key "by_thing_urls", "by_things", name: "FK_BY_THN_URL_THING"
+  add_foreign_key "by_thing_urls", "employees", name: "FK_BY_THN_URL_EMPLOYEE"
   add_foreign_key "by_things", "by_agents", name: "FK_BY_THN_AGENT"
   add_foreign_key "by_things", "by_customers", name: "FK_BY_THN_CUSTOMER"
   add_foreign_key "by_things", "employees", name: "FK_BY_THN_EMPLOYEE"
   add_foreign_key "card_masters", "members"
   add_foreign_key "cards", "card_masters"
+  add_foreign_key "client_users", "clients"
   add_foreign_key "code_prtimes", "crawl_prtimes_check_lists", name: "code_prtimes_ibfk_1"
   add_foreign_key "corporation_watchers", "customer_masters", name: "corporation_watchers_ibfk_2"
   add_foreign_key "corporation_watchers", "entities", name: "corporation_watchers_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "crawl_google_check_lists", "customer_masters"
   add_foreign_key "crawl_google_difference_lists", "customer_masters"
   add_foreign_key "crawl_lighthouse_check_lists", "customer_masters", name: "crawl_lighthouse_check_lists_ibfk_1"
-  add_foreign_key "crawl_nikkei_check_lists", "customer_masters", name: "crawl_nikkei_check_lists_ibfk_1"
   add_foreign_key "crawl_prtimes_check_lists", "customer_masters", name: "crawl_prtimes_check_lists_ibfk_1"
   add_foreign_key "crawl_tdnet_check_lists", "customer_masters", name: "fk_customer_master"
   add_foreign_key "crawl_tenshokukaigi_check_lists", "customer_masters", name: "crawl_tenshokukaigi_check_lists_ibfk_1"
@@ -2404,8 +2512,8 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
   add_foreign_key "customer_master_histories", "customer_masters", name: "customer_master_histories_ibfk_1"
   add_foreign_key "customer_registration_counts", "customer_masters"
   add_foreign_key "customers", "members"
-  add_foreign_key "dialogs", "judges", column: "v1_employee_id", name: "dialogs_ibfk_2"
   add_foreign_key "dialogs", "members", name: "dialogs_ibfk_1"
+  add_foreign_key "dialogs", "v1_employees", name: "dialogs_ibfk_2"
   add_foreign_key "entity_profiles", "entities", name: "entity_profiles_ibfk_1"
   add_foreign_key "entity_relations", "entities", column: "relation_entity_id", name: "entity_relations_ibfk_2"
   add_foreign_key "entity_relations", "entities", name: "entity_relations_ibfk_1"
@@ -2431,24 +2539,19 @@ ActiveRecord::Schema.define(version: 2021_05_22_100158) do
   add_foreign_key "plan_histories", "members"
   add_foreign_key "ps_browse_logs", "members", name: "FK_PS_BRS_LOG_MEMBER"
   add_foreign_key "ps_browse_logs", "users", name: "FK_PS_BRS_LOG_USER"
-  add_foreign_key "ps_payment_histories", "members", name: "FK_PS_PYHS_MEMEBER"
-  add_foreign_key "ps_plan_histories", "members", name: "FK_PS_PLHS_MEMEBER"
   add_foreign_key "ps_plan_reservations", "members", name: "ps_plan_reservations_ibfk_1"
   add_foreign_key "ps_plan_reservations", "users", name: "ps_plan_reservations_ibfk_2"
-  add_foreign_key "ps_points", "members", name: "FK_PS_PTS_MEMEBER"
   add_foreign_key "ps_purchase_social_check_usage_points", "ps_purchase_social_checks", column: "purchase_social_check_id", name: "ps_purchase_social_check_usage_points_ibfk_1"
   add_foreign_key "ps_purchase_social_check_usage_points", "ps_usage_points", column: "usage_point_id", name: "ps_purchase_social_check_usage_points_ibfk_2"
   add_foreign_key "ps_purchase_social_checks", "entities", name: "ps_purchase_social_checks_ibfk_2"
   add_foreign_key "ps_purchase_social_checks", "users", name: "ps_purchase_social_checks_ibfk_1"
   add_foreign_key "ps_social_check_target_persons", "ps_purchase_social_checks", column: "purchase_social_check_id", name: "ps_social_check_target_persons_ibfk_1"
-  add_foreign_key "ps_usage_points", "members", name: "FK_PS_USAGE_MEMEBER"
-  add_foreign_key "ps_usage_points", "ps_points", column: "point_id", name: "FK_PS_USAGE_POINT"
   add_foreign_key "relational_alarm_candidates", "customer_masters", name: "fk_rel_alarm_candidate_customer_master_id"
   add_foreign_key "rpa_exam_results", "customers", name: "FK_RPA_RESULT_CUSTOMER"
   add_foreign_key "rpa_exam_targets", "customers", name: "FK_RPA_TARGET_CUSTOMER"
   add_foreign_key "site_watcher_histories", "site_watchers", name: "site_watcher_histories_ibfk_1"
-  add_foreign_key "tenshokukaigi_candidates", "tenshokukaigi_masters", name: "tenshokukaigi_candidates_ibfk_1"
   add_foreign_key "tenshokukaigi_masters", "customer_masters", name: "tenshokukaigi_masters_ibfk_1"
+  add_foreign_key "tenshokukaigi_options", "tenshokukaigi_masters", name: "tenshokukaigi_options_ibfk_1"
   add_foreign_key "unsubscribe_forms", "members", name: "unsubscribe_forms_ibfk_1"
   add_foreign_key "unsubscribe_forms", "plan_histories", name: "unsubscribe_forms_ibfk_2"
   add_foreign_key "user_receive_alarm_sources", "users", name: "user_receive_alarm_sources_ibfk_1"
