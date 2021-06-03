@@ -1,3 +1,77 @@
 <% provide :title, "クライアント一覧" %>
+  <%= search_form_for(@q, url:clients_list_path) do |f| %>
+    <div class="row">
+      <div class="col">
+        <%= f.label :name_cont, "取引先名" %>
+        <%= f.search_field :name_cont %>
+      </div>
+      <div class="col">
+        <%= f.label :daihyo_name_cont, "代表者名" %>
+        <%= f.search_field :daihyo_name_cont %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <%= f.label :prefecture_code_eq, '都道府県' %>
+        <%= f.collection_select :prefecture_code_eq, Prefecture.where(input: true), :id, :name, include_blank: "-- 選択してください --" %>
+      </div>
+      <div class="col">
+        <%= f.label :address_cont, "住所" %>
+        <%= f.search_field :address_cont %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8">
+        <%= f.label :created_at_gteq, "登録日" %>
+        <%= f.date_field :created_at_gteq, include_blank: true%>～
+        <%= f.date_field :created_at_lteq_end_of_day, include_blank: true%>
+      </div>
+      <div class="col">
+        <%= f.submit %>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th><%= sort_link(@q, :customer_name, "状態") %></th>
+            <th><%= sort_link(@q, :thing_name, "SB担当者") %></th>
+            <th><%= sort_link(@q, :thing_name, "登録日（取込）") %></th>
+            <th><%= sort_link(@q, :thing_name, "企業名") %></th>
+            <th><%= sort_link(@q, :created_at, "代表者名") %></th>
+            <th><%= sort_link(@q, :created_at, "都道府県") %></th>
+            <th><%= sort_link(@q, :created_at, "住所") %></th>
+            <th><%= sort_link(@q, :created_at, "稟議承認日") %></th>
+            <th><%= sort_link(@q, :created_at, "契約日") %></th>
+            <th><%= sort_link(@q, :created_at, "条件設定") %></th>
+            <th><%= sort_link(@q, :created_at, "プラン") %></th>
+            <th><%= sort_link(@q, :created_at, "代理店名") %></th>
+            <th><%= sort_link(@q, :created_at, "保証利用の有無") %></th>
+          </tr>
+        </thead>
+        </tbody>
+          <% @client.each do |c| %>
+            <tr>
+              <td><%= c.status %></td>
+              <td><%= c.sb_user_name %></td>
+              <td><%= c.updated_at %></td>
+              <td><%= c.name %></td>
+              <td><%= c.daihyo_name %></td>
+              <td><%= Prefecture.find(c.prefecture_code).name %></td>
+              <td><%= c.address %></td>
+              <td>稟議承認日</td>
+              <td>契約日</td>
+              <td>条件設定</td>
+              <td>プラン</td>
+              <td><%= c.sb_agent.name %></td>
+              <td>保証利用の有無</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= paginate @client %>
+    </div>
+  </div>
 
-list!

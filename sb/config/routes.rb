@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   namespace :clients do
     get "/", action: "list"
     get "/list", action: "list"
+    get "/search", action: "search"
     get "/upload", action: "upload"
   end
 end
