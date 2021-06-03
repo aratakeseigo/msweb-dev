@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_01_175511) do
+ActiveRecord::Schema.define(version: 2021_06_03_051108) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -1947,7 +1947,7 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
   create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアントユーザー", force: :cascade do |t|
     t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.string "name", null: false, comment: "担当者名"
-    t.string "kana", comment: "担当者名カナ"
+    t.string "name_kana", comment: "担当者名カナ"
     t.string "email", comment: "メールアドレス"
     t.string "department", comment: "部署"
     t.string "position", comment: "役職"
@@ -1958,12 +1958,12 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
   end
 
   create_table "sb_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアント", force: :cascade do |t|
-    t.integer "entity_id", null: false, comment: "法人ID"
+    t.integer "entity_id", comment: "法人ID"
     t.string "name", null: false, comment: "クライアント名"
     t.integer "status_id", comment: "ステータスID"
     t.string "taxagency_corporate_number", comment: "法人番号"
     t.integer "area_id", comment: "エリアID"
-    t.integer "sb_user_id", comment: "SB担当者ID"
+    t.integer "sb_tanto_id", comment: "SB担当者ID"
     t.string "daihyo_name", null: false, comment: "代表者名"
     t.string "zip_code", comment: "郵便番号"
     t.integer "prefecture_code", comment: "都道府県コード"
@@ -1971,11 +1971,11 @@ ActiveRecord::Schema.define(version: 2021_06_01_175511) do
     t.string "tel", comment: "電話番号"
     t.string "industry_code1", comment: "業種コード1"
     t.string "industry_code2", comment: "業種コード2"
-    t.string "established", comment: "設立年月"
+    t.string "established_in", comment: "設立年月"
     t.integer "annual_sales", comment: "年商（千円）"
     t.integer "channel_id", comment: "媒体ID"
     t.bigint "sb_agent_id", comment: "SB代理店ID"
-    t.boolean "anti_social_flag", default: false, comment: "反社チェックフラグ"
+    t.boolean "anti_social", default: false, comment: "反社(反社の場合true)"
     t.text "content", comment: "内容"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
