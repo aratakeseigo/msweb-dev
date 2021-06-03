@@ -5,7 +5,7 @@
     <div class="mb-3">
         クライアント登録Excelを選択してください
     </div>
-    <%= form_tag clients_registration_upload_path, method: "post", multipart: true do %>
+    <%= form_with url: clients_registration_upload_path, method: "post", local: true, multipart: true do %>
         <div class="form-group">
             <%= render partial: "shared/file_upload", locals: { name: "input_file" } %>
         </div>
@@ -13,4 +13,5 @@
             <%= submit_tag "送信", class: "btn btn-primary" %>
         </div>
     <% end %>
+            <%= render partial: "shared/file_upload", locals: { name: "input_file2" } %>
 </div>

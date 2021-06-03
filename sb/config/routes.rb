@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     namespace :registration do
       get "/", action: "index", as: "index"
       post "/upload", action: "upload"
+      post "/create", action: "create"
     end
   end
 end

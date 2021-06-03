@@ -10,7 +10,7 @@ module Client
     attribute :address2, :string
     attribute :tel, :string
     attribute :industory_code1, :string
-    attribute :industory_code1, :string
+    attribute :industory_code2, :string
     attribute :user_name, :string
     attribute :user_kana, :string
     attribute :user_email, :string
@@ -42,7 +42,7 @@ module Client
         "住所2" => "address2",
         "ＴＥＬ" => "tel",
         "業種1" => "industory_code1",
-        "業種2" => "industory_code1",
+        "業種2" => "industory_code2",
         "担当者名" => "user_name",
         "担当者名カナ" => "user_kana",
         "メールアドレス" => "user_email",

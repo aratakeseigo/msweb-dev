@@ -8,9 +8,17 @@
     </div>
 </div>
 
+<% unless @is_initialized_bs_custom_file_input %>
+<% # 二重で読み込まない制御 %>
 <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
 <script>
-  bsCustomFileInput.init();
+    window.onload = function() {
+        bsCustomFileInput.init();
+    };
+</script>
+<% @is_initialized_bs_custom_file_input = true; end %>
+
+<script>
   document.getElementById('<%= name %>Reset').addEventListener('click', function() {
     var elem = document.getElementById('<%= name %>');
     elem.value = '';

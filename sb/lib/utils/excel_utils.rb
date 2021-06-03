@@ -18,18 +18,18 @@ module Utils
       RubyXL::Parser.parse(excel_file_path).tap do |workbook|
         worksheet = workbook.worksheets[worksheet_index]
         header = (worksheet[header_row_index])[start_col_index..end_col_index].map(&:value)
-        res = worksheet.drop(list_start_row_index).map.with_index do |row, row_num|
-          row&.cells&.drop(start_col_index).map.with_index() do |cell, col_num|
+        res = worksheet.drop(list_start_row_index).map do |row|
+          cells = row&.cells
+          next unless cells
+          cells.drop(start_col_index).map.with_index do |cell, col_num|
             key = header_mapping[header[col_num]]
-            unless key
-              nil
-              next
-            end
+            next unless key
             { key => cell&.value || "" }
           end
             .compact
             .reduce(&:merge)
         end
+          .compact
       end
       res
     end
