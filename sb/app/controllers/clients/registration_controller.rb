@@ -9,6 +9,8 @@ class Clients::RegistrationController < ApplicationController
   def create
     @form = Client::RegistrationForm.new(JSON.parse(create_params[:registration_form]))
     puts @form.to_json
+    puts @form.valid?
+    puts @form.errors.full_messages
     redirect_to clients_list_path
   end
 

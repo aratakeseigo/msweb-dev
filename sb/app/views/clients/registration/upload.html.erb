@@ -11,29 +11,16 @@
 
 <div class="row">
     <div class="col">
-        <div class="row"><div class="col">Ｎｏ</div><div class="col"><%= @form.no %></div></div>
-        <div class="row"><div class="col">エリア</div><div class="col"><%= @form.area %></div></div>
-        <div class="row"><div class="col">ＳＢ担当名</div><div class="col"><%= @form.internal_user_id %></div></div>
+        <div class="row"><div class="col">エリア</div><div class="col"><%= @form.area_name %></div></div>
+        <div class="row"><div class="col">ＳＢ担当名</div><div class="col"><%= @form.tanto_name %></div></div>
         <div class="row"><div class="col">クライアント名</div><div class="col"><%= @form.name %></div></div>
         <div class="row"><div class="col">代表者名</div><div class="col"><%= @form.daihyo_name %></div></div>
         <div class="row"><div class="col">〒</div><div class="col"><%= @form.zip_code %></div></div>
-        <div class="row"><div class="col">住所1</div><div class="col"><%= @form.address1 %></div></div>
-        <div class="row"><div class="col">住所2</div><div class="col"><%= @form.address2 %></div></div>
+        <div class="row"><div class="col">住所</div><div class="col"><%= @form.address %></div></div>
         <div class="row"><div class="col">ＴＥＬ</div><div class="col"><%= @form.tel %></div></div>
-        <div class="row"><div class="col">業種1</div><div class="col"><%= @form.industory_code1 %></div></div>
-        <div class="row"><div class="col">業種2</div><div class="col"><%= @form.industory_code2 %></div></div>
-    </div>
-    <div class="col">
-        <div class="row"><div class="col">設立</div><div class="col"><%= @form.setsuritsu %></div></div>
-        <div class="row"><div class="col">年商（千円）</div><div class="col"><%= @form.nensho %></div></div>
-        <div class="row"><div class="col">媒体</div><div class="col"><%= @form.channel %></div></div>
-        <div class="row"><div class="col">代理店</div><div class="col"><%= @form.agent %></div></div>
-        <div class="row"><div class="col">反社チェック</div><div class="col"><%= @form.hansha %></div></div>
-        <div class="row"><div class="col">✖内容</div><div class="col"><%= @form.ng_reason %></div></div>
-        <div class="row"><div class="col">稟議日</div><div class="col"><%= @form.ringi %></div></div>
-        <div class="row"><div class="col">決裁日</div><div class="col"><%= @form.kessai %></div></div>
-        <div class="row"><div class="col">決裁担当</div><div class="col"><%= @form.kessai_user %></div></div>
-        <div class="row"><div class="col">契約日</div><div class="col"><%= @form.contract_date %></div></div>
+        <div class="row"><div class="col">業種1</div><div class="col"><%= @form.industry_name1 %></div></div>
+        <div class="row"><div class="col">業種2</div><div class="col"><%= @form.industry_name2 %></div></div>
+        <div class="row"><div class="col">代理店</div><div class="col"><%= @form.agent_name %></div></div>
     </div>
 </div>
 <div class="row">
@@ -54,12 +41,12 @@
                 <% @form.users.each.with_index(1) do |user, index| %>
                 <tr>
                     <td><%= index %></td>
-                    <td><%= user[:user_name] %></td>
-                    <td><%= user[:user_kana] %></td>
-                    <td><%= user[:user_email] %></td>
-                    <td><%= user[:user_position] %></td>
-                    <td><%= user[:user_department] %></td>
-                    <td><%= user[:user_tel] %></td>
+                    <td><%= user["name"] %></td>
+                    <td><%= user["name_kana"] %></td>
+                    <td><%= user["email"] %></td>
+                    <td><%= user["position"] %></td>
+                    <td><%= user["department"] %></td>
+                    <td><%= user["contact_tel"] %></td>
                 </tr>
                 <% end %>
             </tbody>

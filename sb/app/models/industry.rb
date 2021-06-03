@@ -56,4 +56,8 @@ class Industry < ActiveHash::Base
     { id: 53, code: "T", name: "その他", display_name: "T.その他" },
   ]
   enum_accessor :code
+
+  def find_by_name(name)
+    find_by(name: name)
+  end
 end
