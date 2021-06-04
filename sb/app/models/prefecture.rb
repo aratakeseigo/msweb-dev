@@ -1,16 +1,4 @@
 class Prefecture < ActiveHash::Base
-<<<<<<< HEAD
-  fields :code, :name
-  add :id => 1,  :code => 1,  :name => "北海道"
-  add :id => 2,  :code => 2,  :name => "青森県"
-  add :id => 3,  :code => 3,  :name => "岩手県"
-  add :id => 4,  :code => 4,  :name => "宮城県"
-  add :id => 5,  :code => 5,  :name => "秋田県"
-  add :id => 6,  :code => 6,  :name => "山形県"
-  add :id => 7,  :code => 7,  :name => "福島県"
-  add :id => 8,  :code => 8,  :name => "茨城県"
-  add :id => 9,  :code => 9,  :name => "栃木県"
-=======
   fields :name, :code
   add :id => 1, :code => 1, :name => "北海道"
   add :id => 2, :code => 2, :name => "青森県"
@@ -21,7 +9,6 @@ class Prefecture < ActiveHash::Base
   add :id => 7, :code => 7, :name => "福島県"
   add :id => 8, :code => 8, :name => "茨城県"
   add :id => 9, :code => 9, :name => "栃木県"
->>>>>>> develop
   add :id => 10, :code => 10, :name => "群馬県"
   add :id => 11, :code => 11, :name => "埼玉県"
   add :id => 12, :code => 12, :name => "千葉県"
