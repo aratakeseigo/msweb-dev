@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_002726) do
+ActiveRecord::Schema.define(version: 2021_06_04_083327) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -1969,17 +1969,17 @@ ActiveRecord::Schema.define(version: 2021_06_04_002726) do
     t.integer "prefecture_code", comment: "都道府県コード"
     t.string "address", comment: "住所"
     t.string "tel", comment: "電話番号"
-    t.string "industry_code", comment: "業種コード"
+    t.string "industry_id", comment: "業種コード"
     t.string "industry_optional", comment: "業種(補足)"
     t.string "established_in", comment: "設立年月"
-    t.integer "annual_sales", comment: "年商（千円）"
+    t.bigint "annual_sales", comment: "年商"
     t.integer "channel_id", comment: "媒体ID"
     t.bigint "sb_agent_id", comment: "SB代理店ID"
     t.boolean "anti_social", default: false, comment: "反社(反社の場合true)"
     t.text "content", comment: "内容"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "capital", comment: "資本金"
+    t.bigint "capital", comment: "資本金"
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
   end
 

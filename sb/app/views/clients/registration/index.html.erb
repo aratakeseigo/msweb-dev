@@ -3,7 +3,18 @@
 
 <div class="mx-auto mt-5" style="width: 500px;">
     <div class="mb-3">
-        クライアント登録Excelを選択してください
+        <% if @form&.invalid? %>
+            <div class="alert alert-danger" role="alert">
+                <strong>エラー内容を修正して再度アップロードしてください。</strong>
+                <ul>
+                    <% @form.errors.full_messages.each do |message| %>
+                        <li><%= message %>
+                    <% end %>
+                <ul>
+            </div>
+        <% else %>
+            クライアント登録Excelを選択してください
+        <% end %>
     </div>
     <%= form_with url: clients_registration_upload_path, method: "post", local: true, multipart: true do %>
         <div class="form-group">

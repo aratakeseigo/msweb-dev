@@ -4,13 +4,18 @@ class Clients::RegistrationController < ApplicationController
 
   def upload
     @form = Client::RegistrationForm.initFromFile(upload_params[:input_file])
+    if @form.invalid?
+      render :index and return
+    end
   end
 
   def create
-    @form = Client::RegistrationForm.new(JSON.parse(create_params[:registration_form]))
-    puts @form.to_json
-    puts @form.valid?
-    puts @form.errors.full_messages
+    hash = JSON.parse(create_params[:registration_form])
+    users_hash = JSON.parse(create_params[:registration_form_users])
+    hash["users"] = users_hash
+    @form = Client::RegistrationForm.new(hash)
+    @form.save_client
+    flash[:notice] = "登録が完了しました。"
     redirect_to clients_list_path
   end
 
@@ -21,6 +26,6 @@ class Clients::RegistrationController < ApplicationController
   end
 
   def create_params
-    params.permit(:registration_form)
+    params.permit(:registration_form, :registration_form_users)
   end
 end

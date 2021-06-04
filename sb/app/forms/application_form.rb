@@ -3,4 +3,5 @@ class ApplicationForm
   include ActiveModel::Attributes
   include ActiveModel::AttributeMethods
   include ActiveRecord::AttributeMethods::BeforeTypeCast
+  include ActiveModel::Serializers::JSON
 end

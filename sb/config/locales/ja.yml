@@ -11,7 +11,7 @@ ja:
       sb_client:
         name: "クライアント名"
         daihyo_name: "代表者名"
-        zip_code: "〒"
+        zip_code: "郵便番号"
         prefecture_name: "都道府県"
         address: "住所"
         tel: "ＴＥＬ"
@@ -21,8 +21,8 @@ ja:
         capital: "資本金"
         annual_sales: "年商（千円）"
       sb_client_user:
-        user_name: "担当者名"
-        user_name_kana: "担当者名カナ"
+        name: "担当者名"
+        name_kana: "担当者名カナ"
         email: "メールアドレス"
         position: "役職"
         department: "部署"
@@ -32,9 +32,9 @@ ja:
       client/registration_form:
         name: "クライアント名"
         daihyo_name: "代表者名"
-        zip_code: "〒"
+        zip_code: "郵便番号"
         prefecture_name: "都道府県"
-        address: "住所"
+        address: "住所2"
         tel: "ＴＥＬ"
         industry_name: "業種1"
         industry_optional: "業種2"
@@ -45,7 +45,7 @@ ja:
         department: "部署"
         contact_tel: "希望連絡先"
         established_in: "設立"
-        capital: "資本金"
+        capital: "資本金（千円）"
         annual_sales: "年商（千円）"
   date:
     abbr_day_names:
