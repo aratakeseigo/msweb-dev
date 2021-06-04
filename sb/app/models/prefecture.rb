@@ -1,5 +1,5 @@
 class Prefecture < ActiveHash::Base
-  fields :name
+  fields :code, :name
   add :id => 1,  :code => 1,  :name => "北海道"
   add :id => 2,  :code => 2,  :name => "青森県"
   add :id => 3,  :code => 3,  :name => "岩手県"

@@ -36,26 +36,26 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th><%= sort_link(@q, :customer_name, "状態") %></th>
-            <th><%= sort_link(@q, :thing_name, "SB担当者") %></th>
-            <th><%= sort_link(@q, :thing_name, "登録日（取込）") %></th>
-            <th><%= sort_link(@q, :thing_name, "企業名") %></th>
-            <th><%= sort_link(@q, :created_at, "代表者名") %></th>
-            <th><%= sort_link(@q, :created_at, "都道府県") %></th>
-            <th><%= sort_link(@q, :created_at, "住所") %></th>
-            <th><%= sort_link(@q, :created_at, "稟議承認日") %></th>
-            <th><%= sort_link(@q, :created_at, "契約日") %></th>
-            <th><%= sort_link(@q, :created_at, "条件設定") %></th>
-            <th><%= sort_link(@q, :created_at, "プラン") %></th>
-            <th><%= sort_link(@q, :created_at, "代理店名") %></th>
-            <th><%= sort_link(@q, :created_at, "保証利用の有無") %></th>
+            <th><%= sort_link(@q, :status_id, "状態") %></th>
+            <th><%= sort_link(@q, :sb_client_user_name, "SB担当者") %></th>
+            <th><%= sort_link(@q, :updated_at, "登録日（取込）") %></th>
+            <th><%= sort_link(@q, :name, "企業名") %></th>
+            <th><%= sort_link(@q, :daihyo_name, "代表者名") %></th>
+            <th><%= sort_link(@q, :prefecture_code, "都道府県") %></th>
+            <th><%= sort_link(@q, :address, "住所") %></th>
+            <th>稟議承認日</th>
+            <th>契約日</th>
+            <th>条件設定</th>
+            <th>プラン</th>
+            <th><%= sort_link(@q, :sb_agent_name, "代理店") %></th>
+            <th>保証利用の有無</th>
           </tr>
         </thead>
         </tbody>
           <% @client.each do |c| %>
             <tr>
-              <td><%= c.status %></td>
-              <td><%= c.sb_user_name %></td>
+              <td><%= c.status_id %></td>
+              <td><%= c.sb_client_user.name %></td>
               <td><%= c.updated_at %></td>
               <td><%= c.name %></td>
               <td><%= c.daihyo_name %></td>
@@ -65,7 +65,7 @@
               <td>契約日</td>
               <td>条件設定</td>
               <td>プラン</td>
-              <td><%= c.sb_agent.name %></td>
+              <td>代理店</td>
               <td>保証利用の有無</td>
             </tr>
           <% end %>

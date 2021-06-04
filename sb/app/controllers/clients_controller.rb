@@ -15,6 +15,6 @@ class ClientsController < ApplicationController
 
   private
   def search_params
-    params.require(:q).permit!
+    params.require(:q).permit(:name_cont, :daihyo_name_cont, :prefecture_code_eq, :address_cont, :created_at_gteq, :created_at_lteq_end_of_day)
   end
 end
