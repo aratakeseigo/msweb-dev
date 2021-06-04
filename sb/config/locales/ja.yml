@@ -7,20 +7,46 @@ ja:
         restrict_dependent_destroy:
           has_one: "%{record}が存在しているので削除できません"
           has_many: "%{record}が存在しているので削除できません"
+    attributes:
+      sb_client:
+        name: "クライアント名"
+        daihyo_name: "代表者名"
+        zip_code: "〒"
+        prefecture_name: "都道府県"
+        address: "住所"
+        tel: "ＴＥＬ"
+        industry: "業種1"
+        industry_optional: "業種2"
+        established_in: "設立"
+        capital: "資本金"
+        annual_sales: "年商（千円）"
+      sb_client_user:
+        user_name: "担当者名"
+        user_name_kana: "担当者名カナ"
+        email: "メールアドレス"
+        position: "役職"
+        department: "部署"
+        contact_tel: "希望連絡先"
   activemodel:
     attributes:
       client/registration_form:
-        area_name: "エリア名"
-        tanto_name: "SB担当者名"
-        name: "会社名"
+        name: "クライアント名"
         daihyo_name: "代表者名"
-        zip_code: "郵便番号"
+        zip_code: "〒"
+        prefecture_name: "都道府県"
         address: "住所"
-        tel: "電話番号"
-        industry_name1: "業種名１"
-        industry_name2: "業種名２"
-        channel_name: "媒体名"
-        agent_name: "代理店名"
+        tel: "ＴＥＬ"
+        industry_name: "業種1"
+        industry_optional: "業種2"
+        user_name: "担当者名"
+        user_name_kana: "担当者名カナ"
+        email: "メールアドレス"
+        position: "役職"
+        department: "部署"
+        contact_tel: "希望連絡先"
+        established_in: "設立"
+        capital: "資本金"
+        annual_sales: "年商（千円）"
   date:
     abbr_day_names:
     - 日
@@ -135,6 +161,7 @@ ja:
       inclusion: は一覧にありません
       invalid: は不正な値です
       less_than: は%{count}より小さい値にしてください
+      month_in_1_12: の月は1-12で設定してください
       less_than_or_equal_to: は%{count}以下の値にしてください
       model_invalid: 'バリデーションに失敗しました: %{errors}'
       not_a_number: は数値で入力してください
@@ -148,7 +175,11 @@ ja:
       too_short: は%{count}文字以上で入力してください
       wrong_length: は%{count}文字で入力してください
       not_in_master: はマスタにありません
-      invalid_email_address: "ユーザー%{index}の%{email}は不正なメールアドレスです"
+      invalid_email_address: "%{email}は不正なメールアドレスです"
+      invalid_user_email_address: "ユーザー%{index}の%{email}は不正なメールアドレスです"
+      only_number: は数字のみで入力してください
+      length_10_or_11: は10桁または11桁で入力してください
+      inclusion_prefecture_code: は1-47の数値で入力してください
     template:
       body: 次の項目を確認してください
       header:

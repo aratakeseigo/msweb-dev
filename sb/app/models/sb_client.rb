@@ -9,4 +9,14 @@ class SbClient < ApplicationRecord
   has_many :sb_client_user
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
+
+  validates :name, presence: true, length: { maximum: 255 }
+  validates :daihyo_name, presence: true, length: { maximum: 255 }
+  validates :zip_code, allow_blank: true, zip_code: true
+  validates :prefecture_code, allow_blank: true, inclusion: { in: Prefecture.all.map(&:id), message: :inclusion_prefecture_code }
+  validates :address, allow_blank: true, length: { maximum: 255 }
+  validates :tel, allow_blank: true, tel: true
+  validates :industry, allow_blank: true, inclusion: { in: Industry.all.map(&:id), message: :not_in_master }
+  validates :channel, allow_blank: true, inclusion: { in: Channel.all.map(&:id), message: :not_in_master }
+  validates :agent, allow_blank: true, inclusion: { in: Agent.all.map(&:id), message: :not_in_master }
 end
