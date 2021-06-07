@@ -4,8 +4,12 @@ class SbClient < ApplicationRecord
   belongs_to_active_hash :area
   belongs_to_active_hash :industry
   belongs_to_active_hash :channel
+  belongs_to_active_hash :status, class_name: "Status::ClientStatus"
 
   belongs_to :sb_tanto, optional: true, class_name: "InternalUser", foreign_key: "sb_tanto_id"
+  belongs_to :created_user, class_name: "InternalUser", foreign_key: "created_by"
+  belongs_to :updated_user, class_name: "InternalUser", foreign_key: "updated_by"
+
   has_many :sb_client_users
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
@@ -17,7 +21,11 @@ class SbClient < ApplicationRecord
   validates :address, allow_blank: true, length: { maximum: 255 }
   validates :tel, allow_blank: true, tel: true
   validates :industry, allow_blank: true, inclusion: { in: Industry.all, message: :not_in_master }
+  validates :industry_optional, allow_blank: true, length: { maximum: 255 }
   validates :channel, allow_blank: true, inclusion: { in: Channel.all, message: :not_in_master }
   validates :sb_agent, allow_blank: true, inclusion: { in: SbAgent.all, message: :not_in_master }
+  validates :area, allow_blank: true, inclusion: { in: Area.all, message: :not_in_master }
   validates :established_in, allow_blank: true, yyyymm: true
+  validates :capital, allow_blank: true, numericality: { only_integer: true }
+  validates :annual_sales, allow_blank: true, numericality: { only_integer: true }
 end

@@ -12,7 +12,7 @@ module Client
     attribute :capital, :integer
     attribute :annual_sales, :integer
 
-    attr_accessor :users
+    attr_accessor :users, :create_user
 
     validates :prefecture_name, presence: true, inclusion: { in: Prefecture.all.map(&:name), message: :not_in_master }
     validates :industry_name, presence: true, inclusion: { in: Industry.all.map(&:name), message: :not_in_master }
@@ -20,7 +20,9 @@ module Client
 
     def save_client
       sb_client = to_sb_client
-      to_sb_client_users(sb_client)
+      add_client_users(sb_client)
+      sb_client.status = Status::ClientStatus::COMPANY_NOT_DETECTED
+      sb_client.sb_tanto = @create_user
       sb_client.save!
     end
 
@@ -31,7 +33,7 @@ module Client
           errors.add(attr, error)
         end
       end
-      to_sb_client_users(sb_client).each.with_index(1) do |user, num|
+      add_client_users(sb_client).each.with_index(1) do |user, num|
         unless user.valid?
           user.errors.each do |attr, error|
             errors.add(attr, error + "[#{num}行目]")
@@ -42,6 +44,8 @@ module Client
 
     def to_sb_client
       sb_client = SbClient.new
+      sb_client.created_user = @create_user
+      sb_client.updated_user = @create_user
       sb_client.name = name
       sb_client.daihyo_name = daihyo_name
       sb_client.zip_code = zip_code
@@ -56,7 +60,7 @@ module Client
       sb_client
     end
 
-    def to_sb_client_users(sb_client)
+    def add_client_users(sb_client)
       users.map do |user_hash|
         user = sb_client.sb_client_users.build
         user.name = user_hash["user_name"]
