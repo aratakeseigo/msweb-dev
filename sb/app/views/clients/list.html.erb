@@ -1,5 +1,5 @@
 <% provide :title, "クライアント一覧" %>
-  <%= search_form_for(@q, url:clients_list_path) do |f| %>
+  <%= search_form_for(@q, url: clients_list_path) do |f| %>
     <div class="row">
       <div class="col">
         <%= f.label :status_id_eq, "状態" %>
@@ -53,13 +53,13 @@
       </div>
       <div class="col">
         <%= f.label :created_at_gteq, "登録日" %>
-        <%= f.date_field :created_at_gteq, include_blank: true%>～
-        <%= f.date_field :created_at_lteq_end_of_day, include_blank: true%>
+        <%= f.date_field :created_at_gteq, include_blank: true %>～
+        <%= f.date_field :created_at_lteq_end_of_day, include_blank: true %>
       </div>
     </div>
     <div class="row">
        <div class="col-10">
-       </div>     
+       </div>
       <div class="col">
         <%= f.submit %>
       </div>
@@ -87,17 +87,17 @@
         </tbody>
           <% @client.each do |client| %>
             <tr>
-              <td><%= client.status.name %></td>
-              <td><%= client.area.name %></td>
-              <td><%= client.sb_tanto.name %></td>
+              <td><%= client.status&.name %></td>
+              <td><%= client.area&.name %></td>
+              <td><%= client.sb_tanto&.name %></td>
               <td><%= client.name %></td>
               <td><%= client.daihyo_name %></td>
-              <td><%= client.prefecture.name %></td>
+              <td><%= client.prefecture&.name %></td>
               <td><%= client.tel %></td>
-              <td><%= client.sb_client_users.first.name %></td>
-              <td><%= client.sb_client_users.first.contact_tel %></td>
+              <td><%= client.sb_client_users&.first&.name %></td>
+              <td><%= client.sb_client_users&.first&.contact_tel %></td>
               <td><%= client.created_at %></td>
-              <td><%= client.channel.name %></td>
+              <td><%= client.channel&.name %></td>
               <td><%= client.sb_agent_name %></td>
             </tr>
           <% end %>
@@ -106,4 +106,3 @@
       <%= paginate @client %>
     </div>
   </div>
-
