@@ -15,6 +15,10 @@ Rails.application.routes.draw do
     get "/", action: "list"
     get "/list", action: "list"
     get "/search", action: "search"
-    get "/upload", action: "upload"
+    namespace :registration do
+      get "/", action: "index", as: "index"
+      post "/upload", action: "upload"
+      post "/create", action: "create"
+    end
   end
 end
