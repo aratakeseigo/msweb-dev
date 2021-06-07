@@ -105,10 +105,10 @@ module Client
                                                       header_mapping: column_mapping)
 
       form = Client::RegistrationForm.new(
-        client_hash_list.first.select { |key, val| company_column_mapping.values.include? key }
+        client_hash_list.first.select { |key| company_column_mapping.values.include? key }
       )
       client_hash_list.each do |h|
-        user_hash = h.select { |key, val| user_column_mapping.values.include? key }
+        user_hash = h.select { |key| user_column_mapping.values.include? key }
         next if user_hash.values.join.empty?
         form.add_user(user_hash)
       end
