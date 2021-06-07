@@ -1,13 +1,15 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ClientsController, type: :controller do
-  describe 'GET #list' do
+  describe "GET #list" do
     let(:entity) { create :entity }
     let(:client) { create :sb_client }
+    before do
+      user = create(:internal_user)
+      sign_in user
+    end
     before { get :list }
     it "render assings client to @client" do
-      #client = create(:sb_client_alarmbox)
-      # get :list
       expect(assigns(nil)).to eq client
     end
   end

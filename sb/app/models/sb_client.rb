@@ -7,8 +7,8 @@ class SbClient < ApplicationRecord
   belongs_to_active_hash :status, class_name: "Status::ClientStatus"
 
   belongs_to :sb_tanto, optional: true, class_name: "InternalUser", foreign_key: "sb_tanto_id"
-  belongs_to :created_user, class_name: "InternalUser", foreign_key: "created_by"
-  belongs_to :updated_user, class_name: "InternalUser", foreign_key: "updated_by"
+  belongs_to :created_user, optional: true, class_name: "InternalUser", foreign_key: "created_by"
+  belongs_to :updated_user, optional: true, class_name: "InternalUser", foreign_key: "updated_by"
 
   has_many :sb_client_users
   belongs_to :entity, optional: true

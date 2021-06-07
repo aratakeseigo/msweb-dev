@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :entity, class: Entity do
+  factory :entity do
     id { 1 }
     show_flag { 1 }
   end
