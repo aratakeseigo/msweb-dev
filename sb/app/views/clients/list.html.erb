@@ -86,21 +86,20 @@
         </thead>
         </tbody>
           <% @client.each do |client| %>
-              <tr>
-                <td><%= Status.find(client.status_id).name %></td>
-                <td><%= client.area.name %></td>
-                <td><%= client.sb_tanto.name %></td>
-                <td><%= client.name %></td>
-                <td><%= client.daihyo_name %></td>
-                <td><%= Prefecture.find(client.prefecture_code).name %></td>
-                <td><%= client.tel %></td>
-                <td><%= client.sb_client_user.first.name %></td>
-                <td><%= client.sb_client_user.first.contact_tel %></td>
-                <td><%= client.created_at %></td>
-                <td><%= Channel.find(client.channel_id).name %></td>
-                <td><%= client.sb_agent_name %></td>
-              </tr>
-            <% end %>
+            <tr>
+              <td><%= client.status.name %></td>
+              <td><%= client.area.name %></td>
+              <td><%= client.sb_tanto.name %></td>
+              <td><%= client.name %></td>
+              <td><%= client.daihyo_name %></td>
+              <td><%= client.prefecture.name %></td>
+              <td><%= client.tel %></td>
+              <td><%= client.sb_client_user.first.name %></td>
+              <td><%= client.sb_client_user.first.contact_tel %></td>
+              <td><%= client.created_at %></td>
+              <td><%= client.channel.name %></td>
+              <td><%= client.sb_agent_name %></td>
+            </tr>
           <% end %>
         </tbody>
       </table>
