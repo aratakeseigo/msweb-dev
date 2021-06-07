@@ -71,7 +71,7 @@
         <thead>
           <tr>
             <th><%= sort_link(@q, :status_id, "状態") %></th>
-            <th><%= sort_link(@q, :area, "都道府県") %></th>
+            <th><%= sort_link(@q, :area_id, "エリア") %></th>
             <th><%= sort_link(@q, :sb_tanto_id, "SB担当者") %></th>
             <th><%= sort_link(@q, :name, "企業名") %></th>
             <th><%= sort_link(@q, :daihyo_name, "代表者名") %></th>
@@ -79,9 +79,9 @@
             <th><%= sort_link(@q, :tel, "電話番号") %></th>
             <th><%= sort_link(@q, :sb_client_user_name, "担当者") %></th>
             <th><%= sort_link(@q, :sb_client_user_contact_tel, "希望連絡先") %></th>
-            <th><%= sort_link(@q, :updated_at, "登録日（取込）") %></th>
+            <th><%= sort_link(@q, :created_at, "登録日（取込）") %></th>
             <th><%= sort_link(@q, :channel_id, "媒体") %></th>
-            <th><%= sort_link(@q, :sb_agent_name, "代理店") %></th>
+            <th><%= sort_link(@q, :sb_agent_id, "代理店") %></th>
           </tr>
         </thead>
         </tbody>
