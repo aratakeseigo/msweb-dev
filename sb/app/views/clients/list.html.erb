@@ -34,12 +34,12 @@
         <%= f.search_field :tel_eq %>
       </div>
       <div class="col">
-        <%= f.label :sb_client_user_name_cont, "担当者名" %>
-        <%= f.search_field :sb_client_user_name_cont %>
+        <%= f.label :sb_client_users_name_cont, "担当者名" %>
+        <%= f.search_field :sb_client_users_name_cont %>
       </div>
       <div class="col">
-        <%= f.label :sb_client_user_contact_tel_eq, "希望連絡先" %>
-        <%= f.search_field :sb_client_user_contact_tel_eq %>
+        <%= f.label :sb_client_users_contact_tel_eq, "希望連絡先" %>
+        <%= f.search_field :sb_client_users_contact_tel_eq %>
       </div>
     </div>
     <div class="row">
@@ -77,8 +77,8 @@
             <th><%= sort_link(@q, :daihyo_name, "代表者名") %></th>
             <th><%= sort_link(@q, :prefecture_code, "都道府県") %></th>
             <th><%= sort_link(@q, :tel, "電話番号") %></th>
-            <th><%= sort_link(@q, :sb_client_user_name, "担当者") %></th>
-            <th><%= sort_link(@q, :sb_client_user_contact_tel, "希望連絡先") %></th>
+            <th><%= sort_link(@q, :sb_client_users_name, "担当者") %></th>
+            <th><%= sort_link(@q, :sb_client_users_contact_tel, "希望連絡先") %></th>
             <th><%= sort_link(@q, :created_at, "登録日（取込）") %></th>
             <th><%= sort_link(@q, :channel_id, "媒体") %></th>
             <th><%= sort_link(@q, :sb_agent_id, "代理店") %></th>
@@ -94,8 +94,8 @@
               <td><%= client.daihyo_name %></td>
               <td><%= client.prefecture.name %></td>
               <td><%= client.tel %></td>
-              <td><%= client.sb_client_user.first.name %></td>
-              <td><%= client.sb_client_user.first.contact_tel %></td>
+              <td><%= client.sb_client_users.first.name %></td>
+              <td><%= client.sb_client_users.first.contact_tel %></td>
               <td><%= client.created_at %></td>
               <td><%= client.channel.name %></td>
               <td><%= client.sb_agent_name %></td>
