@@ -1,0 +1,61 @@
+<% provide :title, "クライアント登録-確認" %>
+<% provide :breadcrumb_items, "Home クライアント" %>
+
+<%= form_with url: clients_registration_create_path, method: "post", local: true do %>
+    <%= hidden_field_tag "registration_form", @form.to_json %>
+    <%= hidden_field_tag "registration_form_users", @form.users.to_json %>
+
+    <div class="form-group text-right">
+        <a href="<%= clients_registration_index_path %>" class="btn btn-secondary" role="button" aria-pressed="true">キャンセル</a>
+        <%= submit_tag "送信", class: "btn btn-primary" %>
+    </div>
+<% end %>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col">
+            <div class="row"><div class="col-2 bg-light font-weight-bold">ＳＢ担当名</div><div class="col-10"><%= current_internal_user.name %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">クライアント名</div><div class="col"><%= @form.name %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">代表者名</div><div class="col"><%= @form.daihyo_name %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">〒</div><div class="col"><%= @form.zip_code %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">都道府県</div><div class="col"><%= @form.prefecture_name %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">住所</div><div class="col"><%= @form.address %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">ＴＥＬ</div><div class="col"><%= @form.tel %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">業種1</div><div class="col"><%= @form.industry_name %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">業種2</div><div class="col"><%= @form.industry_optional %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">設立年月</div><div class="col"><%= @form.established_in %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">資本金（千円）</div><div class="col"><%= @form.capital&.to_s(:delimited) %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">年商（千円</div><div class="col"><%= @form.annual_sales&.to_s(:delimited) %></div></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">担当者名</th>
+                    <th scope="col">担当者名カナ</th>
+                    <th scope="col">メールアドレス</th>
+                    <th scope="col">役職</th>
+                    <th scope="col">部署</th>
+                    <th scope="col">希望連絡先</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @form.users.each.with_index(1) do |user, index| %>
+                <tr>
+                    <td><%= index %></td>
+                    <td><%= user["user_name"] %></td>
+                    <td><%= user["user_name_kana"] %></td>
+                    <td><%= user["email"] %></td>
+                    <td><%= user["position"] %></td>
+                    <td><%= user["department"] %></td>
+                    <td><%= user["contact_tel"] %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>

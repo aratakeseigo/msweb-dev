@@ -14,6 +14,10 @@ Rails.application.routes.draw do
   namespace :clients do
     get "/", action: "list"
     get "/list", action: "list"
-    get "/upload", action: "upload"
+    namespace :registration do
+      get "/", action: "index", as: "index"
+      post "/upload", action: "upload"
+      post "/create", action: "create"
+    end
   end
 end
