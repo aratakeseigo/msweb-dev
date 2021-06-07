@@ -1,3 +1,109 @@
 <% provide :title, "クライアント一覧" %>
+  <%= search_form_for(@q, url:clients_list_path) do |f| %>
+    <div class="row">
+      <div class="col">
+        <%= f.label :status_id_eq, "状態" %>
+        <%= f.collection_select :status_id_eq, Status.all, :id, :name, include_blank: "-- 選択してください --" %>
+      </div>
+      <div class="col">
+        <%= f.label :area_eq, "エリア" %>
+        <%= f.collection_select :area_id_eq, Area.all, :id, :name, include_blank: "-- 選択してください --" %>
+      </div>
+      <div class="col">
+        <%= f.label :sb_tanto_name_cont, "SB担当者名" %>
+        <%= f.search_field :sb_tanto_name_cont %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <%= f.label :name_cont, "クライアント名" %>
+        <%= f.search_field :name_cont %>
+      </div>
+      <div class="col">
+        <%= f.label :daihyo_name_cont, "代表者名" %>
+        <%= f.search_field :daihyo_name_cont %>
+      </div>
+      <div class="col">
+        <%= f.label :prefecture_code_eq, "都道府県" %>
+        <%= f.collection_select :prefecture_code_eq, Prefecture.all, :id, :name, include_blank: "-- 選択してください --" %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <%= f.label :tel_eq, "電話番号" %>
+        <%= f.search_field :tel_eq %>
+      </div>
+      <div class="col">
+        <%= f.label :sb_client_users_name_cont, "担当者名" %>
+        <%= f.search_field :sb_client_users_name_cont %>
+      </div>
+      <div class="col">
+        <%= f.label :sb_client_users_contact_tel_eq, "希望連絡先" %>
+        <%= f.search_field :sb_client_users_contact_tel_eq %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <%= f.label :channel_id_eq, "媒体" %>
+        <%= f.collection_select :channel_id_eq, Channel.all, :id, :name, include_blank: "-- 選択してください --" %>
+      </div>
+      <div class="col">
+        <%= f.label :sb_agent_name_cont, "代理店" %>
+        <%= f.search_field :sb_agent_name_cont %>
+      </div>
+      <div class="col">
+        <%= f.label :created_at_gteq, "登録日" %>
+        <%= f.date_field :created_at_gteq, include_blank: true%>～
+        <%= f.date_field :created_at_lteq_end_of_day, include_blank: true%>
+      </div>
+    </div>
+    <div class="row">
+       <div class="col-10">
+       </div>     
+      <div class="col">
+        <%= f.submit %>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th><%= sort_link(@q, :status_id, "状態") %></th>
+            <th><%= sort_link(@q, :area_id, "エリア") %></th>
+            <th><%= sort_link(@q, :sb_tanto_id, "SB担当者") %></th>
+            <th><%= sort_link(@q, :name, "企業名") %></th>
+            <th><%= sort_link(@q, :daihyo_name, "代表者名") %></th>
+            <th><%= sort_link(@q, :prefecture_code, "都道府県") %></th>
+            <th><%= sort_link(@q, :tel, "電話番号") %></th>
+            <th><%= sort_link(@q, :sb_client_users_name, "担当者") %></th>
+            <th><%= sort_link(@q, :sb_client_users_contact_tel, "希望連絡先") %></th>
+            <th><%= sort_link(@q, :created_at, "登録日（取込）") %></th>
+            <th><%= sort_link(@q, :channel_id, "媒体") %></th>
+            <th><%= sort_link(@q, :sb_agent_id, "代理店") %></th>
+          </tr>
+        </thead>
+        </tbody>
+          <% @client.each do |client| %>
+            <tr>
+              <td><%= client.status.name %></td>
+              <td><%= client.area.name %></td>
+              <td><%= client.sb_tanto.name %></td>
+              <td><%= client.name %></td>
+              <td><%= client.daihyo_name %></td>
+              <td><%= client.prefecture.name %></td>
+              <td><%= client.tel %></td>
+              <td><%= client.sb_client_users.first.name %></td>
+              <td><%= client.sb_client_users.first.contact_tel %></td>
+              <td><%= client.created_at %></td>
+              <td><%= client.channel.name %></td>
+              <td><%= client.sb_agent_name %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= paginate @client %>
+    </div>
+  </div>
 
-list!

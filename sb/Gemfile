@@ -23,6 +23,8 @@ group :test do
   gem "rspec-rails"
   gem "simplecov"
   gem "rspec_junit_formatter"
+  gem "factory_bot_rails"
+  gem 'rails-controller-testing'
 end
 
 group :development do
@@ -53,3 +55,15 @@ gem "font-awesome-sass"
 
 # Excel
 gem "rubyXL"
+
+# ransack
+gem 'ransack'
+
+#active_hash
+gem 'active_hash'
+
+# kaminari
+gem 'kaminari'
+
+# decorator
+gem 'draper'
