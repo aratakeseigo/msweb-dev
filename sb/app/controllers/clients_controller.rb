@@ -1,7 +1,7 @@
 class ClientsController < ApplicationController
   def list
     @q = SbClient.ransack(params[:q])
-    @client = @q.result.includes(:sb_agent).page(params[:page])
+    @client = @q.result(distinct: true).includes(:sb_agent, :sb_client_user).page(params[:page]).decorate
   end
 
   def search

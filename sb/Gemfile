@@ -66,4 +66,4 @@ gem 'active_hash'
 gem 'kaminari'
 
 # decorator
-gem 'active_decorator'
+gem 'draper'
