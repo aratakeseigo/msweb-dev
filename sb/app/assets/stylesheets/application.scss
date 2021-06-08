@@ -15,6 +15,16 @@
  */
  @import "adminlte/adminlte.css";
  @import "bootstrap";
- @import "bootstrap-select";
  @import "font-awesome-sprockets";
  @import "font-awesome";
+
+.maru {
+    height:40px;
+    width:40px;
+    border-radius:50%;
+    line-height:40px;
+    min-height: 40px;
+    min-width: 40px;
+    text-align:center;
+    background-color: #999;
+}
