@@ -4,18 +4,28 @@
     <div class="form-group col">
       <%= f.label :status_id_eq, "状態", class: "col-form-label col-form-label-sm" %>
       <div>
-        <%= f.collection_select :status_id_eq, Status::ClientStatus.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "selectpicker col" } %>
+        <%= f.collection_select :status_id_eq, Status::ClientStatus.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select col" } %>
       </div>
     </div>
     <div class="form-group col">
       <%= f.label :area_eq, "エリア", class: "col-form-label col-form-label-sm" %>
       <div>
-        <%= f.collection_select :area_id_eq, Area.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "selectpicker col" } %>
+        <%= f.collection_select :area_id_eq, Area.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select col" } %>
       </div>
     </div>
     <div class="form-group col">
       <%= f.label :sb_tanto_name_cont, "SB担当者名", class: "col-form-label col-form-label-sm" %>
       <%= f.search_field :sb_tanto_name_cont, class: " form-control form-control-sm" %>
+    </div>
+    <div class="form-group col">
+      <%= f.label :channel_id_eq, "媒体", class: "col-form-label col-form-label-sm" %>
+      <div>
+        <%= f.collection_select :channel_id_eq, Channel.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select" } %>
+      </div>
+    </div>
+    <div class="form-group col">
+      <%= f.label :sb_agent_name_cont, "代理店", class: "col-form-label col-form-label-sm" %>
+      <%= f.search_field :sb_agent_name_cont, class: " form-control form-control-sm" %>
     </div>
   </div>
   <div class="row">
@@ -30,7 +40,7 @@
     <div class="form-group col">
       <%= f.label :prefecture_code_eq, "都道府県", class: "col-form-label col-form-label-sm" %>
       <div>
-        <%= f.collection_select :prefecture_code_eq, Prefecture.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "selectpicker" } %>
+        <%= f.collection_select :prefecture_code_eq, Prefecture.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select" } %>
       </div>
     </div>
     <div class="form-group col">
@@ -39,35 +49,22 @@
     </div>
   </div>
   <div class="row">
-    <div class="form-group col">
+    <div class="form-group col-sm-3">
       <%= f.label :sb_client_users_name_cont, "担当者名", class: "col-form-label col-form-label-sm" %>
       <%= f.search_field :sb_client_users_name_cont, class: " form-control form-control-sm" %>
     </div>
-    <div class="form-group col">
+    <div class="form-group col-sm-3">
       <%= f.label :sb_client_users_contact_tel_eq, "希望連絡先", class: "col-form-label col-form-label-sm" %>
       <%= f.search_field :sb_client_users_contact_tel_eq, class: " form-control form-control-sm" %>
     </div>
-    <div class="form-group col">
-      <%= f.label :channel_id_eq, "媒体", class: "col-form-label col-form-label-sm" %>
-      <div>
-        <%= f.collection_select :channel_id_eq, Channel.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "selectpicker" } %>
-      </div>
-    </div>
-    <div class="form-group col">
-      <%= f.label :sb_agent_name_cont, "代理店", class: "col-form-label col-form-label-sm" %>
-      <%= f.search_field :sb_agent_name_cont, class: " form-control form-control-sm" %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="form-group col">
+    <div class="form-group col-sm-6">
       <%= f.label :created_at_gteq, "登録日", class: "col-form-label col-form-label-sm" %>
       <div>
-          <%= f.date_field :created_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
+          <%= f.date_field :created_at_gteq, include_blank: true, class: "form-control", style: "width:200px;display:inline-block" %>
           ～
-        <%= f.date_field :created_at_lteq_end_of_day, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
+        <%= f.date_field :created_at_lteq_end_of_day, include_blank: true, class: "form-control", style: "width:200px;display:inline-block" %>
       </div>
     </div>
-  </div>
   </div>
   <div class="form-group row text-center">
     <div class="col">
@@ -94,7 +91,7 @@
           <th><%= sort_link(@q, :sb_agent_id, "代理店") %></th>
         </tr>
       </thead>
-      </tbody>
+      <tbody>
         <% @client.each do |client| %>
           <tr>
             <td><%= client.status&.name %></td>
