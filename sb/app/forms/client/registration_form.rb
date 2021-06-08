@@ -12,7 +12,7 @@ module Client
     attribute :capital, :integer
     attribute :annual_sales, :integer
 
-    attr_accessor :users, :create_user
+    attr_accessor :users, :current_user, :sb_client
 
     validates :prefecture_name, presence: true, inclusion: { in: Prefecture.all.map(&:name), message: :not_in_master }
     validates :industry_name, presence: true, inclusion: { in: Industry.all.map(&:name), message: :not_in_master }
@@ -22,8 +22,10 @@ module Client
       sb_client = to_sb_client
       add_client_users(sb_client)
       sb_client.status = Status::ClientStatus::COMPANY_NOT_DETECTED
-      sb_client.sb_tanto = @create_user
+      sb_client.sb_tanto = @current_user
       sb_client.save!
+      sb_client.reload
+      @sb_client = sb_client
     end
 
     def sb_client_validate?
@@ -44,8 +46,8 @@ module Client
 
     def to_sb_client
       sb_client = SbClient.new
-      sb_client.created_user = @create_user
-      sb_client.updated_user = @create_user
+      sb_client.created_user = @current_user
+      sb_client.updated_user = @current_user
       sb_client.name = name
       sb_client.daihyo_name = daihyo_name
       sb_client.zip_code = zip_code
@@ -118,6 +120,11 @@ module Client
     def add_user(hash)
       @users = [] unless @users
       @users << hash
+    end
+
+    ## 保存しないので常にtrue(rspec用)
+    def save!
+      return true
     end
   end
 end
