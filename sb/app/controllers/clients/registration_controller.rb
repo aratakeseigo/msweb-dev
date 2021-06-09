@@ -3,10 +3,17 @@ class Clients::RegistrationController < ApplicationController
   end
 
   def upload
-    @form = Client::RegistrationForm.initFromFile(upload_params[:input_file])
-    @form.current_user = current_internal_user
-    if @form.invalid?
-      render :index and return
+    begin
+      @form = Client::RegistrationForm.initFromFile(upload_params[:input_file].tempfile)
+
+      @form.current_user = current_internal_user
+      if @form.invalid?
+        render :index and return
+      end
+    rescue ArgumentError => e
+      @form = Client::RegistrationForm.new
+      @form.errors.add(:base, e.message)
+      render :index
     end
   end
 
@@ -17,7 +24,7 @@ class Clients::RegistrationController < ApplicationController
     @form = Client::RegistrationForm.new(hash)
     @form.current_user = current_internal_user
     @form.save_client
-    flash[:notice] = "登録が完了しました。"
+    flash[:success] = "登録が完了しました。"
     redirect_to clients_list_path
   end
 

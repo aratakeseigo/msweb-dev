@@ -3,7 +3,7 @@
 
 <div class="mx-auto mt-5" style="width: 500px;">
     <div class="mb-3">
-        <% if @form&.invalid? %>
+        <% if @form&.errors.present? %>
             <div class="alert alert-danger" role="alert">
                 <strong>エラー内容を修正して再度アップロードしてください。</strong>
                 <ul>

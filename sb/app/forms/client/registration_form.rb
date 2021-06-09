@@ -16,6 +16,7 @@ module Client
 
     validates :prefecture_name, presence: true, inclusion: { in: Prefecture.all.map(&:name), message: :not_in_master }
     validates :industry_name, presence: true, inclusion: { in: Industry.all.map(&:name), message: :not_in_master }
+    validates :users, presence: true
     validate :sb_client_validate?
 
     def save_client
@@ -35,7 +36,7 @@ module Client
           errors.add(attr, error)
         end
       end
-      add_client_users(sb_client).each.with_index(1) do |user, num|
+      add_client_users(sb_client)&.each&.with_index(1) do |user, num|
         unless user.valid?
           user.errors.each do |attr, error|
             errors.add(attr, error + "[#{num}行目]")
@@ -56,14 +57,16 @@ module Client
       sb_client.tel = tel
       sb_client.industry = Industry.find_by_name industry_name if industry_name.present?
       sb_client.industry_optional = industry_optional
-      sb_client.established_in = sprintf("%04d%02d", established_in.year, established_in.mon)
-      sb_client.capital = capital * 1000 #円で格納
-      sb_client.annual_sales = annual_sales * 1000 #円で格納
+      sb_client.established_in = sprintf("%04d%02d", established_in.year, established_in.mon) if established_in.present?
+
+      #円で格納( *1000する )
+      sb_client.capital = capital * 1000 if capital.present?
+      sb_client.annual_sales = annual_sales * 1000 if annual_sales.present?
       sb_client
     end
 
     def add_client_users(sb_client)
-      users.map do |user_hash|
+      users&.map do |user_hash|
         user = sb_client.sb_client_users.build
         user.name = user_hash["user_name"]
         user.name_kana = user_hash["user_name_kana"]
@@ -98,13 +101,17 @@ module Client
         "希望連絡先" => "contact_tel",
       }
       column_mapping = company_column_mapping.merge user_column_mapping
+      client_hash_list = {}
       client_hash_list = Utils::ExcelUtils.excel_to_h(file,
                                                       worksheet_index: 0,
                                                       header_row_index: 1,
                                                       list_start_row_index: 2,
+                                                      list_end_row_index: 6, #５人まで
                                                       start_col_index: 0,
                                                       end_col_index: 30,
                                                       header_mapping: column_mapping)
+
+      return form = Client::RegistrationForm.new if client_hash_list.empty?
 
       form = Client::RegistrationForm.new(
         client_hash_list.first.select { |key| company_column_mapping.values.include? key }
