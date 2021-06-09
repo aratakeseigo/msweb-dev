@@ -101,7 +101,6 @@ module Client
         "希望連絡先" => "contact_tel",
       }
       column_mapping = company_column_mapping.merge user_column_mapping
-      client_hash_list = {}
       client_hash_list = Utils::ExcelUtils.excel_to_h(file,
                                                       worksheet_index: 0,
                                                       header_row_index: 1,
