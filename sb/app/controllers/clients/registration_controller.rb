@@ -23,6 +23,9 @@ class Clients::RegistrationController < ApplicationController
     hash["users"] = users_hash
     @form = Client::RegistrationForm.new(hash)
     @form.current_user = current_internal_user
+    if @form.invalid?
+      render :index and return
+    end
     @form.save_client
     flash[:success] = "登録が完了しました。"
     redirect_to clients_list_path
