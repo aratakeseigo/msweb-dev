@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :sb_client, class: SbClient do
     transient do
       entity { build :entity }
-      sb_agent {build :sb_agent}
+      sb_agent { create :sb_agent }
       internal_user { build :internal_user, name: "SB担当者１太郎", email: "sb_client_1@example.com" }
       internal_user2 { build :internal_user, name: "SB担当者２次郎", email: "sb_client_2@example.com" }
     end
@@ -36,7 +36,7 @@ FactoryBot.define do
       tel { "11111111111" }
       created_at { "2021/06/02 20:55:57" }
       channel_id { 2 }
-      sb_agent { sb_agent }
+      sb_agent_id { sb_agent.id }
       created_user { internal_user2 }
       updated_user { internal_user2 }
       after(:build) do |sb_client_2|
