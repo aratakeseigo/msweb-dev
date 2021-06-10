@@ -23,4 +23,5 @@ class SbClient < ApplicationRecord
   validates :established_in, allow_blank: true, yyyymm: true
   validates :capital, allow_blank: true, numericality: { only_integer: true }
   validates :annual_sales, allow_blank: true, numericality: { only_integer: true }
+  validates :taxagency_corporate_number, allow_blank: true, taxagency_corporate_number: true
 end

@@ -116,6 +116,7 @@ RSpec.describe Client::RegistrationForm, type: :model do
           expect(new_sb_client.prefecture).to eq Prefecture.find_by_name form.prefecture_name
           expect(new_sb_client.address).to eq form.address
           expect(new_sb_client.tel).to eq form.tel
+          expect(new_sb_client.taxagency_corporate_number).to eq form.taxagency_corporate_number
           expect(new_sb_client.industry).to eq Industry.find_by_name form.industry_name
           expect(new_sb_client.industry_optional).to eq form.industry_optional
           expect(new_sb_client.established_in).to eq sprintf("%04d%02d", form.established_in.year, form.established_in.mon)

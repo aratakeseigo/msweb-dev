@@ -20,6 +20,7 @@ ja:
         established_in: "設立"
         capital: "資本金"
         annual_sales: "年商（千円）"
+        taxagency_corporate_number: "法人番号"
       sb_client_user:
         name: "担当者名"
         name_kana: "担当者名カナ"

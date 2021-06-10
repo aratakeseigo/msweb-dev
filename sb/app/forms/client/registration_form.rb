@@ -11,6 +11,7 @@ module Client
     attribute :established_in, :date
     attribute :capital, :integer
     attribute :annual_sales, :integer
+    attribute :taxagency_corporate_number, :string
 
     attr_accessor :users, :current_user, :sb_client
 
@@ -55,6 +56,7 @@ module Client
       sb_client.prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
       sb_client.address = address
       sb_client.tel = tel
+      sb_client.taxagency_corporate_number = taxagency_corporate_number
       sb_client.industry = Industry.find_by_name industry_name if industry_name.present?
       sb_client.industry_optional = industry_optional
       sb_client.established_in = sprintf("%04d%02d", established_in.year, established_in.mon) if established_in.present?
@@ -91,6 +93,7 @@ module Client
         "設立" => "established_in",
         "資本金（千円）" => "capital",
         "年商（千円）" => "annual_sales",
+        "法人番号" => "taxagency_corporate_number",
       }
       user_column_mapping = {
         "担当者名" => "user_name",

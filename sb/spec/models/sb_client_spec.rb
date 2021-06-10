@@ -31,7 +31,7 @@ RSpec.describe SbClient, type: :model do
         expect(sb_client).to be_invalid
       end
     end
-    context "郵便番号が10or11桁でない場合" do
+    context "電話番号が10or11桁でない場合" do
       let(:sb_client_12) { build :sb_client, tel: "123456789012" }
       it "無効である" do
         expect(sb_client_12).to be_invalid
@@ -47,6 +47,29 @@ RSpec.describe SbClient, type: :model do
       let(:sb_client_9) { build :sb_client, tel: "123456789" }
       it "無効である" do
         expect(sb_client_9).to be_invalid
+      end
+    end
+  end
+
+  context "バリデーション(taxagency_corporate_number_validator)" do
+    context "法人番号に数字以外が混ざっている場合" do
+      let(:sb_client) { build :sb_client, taxagency_corporate_number: "1234S6789o123" }
+      it "無効である" do
+        expect(sb_client).to be_invalid
+      end
+    end
+    context "法人番号が13桁でない場合" do
+      let(:sb_client_14) { build :sb_client, taxagency_corporate_number: "12345678901234" }
+      it "無効である" do
+        expect(sb_client_14).to be_invalid
+      end
+      let(:sb_client_13) { build :sb_client, taxagency_corporate_number: "1234567890123" }
+      it "有効である" do
+        expect(sb_client_13).to be_valid
+      end
+      let(:sb_client_12) { build :sb_client, taxagency_corporate_number: "123456789012" }
+      it "無効である" do
+        expect(sb_client_12).to be_invalid
       end
     end
   end
