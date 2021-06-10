@@ -85,7 +85,7 @@
           </tr>
         </thead>
         </tbody>
-          <% @client.each do |client| %>
+          <% @clients.each do |client| %>
             <tr>
               <td><%= client.status.name %></td>
               <td><%= client.area.name %></td>
@@ -103,7 +103,7 @@
           <% end %>
         </tbody>
       </table>
-      <%= paginate @client %>
+      <%= paginate @clients %>
     </div>
   </div>
 
