@@ -2,7 +2,6 @@ FactoryBot.define do
 
   # sb_clientモデルのテストデータsb_client_alarmboxを定義
   factory :sb_client do
-    id { 1 }
     # status_id { 1 }
     # area_id { 1 }
     #sb_tanto_id { 1 }

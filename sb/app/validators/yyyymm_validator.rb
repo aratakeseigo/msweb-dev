@@ -6,7 +6,10 @@ class YyyymmValidator < ActiveModel::EachValidator
     unless value.length == 6
       record.errors.add(attribute, :wrong_length, count: 7)
     end
-    unless value.last(2).to_i <= 12
+    unless (1..12).include? value.last(2).to_i
+      record.errors.add(attribute, :month_in_1_12)
+    end
+    unless value.first(4).to_i > 1900
       record.errors.add(attribute, :month_in_1_12)
     end
   end

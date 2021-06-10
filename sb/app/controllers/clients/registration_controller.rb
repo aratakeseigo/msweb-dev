@@ -3,10 +3,17 @@ class Clients::RegistrationController < ApplicationController
   end
 
   def upload
-    @form = Client::RegistrationForm.initFromFile(upload_params[:input_file])
-    @form.create_user = current_internal_user
-    if @form.invalid?
-      render :index and return
+    begin
+      @form = Client::RegistrationForm.initFromFile(upload_params[:input_file].tempfile)
+
+      @form.current_user = current_internal_user
+      if @form.invalid?
+        render :index and return
+      end
+    rescue ArgumentError => e
+      @form = Client::RegistrationForm.new
+      @form.errors.add(:base, e.message)
+      render :index
     end
   end
 
@@ -15,9 +22,12 @@ class Clients::RegistrationController < ApplicationController
     users_hash = JSON.parse(create_params[:registration_form_users])
     hash["users"] = users_hash
     @form = Client::RegistrationForm.new(hash)
-    @form.create_user = current_internal_user
+    @form.current_user = current_internal_user
+    if @form.invalid?
+      render :index and return
+    end
     @form.save_client
-    flash[:notice] = "登録が完了しました。"
+    flash[:success] = "登録が完了しました。"
     redirect_to clients_list_path
   end
 
