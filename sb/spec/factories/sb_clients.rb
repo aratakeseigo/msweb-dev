@@ -7,6 +7,12 @@ FactoryBot.define do
       internal_user2 { build :internal_user, name: "SB担当者２次郎", email: "sb_client_2@example.com" }
     end
     entity_id { entity.id }
+    name { "アラームボックス" }
+    daihyo_name { "テスト太郎" }
+    prefecture_code { 13 }
+    tel { "00000000000" }
+    created_user { internal_user }
+    updated_user { internal_user }
 
     trait :has_no_agent do
       status_id { 1 }
@@ -40,7 +46,6 @@ FactoryBot.define do
       created_user { internal_user2 }
       updated_user { internal_user2 }
       after(:build) do |sb_client_2|
-        puts sb_client_2
         sb_client_2.sb_client_users = []
         sb_client_2.sb_client_users << build(:sb_client_user, name: "横浜　三郎", contact_tel: "44444444444")
       end

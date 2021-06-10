@@ -12,18 +12,21 @@ module Client
     attribute :capital, :integer
     attribute :annual_sales, :integer
 
-    attr_accessor :users, :create_user
+    attr_accessor :users, :current_user, :sb_client
 
     validates :prefecture_name, presence: true, inclusion: { in: Prefecture.all.map(&:name), message: :not_in_master }
     validates :industry_name, presence: true, inclusion: { in: Industry.all.map(&:name), message: :not_in_master }
+    validates :users, presence: true
     validate :sb_client_validate?
 
     def save_client
       sb_client = to_sb_client
       add_client_users(sb_client)
       sb_client.status = Status::ClientStatus::COMPANY_NOT_DETECTED
-      sb_client.sb_tanto = @create_user
+      sb_client.sb_tanto = @current_user
       sb_client.save!
+      sb_client.reload
+      @sb_client = sb_client
     end
 
     def sb_client_validate?
@@ -33,7 +36,7 @@ module Client
           errors.add(attr, error)
         end
       end
-      add_client_users(sb_client).each.with_index(1) do |user, num|
+      add_client_users(sb_client)&.each&.with_index(1) do |user, num|
         unless user.valid?
           user.errors.each do |attr, error|
             errors.add(attr, error + "[#{num}行目]")
@@ -44,8 +47,8 @@ module Client
 
     def to_sb_client
       sb_client = SbClient.new
-      sb_client.created_user = @create_user
-      sb_client.updated_user = @create_user
+      sb_client.created_user = @current_user
+      sb_client.updated_user = @current_user
       sb_client.name = name
       sb_client.daihyo_name = daihyo_name
       sb_client.zip_code = zip_code
@@ -54,14 +57,16 @@ module Client
       sb_client.tel = tel
       sb_client.industry = Industry.find_by_name industry_name if industry_name.present?
       sb_client.industry_optional = industry_optional
-      sb_client.established_in = sprintf("%04d%02d", established_in.year, established_in.mon)
-      sb_client.capital = capital * 1000 #円で格納
-      sb_client.annual_sales = annual_sales * 1000 #円で格納
+      sb_client.established_in = sprintf("%04d%02d", established_in.year, established_in.mon) if established_in.present?
+
+      #円で格納( *1000する )
+      sb_client.capital = capital * 1000 if capital.present?
+      sb_client.annual_sales = annual_sales * 1000 if annual_sales.present?
       sb_client
     end
 
     def add_client_users(sb_client)
-      users.map do |user_hash|
+      users&.map do |user_hash|
         user = sb_client.sb_client_users.build
         user.name = user_hash["user_name"]
         user.name_kana = user_hash["user_name_kana"]
@@ -100,9 +105,12 @@ module Client
                                                       worksheet_index: 0,
                                                       header_row_index: 1,
                                                       list_start_row_index: 2,
+                                                      list_end_row_index: 6, #５人まで
                                                       start_col_index: 0,
                                                       end_col_index: 30,
                                                       header_mapping: column_mapping)
+
+      return form = Client::RegistrationForm.new if client_hash_list.empty?
 
       form = Client::RegistrationForm.new(
         client_hash_list.first.select { |key| company_column_mapping.values.include? key }
@@ -118,6 +126,11 @@ module Client
     def add_user(hash)
       @users = [] unless @users
       @users << hash
+    end
+
+    ## 保存しないので常にtrue(rspec用)
+    def save!
+      return true
     end
   end
 end
