@@ -92,7 +92,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @client.each do |client| %>
+        <% @clients.each do |client| %>
           <tr>
             <td><%= client.status&.name %></td>
             <td><%= client.area&.name %></td>
@@ -107,27 +107,9 @@
             <td><%= client.channel&.name %></td>
             <td><%= client.sb_agent_name %></td>
           </tr>
-        </thead>
-        </tbody>
-          <% @clients.each do |client| %>
-            <tr>
-              <td><%= client.status.name %></td>
-              <td><%= client.area.name %></td>
-              <td><%= client.sb_tanto.name %></td>
-              <td><%= client.name %></td>
-              <td><%= client.daihyo_name %></td>
-              <td><%= client.prefecture.name %></td>
-              <td><%= client.tel %></td>
-              <td><%= client.sb_client_users.first.name %></td>
-              <td><%= client.sb_client_users.first.contact_tel %></td>
-              <td><%= client.created_at %></td>
-              <td><%= client.channel.name %></td>
-              <td><%= client.sb_agent_name %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <%= paginate @clients %>
-    </div>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @clients %>
   </div>
 </div>

@@ -4,6 +4,7 @@ RSpec.describe ClientsController do
   let(:internal_user) { create :internal_user }
   let(:client1) { create :sb_client, :has_no_agent }
   let(:client2) { create :sb_client, :has_agent }
+  let(:escape_client) { create :sb_client, :escape_sequence }
   # データをdecorate
   subject { client1.decorate }
 
@@ -12,6 +13,7 @@ RSpec.describe ClientsController do
       sign_in internal_user
       client1
       client2
+      escape_client
     end
 
     context "初期画面" do
@@ -100,7 +102,7 @@ RSpec.describe ClientsController do
 
       it "登録日(from)で検索できること" do
         get :list, params: {q: {created_at_gteq: "2021-06-02"}}
-        expect(assigns(:clients).size).to eq 1
+        expect(assigns(:clients).size).to eq 2
         expect(assigns(:clients).first.created_at).to eq "2021/06/02"
       end
 
@@ -108,6 +110,28 @@ RSpec.describe ClientsController do
         get :list, params: {q: {created_at_lteq_end_of_day: "2021-06-01"}}
         expect(assigns(:clients).size).to eq 1
         expect(assigns(:clients).first.created_at).to eq "2021/06/01"
+      end
+
+      it "登録日(from)、登録日(to)で検索できること" do
+        get :list, params: {q: {created_at_gteq: "2021-06-02", created_at_lteq_end_of_day: "2021-06-03"}}
+        expect(assigns(:clients).size).to eq 2
+      end
+
+      it "全項目に入力し検索できること" do
+        get :list, params: {q: {status_id_eq: "2", area_id_eq: "2", sb_tanto_name_cont: "担当者２", name_cont: "沖縄", daihyo_name_cont: "風平",prefecture_code_eq: "47",tel_eq: "11111111111", sb_client_users_name_cont: "浜", sb_client_users_contact_tel_eq: "44444444444", channel_id_eq: "2", sb_agent_name_cont: "スト代理",created_at_gteq: "2021-06-02", created_at_lteq_end_of_day: "2021-06-02"}}
+        expect(assigns(:clients).size).to eq 1
+        expect(assigns(:clients).first.name).to eq "東沖縄電力株式会社"
+      end
+
+      it "クライアント名と代表者名がそれぞれ別のレコードに登録されている値を設定した場合、検索できないこと" do
+        # get :list, params: {q: {name: "アラームボックス", daihyo_name_cont: "東風平　太郎"}}
+        get :list, params: {q: {status_id_eq: "", area_id_eq: "", sb_tanto_name_cont: "", name_cont: "アラームボックス", daihyo_name_cont: "東風平　太郎",prefecture_code_eq: "",tel_eq: "", sb_client_users_name_cont: "", sb_client_users_contact_tel_eq: "", channel_id_eq: "", sb_agent_name_cont: "",created_at_gteq: "", created_at_lteq_end_of_day: ""}}
+        expect(assigns(:clients).size).to eq 0
+      end
+
+      it "特殊文字で検索できること" do
+        get :list, params: {q: {name_cont: "'%"}}
+        expect(assigns(:clients).first.name).to eq "アラーム'%ボックス"
       end
     end
   end
