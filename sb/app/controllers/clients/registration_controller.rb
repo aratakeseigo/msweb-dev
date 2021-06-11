@@ -11,6 +11,7 @@ class Clients::RegistrationController < ApplicationController
         render :index and return
       end
     rescue ArgumentError => e
+      output_error(e)
       @form = Client::RegistrationForm.new
       @form.errors.add(:base, e.message)
       render :index
@@ -22,6 +23,7 @@ class Clients::RegistrationController < ApplicationController
     users_hash = JSON.parse(create_params[:registration_form_users])
     hash["users"] = users_hash
     @form = Client::RegistrationForm.new(hash)
+    @form.assign_entity
     @form.current_user = current_internal_user
     if @form.invalid?
       render :index and return
