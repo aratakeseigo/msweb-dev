@@ -15,7 +15,7 @@ class SbClient < ApplicationRecord
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
 
-  belongs_to :approval, class_name: "SbApproval::Client"
+  belongs_to :approval, optional: true, class_name: "SbApproval::Client"
 
   validates :name, presence: true, length: { maximum: 255 }
   validates :daihyo_name, presence: true, length: { maximum: 255 }
