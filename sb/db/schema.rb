@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_121406) do
+ActiveRecord::Schema.define(version: 2021_06_11_030419) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -1944,6 +1944,22 @@ ActiveRecord::Schema.define(version: 2021_06_04_121406) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sb_approvals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "status_id", default: 0, comment: "結果id(申請中:0 差し戻し:9 承認:1)"
+    t.integer "applied_by", comment: "申請者"
+    t.datetime "applied_at", comment: "申請日時"
+    t.string "apply_comment", comment: "申請時コメント"
+    t.integer "approved_by", comment: "決裁者"
+    t.datetime "approved_at", comment: "申請日時"
+    t.string "approve_comment", comment: "決裁時コメント"
+    t.integer "created_by", null: false, comment: "作成者"
+    t.integer "updated_by", null: false, comment: "更新者"
+    t.string "type", comment: "決裁対象Model(STI)"
+    t.integer "relation_id", comment: "決裁対象ID(STI)"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアントユーザー", force: :cascade do |t|
     t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.string "name", null: false, comment: "担当者名"
@@ -1982,6 +1998,7 @@ ActiveRecord::Schema.define(version: 2021_06_04_121406) do
     t.bigint "capital", comment: "資本金"
     t.integer "created_by", null: false, comment: "作成者"
     t.integer "updated_by", null: false, comment: "更新者"
+    t.integer "approval_id", comment: "決裁ID"
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
   end
 

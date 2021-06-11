@@ -5,5 +5,6 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-
-InternalUser.create!(email: "test@example.com", password: "password", login_id: "test", name: "テスト　太郎")
+InternalUser.destroy_all
+InternalUser.create!(email: "test1@example.com", password: "password", login_id: "test", name: "テスト　太郎")
+InternalUser.create!(email: "test2@example.com", password: "password", login_id: "test2", name: "テスト　承認")
