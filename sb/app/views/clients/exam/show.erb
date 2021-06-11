@@ -1,0 +1,4 @@
+<% provide :title, "クライアント情報登録" %>
+<%= form_with url: clients_exam_save_path do |f| %>
+  <%= render :partial => "input_sb_client", :locals => { f: f } %>
+<% end %>

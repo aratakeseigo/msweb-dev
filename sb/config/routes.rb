@@ -20,5 +20,9 @@ Rails.application.routes.draw do
       post "/upload", action: "upload"
       post "/create", action: "create"
     end
+    namespace :exam do
+      get "/:id", action: "show", as: "show"
+      post "/save", action: "save", as: "save"
+    end
   end
 end
