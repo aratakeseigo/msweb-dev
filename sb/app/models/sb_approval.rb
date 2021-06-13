@@ -7,7 +7,7 @@ class SbApproval < ApplicationRecord
   belongs_to :applied_user, optional: true, class_name: "InternalUser", foreign_key: "applied_by"
   belongs_to :approved_user, optional: true, class_name: "InternalUser", foreign_key: "approved_by"
 
-  def has_approvable_permission?(user)
+  def has_approvable_permission?(_user)
     raise StandardError.new("承認時の権限チェックをサブクラスで実装してください。特にない場合はtrueを返却してください")
   end
 
@@ -85,10 +85,10 @@ end
 class SbApproval::Client < SbApproval
   belongs_to :sb_client, class_name: "SbClient", foreign_key: "relation_id"
 
-  def has_approvable_permission?(user)
+  def has_approvable_permission?(_user)
+    # 特にチェックなし
     # 審査対象を参照したい場合はrelationでたどれます
     # puts sb_client.name
-    # 特にチェックなし
     true
   end
 end
