@@ -21,8 +21,9 @@ Rails.application.routes.draw do
       post "/create", action: "create"
     end
     namespace :exam do
-      get "/:id", action: "show", as: "show"
-      post "/save", action: "save", as: "save"
+      get "/:id", action: "edit", as: "edit"
+      post "/:id/update", action: "update", as: "update"
+      #patch "/:id/update", action: "update", as: "update"
     end
   end
 end

@@ -1,0 +1,29 @@
+<% provide :title, "クライアント情報登録" %>
+<%= @test %>
+<% if @form&.errors.present? %>
+  <div class="alert alert-danger" role="alert">
+    <strong>エラー内容を修正してください。</strong>
+    <ul>
+      <% @form.errors.full_messages.each do |message| %>
+        <li><%= message %>
+      <% end %>
+    <ul>
+  </div>
+<% end %>
+
+<%= form_with(url: clients_exam_update_path) do |f| %>
+  <%= render :partial => "input_sb_client", :locals => { f: f } %>
+  
+  <!-- ファイルアップロード -->
+  <div class="row">
+    <div class="form-group col">
+      <%= f.label :application_form, "申込書", class: "col-form-label col-form-label-sm" %>
+      <%= f.file_field :application_form %><br>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col">
+      <%= f.submit %>
+    </div>
+  </div>
+<% end %>
