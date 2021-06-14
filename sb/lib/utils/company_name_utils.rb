@@ -109,8 +109,6 @@ module Utils
       remove_marks_for_search(no_houjin_kaku)
     end
 
-    private
-
     #
     # 法人格除去
     #

@@ -6,7 +6,7 @@ RSpec.describe Entity, type: :model do
       let!(:entity) { Entity.new }
       subject { -> { entity.assign_house_company_code } }
       it "社内企業コードが生成される" do
-        expect(entity.assign_house_company_code).to match /KG[0-9]{9}/
+        expect(entity.assign_house_company_code).to match(/KG[0-9]{9}/)
       end
       it "シーケンステーブルがインクリメントされる" do
         is_expected.to change { SeqHouseCompanyCode.count }.by(1)

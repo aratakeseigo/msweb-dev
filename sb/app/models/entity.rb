@@ -64,7 +64,7 @@ class Entity < ActiveRecord::Base
 
   # 全パラメータで検索
   def self.select_by_company_name_and_daihyo_name_company_no_and_address(company_name: nil, daihyo_name: nil, taxagency_corporate_number: nil, address: nil)
-    entities = Entity.joins(:entity_profile)
+    Entity.joins(:entity_profile)
       .select_adress_choumei(address)
       .select_company_name_short(company_name)
       .where(corporation_number: taxagency_corporate_number)
@@ -74,7 +74,7 @@ class Entity < ActiveRecord::Base
   # 法人番号と住所の町名までで検索
   def self.select_by_company_no_and_address(taxagency_corporate_number: nil, address: nil)
     return {} if taxagency_corporate_number.nil? or address.nil?
-    entities = Entity.joins(:entity_profile)
+    Entity.joins(:entity_profile)
       .where(corporation_number: taxagency_corporate_number)
       .select_adress_choumei(address)
   end
@@ -82,7 +82,7 @@ class Entity < ActiveRecord::Base
   # 会社名と代表者で検索
   def self.select_by_company_name_and_daihyo_name(company_name: nil, daihyo_name: nil)
     return {} if company_name.nil? or daihyo_name.nil?
-    entities = Entity.joins(:entity_profile)
+    Entity.joins(:entity_profile)
       .select_company_name_short(company_name)
       .where(entity_profiles: { daihyo_name: daihyo_name })
   end

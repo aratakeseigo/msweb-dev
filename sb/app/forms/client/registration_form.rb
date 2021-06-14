@@ -156,7 +156,7 @@ module Client
       @entity = Entity.assign_entity(company_name: company_name, daihyo_name: daihyo_name,
                                      taxagency_corporate_number: taxagency_corporate_number, address: address)
       if @entity.present?
-        Status::ClientStatus::READY_FOR_EXAM
+        @status = Status::ClientStatus::READY_FOR_EXAM
         return
       end
       return if Entity.recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
