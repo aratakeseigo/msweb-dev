@@ -2,6 +2,20 @@ require "rails_helper"
 
 RSpec.describe Client::RegistrationForm, type: :model do
   describe "バリデーション" do
+    context "代表者名にスペースがない場合" do
+      let(:client_registration_form) { create :client_registration_form, daihyo_name: "鬼木達" }
+      it "無効である" do
+        expect(client_registration_form).to be_invalid
+      end
+    end
+    context "代表者名に半角スペースがある" do
+      let(:client_registration_form) { create :client_registration_form, daihyo_name: "鬼木 達" }
+      it "Formで変換され有効になる" do
+        expect(client_registration_form).to be_valid
+        expect("鬼木　達").to eq client_registration_form.to_sb_client.daihyo_name
+      end
+    end
+
     context "都道府県名・業種１がマスタにありSBクライアント・SBクライアントユーザーのバリデーションが有効な場合" do
       let(:client_registration_form) { create :client_registration_form }
       it "有効である" do
@@ -24,7 +38,7 @@ RSpec.describe Client::RegistrationForm, type: :model do
     end
 
     context "SBクライアントのバリデーションが無効な場合" do
-      let(:client_registration_form) { create :client_registration_form, name: "" }
+      let(:client_registration_form) { create :client_registration_form, company_name: "" }
       it "無効である" do
         expect(client_registration_form).to be_invalid
       end
@@ -110,7 +124,7 @@ RSpec.describe Client::RegistrationForm, type: :model do
           is_expected.to change { SbClient.count }.by(1)
           new_sb_client = SbClient.find(form.sb_client.id)
 
-          expect(new_sb_client.name).to eq form.name
+          expect(new_sb_client.name).to eq form.company_name
           expect(new_sb_client.daihyo_name).to eq form.daihyo_name
           expect(new_sb_client.zip_code).to eq form.zip_code
           expect(new_sb_client.prefecture).to eq Prefecture.find_by_name form.prefecture_name

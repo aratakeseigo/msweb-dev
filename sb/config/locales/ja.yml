@@ -181,6 +181,7 @@ ja:
       only_number: は数字のみで入力してください
       length_10_or_11: は10桁または11桁で入力してください
       inclusion_prefecture_code: は1-47の数値で入力してください
+      user_name_split_fullspace: の姓名は全角スペースで区切ってください
     template:
       body: 次の項目を確認してください
       header:

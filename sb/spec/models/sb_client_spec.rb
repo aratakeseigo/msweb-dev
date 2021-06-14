@@ -137,12 +137,19 @@ RSpec.describe SbClient, type: :model do
       end
     end
 
-    context "代表者が256文字以上の場合" do
+    context "代表者にスペースが含まれない場合" do
       let(:sb_client_ok) { build :sb_client, daihyo_name: "あ" * 255 }
+      it "無効である" do
+        expect(sb_client_ok).to be_invalid
+      end
+    end
+
+    context "代表者が256文字以上の場合" do
+      let(:sb_client_ok) { build :sb_client, daihyo_name: "あ" * 127 + "　" + "あ" * 127 }
       it "有効である" do
         expect(sb_client_ok).to be_valid
       end
-      let(:sb_client_ng) { build :sb_client, daihyo_name: "あ" * 256 }
+      let(:sb_client_ng) { build :sb_client, daihyo_name: "あ" * 127 + "　" + "あ" * 128 }
       it "無効である" do
         expect(sb_client_ng).to be_invalid
       end

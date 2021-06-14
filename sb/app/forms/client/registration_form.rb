@@ -34,7 +34,6 @@ module Client
     end
 
     def create_entity
-      puts "aaaa"
       entity.assign_house_company_code
       entity.corporation_number = taxagency_corporate_number
       entity.established = sprintf("%04d-%02d", established_in.year, established_in.mon) if established_in.present?
@@ -42,13 +41,12 @@ module Client
 
       profile = entity.build_entity_profile
       profile.corporation_name = company_name
-      profile.daihyo_name = daihyo_name
+      profile.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name
       profile.zip_code = zip_code
       profile.prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
       profile.address = address
       profile.daihyo_tel = tel
       entity.save!
-      puts "bbbb"
     end
 
     def sb_client_validate?
@@ -72,7 +70,7 @@ module Client
       sb_client.created_user = @current_user
       sb_client.updated_user = @current_user
       sb_client.name = company_name
-      sb_client.daihyo_name = daihyo_name
+      sb_client.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name if daihyo_name.present?
       sb_client.zip_code = zip_code
       sb_client.prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
       sb_client.address = address

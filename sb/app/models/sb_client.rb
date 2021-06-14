@@ -15,7 +15,7 @@ class SbClient < ApplicationRecord
   belongs_to :sb_agent, optional: true
 
   validates :name, presence: true, length: { maximum: 255 }
-  validates :daihyo_name, presence: true, length: { maximum: 255 }
+  validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
   validates :zip_code, allow_blank: true, zip_code: true
   validates :address, allow_blank: true, length: { maximum: 255 }
   validates :tel, allow_blank: true, tel: true

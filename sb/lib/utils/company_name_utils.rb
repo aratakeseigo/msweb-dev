@@ -103,6 +103,7 @@ module Utils
     #   全角変換、法人格除去、全文検索でNGな記号除去
     #
     def self.to_short_name(corporation_name)
+      return nil if corporation_name.nil?
       zenkaku = to_zenkaku_name(corporation_name)
       no_houjin_kaku = remove_houjin_kaku(zenkaku)
       remove_marks_for_search(no_houjin_kaku)

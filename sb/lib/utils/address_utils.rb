@@ -10,6 +10,7 @@ module Utils
     # EntityProfile.all.first(100).each {|b|a=b.address;c=Utils::AddressUtils.substr_before_choumei(a);puts "#{a} => #{c}";""}
     #
     def self.substr_before_choumei(address)
+      return nil if address.nil?
       m = REG_CHOUMEI_AND_AFTER.match(address)
       return address unless m #分割できなければそのまま
       m[1]
