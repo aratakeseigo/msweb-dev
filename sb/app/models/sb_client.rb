@@ -24,4 +24,10 @@ class SbClient < ApplicationRecord
   validates :capital, allow_blank: true, numericality: { only_integer: true }
   validates :annual_sales, allow_blank: true, numericality: { only_integer: true }
   validates :taxagency_corporate_number, allow_blank: true, taxagency_corporate_number: true
+
+  validates :prefecture, allow_blank: true, inclusion: { in: Prefecture.all, message: :inclusion_prefecture_code }
+  validates :industry, allow_blank: true, inclusion: { in: Industry.all, message: :not_in_master }
+  validates :channel, allow_blank: true, inclusion: { in: Channel.all, message: :not_in_master }
+  validates :sb_agent, allow_blank: true, inclusion: { in: Proc.new { SbAgent.all }, message: :not_in_master }
+  validates :area, allow_blank: true, inclusion: { in: Area.all, message: :not_in_master }
 end

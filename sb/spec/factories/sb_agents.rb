@@ -1,6 +1,9 @@
 FactoryBot.define do
   factory :sb_agent do
-    id { 1 }
+    transient do
+      entity { create :entity }
+    end
+    entity_id { entity.id }
     name { "テスト代理店" }
   end
 end
