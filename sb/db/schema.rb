@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_11_030419) do
+ActiveRecord::Schema.define(version: 2021_06_15_063155) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -250,6 +250,27 @@ ActiveRecord::Schema.define(version: 2021_06_11_030419) do
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
     t.index ["corporate_code"], name: "IDX_ACCS_SK"
+  end
+
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "alarm_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報の候補", force: :cascade do |t|
@@ -1960,6 +1981,22 @@ ActiveRecord::Schema.define(version: 2021_06_11_030419) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sb_client_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "sb_client_id", comment: "SBクライアントID"
+    t.integer "examination_result", comment: "審査結果"
+    t.text "reject_reason", comment: "否決理由"
+    t.boolean "anti_social", default: false, comment: "反社(反社の場合true)"
+    t.text "anti_social_memo", comment: "反社メモ"
+    t.string "tsr_score", comment: "TSR点数"
+    t.string "tdb_score", comment: "帝国点数"
+    t.text "communicate_memo", comment: "社内連絡メモ"
+    t.integer "created_by", null: false, comment: "作成者"
+    t.integer "updated_by", null: false, comment: "更新者"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sb_client_id"], name: "index_sb_client_exams_on_sb_client_id"
+  end
+
   create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアントユーザー", force: :cascade do |t|
     t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.string "name", null: false, comment: "担当者名"
@@ -2433,6 +2470,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_030419) do
   add_foreign_key "ab_selectbox_value_lists", "users", name: "ab_selectbox_value_lists_ibfk_1"
   add_foreign_key "accounting_kanpou_items", "accounting_kanpou_roots", name: "FK_AKI_ROOT"
   add_foreign_key "accounting_kanpou_roots", "entities", name: "FK_AKR_ENTITY"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "alarm_candidates", "customer_masters", name: "fk_alarm_candidate_customer_master_id"
   add_foreign_key "alarm_candidates", "judges", name: "fk_alarm_candidate_judge_id"
   add_foreign_key "alarm_prtimes", "crawl_prtimes_check_lists", name: "alarm_prtimes_ibfk_1"
@@ -2511,6 +2549,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_030419) do
   add_foreign_key "relational_alarm_candidates", "customer_masters", name: "fk_rel_alarm_candidate_customer_master_id"
   add_foreign_key "rpa_exam_results", "customers", name: "FK_RPA_RESULT_CUSTOMER"
   add_foreign_key "rpa_exam_targets", "customers", name: "FK_RPA_TARGET_CUSTOMER"
+  add_foreign_key "sb_client_exams", "sb_clients"
   add_foreign_key "sb_client_users", "sb_clients"
   add_foreign_key "sb_clients", "sb_agents"
   add_foreign_key "site_watcher_histories", "site_watchers", name: "site_watcher_histories_ibfk_1"
