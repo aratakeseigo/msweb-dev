@@ -157,12 +157,18 @@ module Client
                                      taxagency_corporate_number: taxagency_corporate_number, address: address)
       if @entity.present?
         @status = Status::ClientStatus::READY_FOR_EXAM
-        return
+        return @entity
       end
-      return if Entity.recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
-                                                taxagency_corporate_number: taxagency_corporate_number)
+      # 候補がある場合はなにもせず終了
+      if Entity.recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
+                                         taxagency_corporate_number: taxagency_corporate_number)
+        @entity = nil
+        return @entity
+      end
       # 全く一致しない場合は作る(この時点では空、save_clientで中身を設定して保存する)
       @entity = Entity.new
+      @status = Status::ClientStatus::READY_FOR_EXAM
+      @entity
     end
 
     ## 保存しないので常にtrue(rspec用)

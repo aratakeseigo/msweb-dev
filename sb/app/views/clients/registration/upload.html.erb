@@ -14,8 +14,8 @@
 <div class="container mb-5">
     <div class="row">
         <div class="col">
-            <div class="row"><div class="col-2 bg-light font-weight-bold">企業特定</div><div class="col-10"><%= if @form.entity.present? then @form.entity.house_company_code || "自動新規" else "特定不可" end %></div></div>
-            <div class="row"><div class="col-2 bg-light font-weight-bold">ＳＢ担当名</div><div class="col-10"><%= current_internal_user.name %></div></div>
+            <div class="row mb-2"><div class="col-2 bg-light font-weight-bold">企業特定</div><div class="col"><%= if @form.entity.present? then "特定済み(#{@form.entity.house_company_code || "自動新規"})" else "自動特定不可" end %></div></div>
+            <div class="row"><div class="col-2 bg-light font-weight-bold">ＳＢ担当名</div><div class="col"><%= current_internal_user.name %></div></div>
             <div class="row"><div class="col-2 bg-light font-weight-bold">クライアント名</div><div class="col"><%= @form.company_name %></div></div>
             <div class="row"><div class="col-2 bg-light font-weight-bold">代表者名</div><div class="col"><%= @form.daihyo_name %></div></div>
             <div class="row"><div class="col-2 bg-light font-weight-bold">〒</div><div class="col"><%= @form.zip_code %></div></div>

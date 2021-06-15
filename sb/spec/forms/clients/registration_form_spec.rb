@@ -156,4 +156,59 @@ RSpec.describe Client::RegistrationForm, type: :model do
       end
     end
   end
+  describe "企業特定" do
+    let(:entity) { create :entity }
+    let(:profile) { entity.entity_profile }
+    context "既存企業で企業特定できた場合" do
+      let(:client_registration_form) {
+        create :client_registration_form, daihyo_name: profile.daihyo_name,
+                                          company_name: profile.corporation_name
+      }
+      before {
+        client_registration_form.assign_entity
+      }
+      it "既存のEntityが設定されている" do
+        expect(client_registration_form.entity).to be_present
+      end
+      it "企業コードが取得できる" do
+        expect(client_registration_form.entity&.house_company_code).to match(/KG[0-9]{9}/)
+      end
+      it "ステータスが審査待ちである" do
+        expect(client_registration_form.status).to eq Status::ClientStatus::READY_FOR_EXAM
+      end
+    end
+    context "候補が存在せず新規Entityを作成して企業特定できた場合" do
+      let(:client_registration_form) {
+        create :client_registration_form, daihyo_name: "あ" + profile.daihyo_name,
+                                          company_name: "い" + profile.corporation_name
+      }
+      before {
+        client_registration_form.assign_entity
+      }
+      it "新規のEntityが設定されている" do
+        expect(client_registration_form.entity).to be_present
+      end
+      it "企業コードが取得できない" do
+        expect(client_registration_form.entity&.house_company_code).to be_nil
+      end
+      it "ステータスが審査待ちである" do
+        expect(client_registration_form.status).to eq Status::ClientStatus::READY_FOR_EXAM
+      end
+    end
+    context "候補が存在あるため企業特定しない場合" do
+      let(:client_registration_form) {
+        create :client_registration_form, daihyo_name: profile.daihyo_name,
+                                          company_name: "い" + profile.corporation_name
+      }
+      before {
+        client_registration_form.assign_entity
+      }
+      it "Entityが設定されていない" do
+        expect(client_registration_form.entity).to be_nil
+      end
+      it "ステータスが企業未特定である" do
+        expect(client_registration_form.status).to eq Status::ClientStatus::COMPANY_NOT_DETECTED
+      end
+    end
+  end
 end
