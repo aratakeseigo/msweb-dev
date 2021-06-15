@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_11_030419) do
+ActiveRecord::Schema.define(version: 2021_06_15_060655) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2000,6 +2000,14 @@ ActiveRecord::Schema.define(version: 2021_06_11_030419) do
     t.integer "updated_by", null: false, comment: "更新者"
     t.integer "approval_id", comment: "決裁ID"
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
+  end
+
+  create_table "sb_user_permissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "internal_user_id", null: false, comment: "内部ユーザーID"
+    t.integer "sb_user_position_id", null: false, comment: "権限ID"
+    t.boolean "available", default: true, null: false, comment: "利用可能か"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "screening_statuses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査期間", force: :cascade do |t|
