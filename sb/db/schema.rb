@@ -1981,7 +1981,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "sb_client_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "sb_client_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアント審査", force: :cascade do |t|
     t.bigint "sb_client_id", comment: "SBクライアントID"
     t.integer "examination_result", comment: "審査結果"
     t.text "reject_reason", comment: "否決理由"

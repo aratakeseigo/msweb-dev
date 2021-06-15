@@ -1,6 +1,6 @@
 class CreateSbClientExam < ActiveRecord::Migration[5.2]
   def change
-    create_table :sb_client_exams do |t|
+    create_table :sb_client_exams, comment: "SBクライアント審査" do |t|
       t.references :sb_client, foreign_key: true, comment: "SBクライアントID"
       t.integer :examination_result, comment: "審査結果"
       t.text :reject_reason, comment: "否決理由"
