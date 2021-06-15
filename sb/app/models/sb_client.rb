@@ -15,7 +15,7 @@ class SbClient < ApplicationRecord
   belongs_to :sb_agent, optional: true
 
   validates :name, presence: true, length: { maximum: 255 }
-  validates :daihyo_name, presence: true, length: { maximum: 255 }
+  validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
   validates :zip_code, allow_blank: true, zip_code: true
   validates :address, allow_blank: true, length: { maximum: 255 }
   validates :tel, allow_blank: true, tel: true
@@ -23,6 +23,7 @@ class SbClient < ApplicationRecord
   validates :established_in, allow_blank: true, yyyymm: true
   validates :capital, allow_blank: true, numericality: { only_integer: true }
   validates :annual_sales, allow_blank: true, numericality: { only_integer: true }
+  validates :taxagency_corporate_number, allow_blank: true, taxagency_corporate_number: true
 
   validates :prefecture, allow_blank: true, inclusion: { in: Prefecture.all, message: :inclusion_prefecture_code }
   validates :industry, allow_blank: true, inclusion: { in: Industry.all, message: :not_in_master }

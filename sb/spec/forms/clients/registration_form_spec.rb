@@ -2,6 +2,20 @@ require "rails_helper"
 
 RSpec.describe Client::RegistrationForm, type: :model do
   describe "バリデーション" do
+    context "代表者名にスペースがない場合" do
+      let(:client_registration_form) { create :client_registration_form, daihyo_name: "鬼木達" }
+      it "無効である" do
+        expect(client_registration_form).to be_invalid
+      end
+    end
+    context "代表者名に半角スペースがある" do
+      let(:client_registration_form) { create :client_registration_form, daihyo_name: "鬼木 達" }
+      it "Formで変換され有効になる" do
+        expect(client_registration_form).to be_valid
+        expect("鬼木　達").to eq client_registration_form.to_sb_client.daihyo_name
+      end
+    end
+
     context "都道府県名・業種１がマスタにありSBクライアント・SBクライアントユーザーのバリデーションが有効な場合" do
       let(:client_registration_form) { create :client_registration_form }
       it "有効である" do
@@ -24,7 +38,7 @@ RSpec.describe Client::RegistrationForm, type: :model do
     end
 
     context "SBクライアントのバリデーションが無効な場合" do
-      let(:client_registration_form) { create :client_registration_form, name: "" }
+      let(:client_registration_form) { create :client_registration_form, company_name: "" }
       it "無効である" do
         expect(client_registration_form).to be_invalid
       end
@@ -110,12 +124,13 @@ RSpec.describe Client::RegistrationForm, type: :model do
           is_expected.to change { SbClient.count }.by(1)
           new_sb_client = SbClient.find(form.sb_client.id)
 
-          expect(new_sb_client.name).to eq form.name
+          expect(new_sb_client.name).to eq form.company_name
           expect(new_sb_client.daihyo_name).to eq form.daihyo_name
           expect(new_sb_client.zip_code).to eq form.zip_code
           expect(new_sb_client.prefecture).to eq Prefecture.find_by_name form.prefecture_name
           expect(new_sb_client.address).to eq form.address
           expect(new_sb_client.tel).to eq form.tel
+          expect(new_sb_client.taxagency_corporate_number).to eq form.taxagency_corporate_number
           expect(new_sb_client.industry).to eq Industry.find_by_name form.industry_name
           expect(new_sb_client.industry_optional).to eq form.industry_optional
           expect(new_sb_client.established_in).to eq sprintf("%04d%02d", form.established_in.year, form.established_in.mon)
@@ -138,6 +153,61 @@ RSpec.describe Client::RegistrationForm, type: :model do
             expect(new_sb_client_user.department).to eq form_users[i]["department"]
           end
         end
+      end
+    end
+  end
+  describe "企業特定" do
+    let(:entity) { create :entity }
+    let(:profile) { entity.entity_profile }
+    context "既存企業で企業特定できた場合" do
+      let(:client_registration_form) {
+        create :client_registration_form, daihyo_name: profile.daihyo_name,
+                                          company_name: profile.corporation_name
+      }
+      before {
+        client_registration_form.assign_entity
+      }
+      it "既存のEntityが設定されている" do
+        expect(client_registration_form.entity).to be_present
+      end
+      it "企業コードが取得できる" do
+        expect(client_registration_form.entity&.house_company_code).to match(/KG[0-9]{9}/)
+      end
+      it "ステータスが審査待ちである" do
+        expect(client_registration_form.status).to eq Status::ClientStatus::READY_FOR_EXAM
+      end
+    end
+    context "候補が存在せず新規Entityを作成して企業特定できた場合" do
+      let(:client_registration_form) {
+        create :client_registration_form, daihyo_name: "あ" + profile.daihyo_name,
+                                          company_name: "い" + profile.corporation_name
+      }
+      before {
+        client_registration_form.assign_entity
+      }
+      it "新規のEntityが設定されている" do
+        expect(client_registration_form.entity).to be_present
+      end
+      it "企業コードが取得できない" do
+        expect(client_registration_form.entity&.house_company_code).to be_nil
+      end
+      it "ステータスが審査待ちである" do
+        expect(client_registration_form.status).to eq Status::ClientStatus::READY_FOR_EXAM
+      end
+    end
+    context "候補が存在あるため企業特定しない場合" do
+      let(:client_registration_form) {
+        create :client_registration_form, daihyo_name: profile.daihyo_name,
+                                          company_name: "い" + profile.corporation_name
+      }
+      before {
+        client_registration_form.assign_entity
+      }
+      it "Entityが設定されていない" do
+        expect(client_registration_form.entity).to be_nil
+      end
+      it "ステータスが企業未特定である" do
+        expect(client_registration_form.status).to eq Status::ClientStatus::COMPANY_NOT_DETECTED
       end
     end
   end
