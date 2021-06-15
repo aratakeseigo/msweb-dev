@@ -1,4 +1,5 @@
 class SbClient < ApplicationRecord
+  include Approvable
   extend ActiveHash::Associations::ActiveRecordExtensions
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   belongs_to_active_hash :area
@@ -13,6 +14,8 @@ class SbClient < ApplicationRecord
   has_many :sb_client_users
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
+
+  belongs_to :approval, optional: true, class_name: "SbApproval::Client"
 
   validates :name, presence: true, length: { maximum: 255 }
   validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
