@@ -1983,6 +1983,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
 
   create_table "sb_client_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアント審査", force: :cascade do |t|
     t.bigint "sb_client_id", comment: "SBクライアントID"
+    t.bigint "sb_approval_id", comment: "SB決裁ID"
     t.integer "examination_result", comment: "審査結果"
     t.text "reject_reason", comment: "否決理由"
     t.boolean "anti_social", default: false, comment: "反社(反社の場合true)"
@@ -1994,6 +1995,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
     t.integer "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["sb_approval_id"], name: "index_sb_client_exams_on_sb_approval_id"
     t.index ["sb_client_id"], name: "index_sb_client_exams_on_sb_client_id"
   end
 
@@ -2549,6 +2551,7 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
   add_foreign_key "relational_alarm_candidates", "customer_masters", name: "fk_rel_alarm_candidate_customer_master_id"
   add_foreign_key "rpa_exam_results", "customers", name: "FK_RPA_RESULT_CUSTOMER"
   add_foreign_key "rpa_exam_targets", "customers", name: "FK_RPA_TARGET_CUSTOMER"
+  add_foreign_key "sb_client_exams", "sb_approvals"
   add_foreign_key "sb_client_exams", "sb_clients"
   add_foreign_key "sb_client_users", "sb_clients"
   add_foreign_key "sb_clients", "sb_agents"

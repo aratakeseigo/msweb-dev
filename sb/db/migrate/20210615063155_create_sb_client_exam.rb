@@ -2,6 +2,7 @@ class CreateSbClientExam < ActiveRecord::Migration[5.2]
   def change
     create_table :sb_client_exams, comment: "SBクライアント審査" do |t|
       t.references :sb_client, foreign_key: true, comment: "SBクライアントID"
+      t.references :sb_approval, foreign_key: true, comment: "SB決裁ID"
       t.integer :examination_result, comment: "審査結果"
       t.text :reject_reason, comment: "否決理由"
       t.boolean :anti_social, default: false, comment: "反社(反社の場合true)"
