@@ -82,13 +82,13 @@ class SbApproval < ApplicationRecord
   class ApproveError < StandardError; end
 end
 
-class SbApproval::Client < SbApproval
-  belongs_to :sb_client, class_name: "SbClient", foreign_key: "relation_id"
+class SbApproval::ClientExam < SbApproval
+  belongs_to :sb_client_exam, class_name: "SbClientExam", foreign_key: "relation_id"
 
   def has_approvable_permission?(_user)
     # 特にチェックなし
     # 審査対象を参照したい場合はrelationでたどれます
-    # puts sb_client.name
+    #puts sb_client_exam.sb_client.name
     true
   end
 end
