@@ -16,7 +16,7 @@ module Client
 
     validate :sb_client_validate?
 
-    attr_accessor :sb_client
+    attr_accessor :sb_client, :registration_form_file
 
     def initialize(attributes, sb_client)
       @sb_client = sb_client[:sb_client]
@@ -40,6 +40,7 @@ module Client
       @sb_client.industry_optional = industry_optional
       @sb_client.annual_sales = annual_sales
       @sb_client.capital = capital
+      @sb_client.registration_form_file = registration_form_file
 
       @sb_client.save!
 

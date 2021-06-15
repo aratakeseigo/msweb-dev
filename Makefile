@@ -25,6 +25,7 @@ db_create:
 .PHONY: run
 run:
 	docker compose -f ../docker-compose.sb.yml up sb
+	docker compose -f ../docker-compose.sb.yml up minio
 
 .PHONY: stop
 stop:

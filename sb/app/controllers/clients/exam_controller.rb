@@ -8,8 +8,7 @@ class Clients::ExamController < ApplicationController
     load_client
     @form = Client::ExamForm.new(client_params, sb_client: @sb_client)
     if @form.invalid?
-      puts @form.inspect
-      render :fff and return
+      render :edit and return
     end
 
     @form.save_client
