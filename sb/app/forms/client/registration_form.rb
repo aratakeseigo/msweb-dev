@@ -1,6 +1,6 @@
 module Client
   class RegistrationForm < ApplicationForm
-    attribute :name, :string
+    attribute :company_name, :string
     attribute :daihyo_name, :string
     attribute :zip_code, :string
     attribute :prefecture_name, :string
@@ -11,22 +11,42 @@ module Client
     attribute :established_in, :date
     attribute :capital, :integer
     attribute :annual_sales, :integer
+    attribute :taxagency_corporate_number, :string
 
-    attr_accessor :users, :current_user, :sb_client
+    attr_accessor :users, :current_user, :sb_client, :entity, :status, :is_assign_new_entity
 
     validates :prefecture_name, presence: true, inclusion: { in: Prefecture.all.map(&:name), message: :not_in_master }
     validates :industry_name, presence: true, inclusion: { in: Industry.all.map(&:name), message: :not_in_master }
     validates :users, presence: true
     validate :sb_client_validate?
 
+    # save_clientの前にassign_entityをしておくこと
     def save_client
       sb_client = to_sb_client
       add_client_users(sb_client)
-      sb_client.status = Status::ClientStatus::COMPANY_NOT_DETECTED
+      create_entity if entity.present? and entity.house_company_code.nil?
+      sb_client.entity = entity
+      sb_client.status = status
       sb_client.sb_tanto = @current_user
       sb_client.save!
       sb_client.reload
       @sb_client = sb_client
+    end
+
+    def create_entity
+      entity.assign_house_company_code
+      entity.corporation_number = taxagency_corporate_number
+      entity.established = sprintf("%04d-%02d", established_in.year, established_in.mon) if established_in.present?
+      entity.enable
+
+      profile = entity.build_entity_profile
+      profile.corporation_name = company_name
+      profile.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name
+      profile.zip_code = zip_code
+      profile.prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
+      profile.address = address
+      profile.daihyo_tel = tel
+      entity.save!
     end
 
     def sb_client_validate?
@@ -49,12 +69,13 @@ module Client
       sb_client = SbClient.new
       sb_client.created_user = @current_user
       sb_client.updated_user = @current_user
-      sb_client.name = name
-      sb_client.daihyo_name = daihyo_name
+      sb_client.name = company_name
+      sb_client.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name if daihyo_name.present?
       sb_client.zip_code = zip_code
       sb_client.prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
       sb_client.address = address
       sb_client.tel = tel
+      sb_client.taxagency_corporate_number = taxagency_corporate_number
       sb_client.industry = Industry.find_by_name industry_name if industry_name.present?
       sb_client.industry_optional = industry_optional
       sb_client.established_in = sprintf("%04d%02d", established_in.year, established_in.mon) if established_in.present?
@@ -80,7 +101,7 @@ module Client
 
     def self.initFromFile(file)
       company_column_mapping = {
-        "クライアント名" => "name",
+        "クライアント名" => "company_name",
         "代表者名" => "daihyo_name",
         "〒" => "zip_code",
         "都道府県" => "prefecture_name",
@@ -91,6 +112,7 @@ module Client
         "設立" => "established_in",
         "資本金（千円）" => "capital",
         "年商（千円）" => "annual_sales",
+        "法人番号" => "taxagency_corporate_number",
       }
       user_column_mapping = {
         "担当者名" => "user_name",
@@ -120,12 +142,33 @@ module Client
         next if user_hash.values.join.empty?
         form.add_user(user_hash)
       end
+      form.assign_entity
       form
     end
 
     def add_user(hash)
       @users = [] unless @users
       @users << hash
+    end
+
+    def assign_entity
+      @status = Status::ClientStatus::COMPANY_NOT_DETECTED
+      @entity = Entity.assign_entity(company_name: company_name, daihyo_name: daihyo_name,
+                                     taxagency_corporate_number: taxagency_corporate_number, address: address)
+      if @entity.present?
+        @status = Status::ClientStatus::READY_FOR_EXAM
+        return @entity
+      end
+      # 候補がある場合はなにもせず終了
+      if Entity.recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
+                                         taxagency_corporate_number: taxagency_corporate_number)
+        @entity = nil
+        return @entity
+      end
+      # 全く一致しない場合は作る(この時点では空、save_clientで中身を設定して保存する)
+      @entity = Entity.new
+      @status = Status::ClientStatus::READY_FOR_EXAM
+      @entity
     end
 
     ## 保存しないので常にtrue(rspec用)

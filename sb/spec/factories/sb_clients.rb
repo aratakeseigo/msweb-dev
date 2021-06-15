@@ -12,7 +12,7 @@ FactoryBot.define do
     area_id { 1 }
     sb_tanto { internal_user }
     name { "アラームボックス" }
-    daihyo_name { "テスト太郎" }
+    daihyo_name { "テスト　太郎" }
     prefecture_code { 13 }
     tel { "00000000000" }
     created_at { "2021/06/01 20:55:57" }

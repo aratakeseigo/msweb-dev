@@ -20,6 +20,7 @@ ja:
         established_in: "設立"
         capital: "資本金"
         annual_sales: "年商（千円）"
+        taxagency_corporate_number: "法人番号"
       sb_client_user:
         name: "担当者名"
         name_kana: "担当者名カナ"
@@ -180,6 +181,7 @@ ja:
       only_number: は数字のみで入力してください
       length_10_or_11: は10桁または11桁で入力してください
       inclusion_prefecture_code: は1-47の数値で入力してください
+      user_name_split_fullspace: の姓名は全角スペースで区切ってください
     template:
       body: 次の項目を確認してください
       header:

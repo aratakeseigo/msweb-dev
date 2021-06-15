@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :client_registration_form, class: "Client::RegistrationForm" do
-    name { "アラームボックス" }
+    company_name { "アラームボックス" }
     daihyo_name { "武田　太郎" }
     zip_code { "2130005" }
     prefecture_name { "神奈川県" }
