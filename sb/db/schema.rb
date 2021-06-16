@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_15_060655) do
+ActiveRecord::Schema.define(version: 2021_06_15_100759) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -1960,6 +1960,24 @@ ActiveRecord::Schema.define(version: 2021_06_15_060655) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sb_client_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアント審査", force: :cascade do |t|
+    t.bigint "sb_client_id", comment: "SBクライアントID"
+    t.bigint "sb_approval_id", comment: "SB決裁ID"
+    t.integer "examination_result", comment: "審査結果"
+    t.text "reject_reason", comment: "否決理由"
+    t.boolean "anti_social", default: false, comment: "反社(反社の場合true)"
+    t.text "anti_social_memo", comment: "反社メモ"
+    t.string "tsr_score", comment: "TSR点数"
+    t.string "tdb_score", comment: "帝国点数"
+    t.text "communicate_memo", comment: "社内連絡メモ"
+    t.integer "created_by", null: false, comment: "作成者"
+    t.integer "updated_by", null: false, comment: "更新者"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sb_approval_id"], name: "index_sb_client_exams_on_sb_approval_id"
+    t.index ["sb_client_id"], name: "index_sb_client_exams_on_sb_client_id"
+  end
+
   create_table "sb_client_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SBクライアントユーザー", force: :cascade do |t|
     t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.string "name", null: false, comment: "担当者名"
@@ -1998,7 +2016,6 @@ ActiveRecord::Schema.define(version: 2021_06_15_060655) do
     t.bigint "capital", comment: "資本金"
     t.integer "created_by", null: false, comment: "作成者"
     t.integer "updated_by", null: false, comment: "更新者"
-    t.integer "approval_id", comment: "決裁ID"
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
   end
 
@@ -2519,6 +2536,8 @@ ActiveRecord::Schema.define(version: 2021_06_15_060655) do
   add_foreign_key "relational_alarm_candidates", "customer_masters", name: "fk_rel_alarm_candidate_customer_master_id"
   add_foreign_key "rpa_exam_results", "customers", name: "FK_RPA_RESULT_CUSTOMER"
   add_foreign_key "rpa_exam_targets", "customers", name: "FK_RPA_TARGET_CUSTOMER"
+  add_foreign_key "sb_client_exams", "sb_approvals"
+  add_foreign_key "sb_client_exams", "sb_clients"
   add_foreign_key "sb_client_users", "sb_clients"
   add_foreign_key "sb_clients", "sb_agents"
   add_foreign_key "site_watcher_histories", "site_watchers", name: "site_watcher_histories_ibfk_1"
