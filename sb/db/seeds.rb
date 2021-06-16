@@ -9,10 +9,21 @@ users = [
   { email: "test@example.com", password: "password", login_id: "test", name: "テスト　太郎" },
   { email: "test2@example.com", password: "password", login_id: "test2", name: "テスト　承認" },
   { email: "test3@example.com", password: "password", login_id: "test3", name: "テスト　審査" },
+  { email: "test99@example.com", password: "password", login_id: "test99", name: "ＡＢ　担当" },
 ]
 users.each do |user|
   next if InternalUser.where(email: user[:email]).count > 0
   InternalUser.create!(user)
+end
+
+SbUserPermission.destroy_all # これはID変更の影響を受けないため作り直す
+user_permissions = [
+  { internal_user_id: InternalUser.find_by(login_id: "test").id, sb_user_position: SbUserPosition::STAFF },
+  { internal_user_id: InternalUser.find_by(login_id: "test2").id, sb_user_position: SbUserPosition::DIRECTOR },
+  { internal_user_id: InternalUser.find_by(login_id: "test3").id, sb_user_position: SbUserPosition::PRESIDENT },
+]
+user_permissions.each do |up|
+  SbUserPermission.create!(up)
 end
 
 # Entity.where(id: EntityProfile.where("corporation_name like '%株式会社%'").last(30).map{|b|b.entity_id}.each{|a|p JSON.parse(a.to_json).to_s}

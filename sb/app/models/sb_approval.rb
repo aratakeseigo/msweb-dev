@@ -82,14 +82,16 @@ class SbApproval < ApplicationRecord
   class ApproveError < StandardError; end
 end
 
-class SbApproval::Client < SbApproval
-  belongs_to :sb_client, class_name: "SbClient", foreign_key: "relation_id"
+class SbApproval::ClientExam < SbApproval
+  belongs_to :sb_client_exam, class_name: "SbClientExam", foreign_key: "relation_id"
 
-  def has_approvable_permission?(_user)
+  def has_approvable_permission?(user)
     # 特にチェックなし
     # 審査対象を参照したい場合はrelationでたどれます
-    # puts sb_client.name
-    true
+    # sb_client_exam.sb_client
+
+    # ユーザがマネージャー以上かどうかチェック
+    user.is_position_upper_than_or_equal?(SbUserPosition::MANAGER)
   end
 end
 
