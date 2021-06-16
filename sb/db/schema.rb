@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_15_063155) do
+ActiveRecord::Schema.define(version: 2021_06_15_100759) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -250,27 +250,6 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
     t.datetime "created_at", null: false, comment: "登録日時"
     t.datetime "updated_at", null: false, comment: "更新日時"
     t.index ["corporate_code"], name: "IDX_ACCS_SK"
-  end
-
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-  end
-
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "alarm_candidates", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報の候補", force: :cascade do |t|
@@ -2037,8 +2016,15 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
     t.bigint "capital", comment: "資本金"
     t.integer "created_by", null: false, comment: "作成者"
     t.integer "updated_by", null: false, comment: "更新者"
-    t.integer "approval_id", comment: "決裁ID"
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
+  end
+
+  create_table "sb_user_permissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "internal_user_id", null: false, comment: "内部ユーザーID"
+    t.integer "sb_user_position_id", null: false, comment: "権限ID"
+    t.boolean "available", default: true, null: false, comment: "利用可能か"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "screening_statuses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査期間", force: :cascade do |t|
@@ -2472,7 +2458,6 @@ ActiveRecord::Schema.define(version: 2021_06_15_063155) do
   add_foreign_key "ab_selectbox_value_lists", "users", name: "ab_selectbox_value_lists_ibfk_1"
   add_foreign_key "accounting_kanpou_items", "accounting_kanpou_roots", name: "FK_AKI_ROOT"
   add_foreign_key "accounting_kanpou_roots", "entities", name: "FK_AKR_ENTITY"
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "alarm_candidates", "customer_masters", name: "fk_alarm_candidate_customer_master_id"
   add_foreign_key "alarm_candidates", "judges", name: "fk_alarm_candidate_judge_id"
   add_foreign_key "alarm_prtimes", "crawl_prtimes_check_lists", name: "alarm_prtimes_ibfk_1"
