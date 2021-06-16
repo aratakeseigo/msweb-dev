@@ -1,0 +1,2 @@
+class SbGuaranteeClient < ApplicationRecord
+end

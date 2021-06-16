@@ -1,0 +1,2 @@
+class SbGuaranteeExam < ApplicationRecord
+end
