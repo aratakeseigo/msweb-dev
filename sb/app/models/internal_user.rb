@@ -13,7 +13,8 @@ class InternalUser < ApplicationRecord
 
   # 決裁可能金額
   def approvable_amount
-    sb_user_permission.sb_user_position&.approvable_amount || 0
+    return 0 unless is_sb_user?
+    sb_user_permission.sb_user_position.approvable_amount
   end
 
   #
@@ -22,6 +23,7 @@ class InternalUser < ApplicationRecord
   #     is_position_upper_than_or_equal?(SbUserPosition::MANAGER)
   #
   def is_position_upper_than_or_equal?(base_position)
+    return false unless is_sb_user?
     sb_user_permission.sb_user_position.is_upper_than_or_equal(base_position)
   end
 end

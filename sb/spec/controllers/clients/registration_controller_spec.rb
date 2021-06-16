@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Clients::RegistrationController, type: :controller do
-  let(:current_user) { create(:internal_user) }
+  let(:current_user) { create(:internal_user, :manager) }
   before do
     sign_in current_user
   end
