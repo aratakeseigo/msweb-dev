@@ -88,8 +88,10 @@ class SbApproval::ClientExam < SbApproval
   def has_approvable_permission?(_user)
     # 特にチェックなし
     # 審査対象を参照したい場合はrelationでたどれます
-    #puts sb_client_exam.sb_client.name
-    true
+    # sb_client_exam.sb_client
+
+    # ユーザがマネージャー以上かどうかチェック
+    _user.is_position_upper_than_or_equal?(SbUserPosition::MANAGER)
   end
 end
 
