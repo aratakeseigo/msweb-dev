@@ -18,6 +18,7 @@ class SbClient < ApplicationRecord
   belongs_to :approval, optional: true, class_name: "SbApproval::Client"
 
   has_one_attached :registration_form_file
+  has_many_attached :other_files
 
   validates :name, presence: true, length: { maximum: 255 }
   validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true

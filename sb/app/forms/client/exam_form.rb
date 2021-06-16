@@ -16,19 +16,17 @@ module Client
 
     validate :sb_client_validate?
 
-    attr_accessor :sb_client, :registration_form_file
+    attr_accessor :sb_client, :registration_form_file, :other_files
 
     def initialize(attributes, sb_client)
       @sb_client = sb_client[:sb_client]
-      #@sb_client = sb_client
       if attributes.present?
         super(attributes)
       end
     end
 
     def save_client
-      # sb_client = to_sb_client
-      @sb_client.area_id = self.area_id
+      @sb_client.area_id = area_id
       @sb_client.sb_tanto_id = sb_tanto_id
       @sb_client.name = name
       @sb_client.daihyo_name = daihyo_name
@@ -38,14 +36,20 @@ module Client
       @sb_client.tel = tel
       @sb_client.industry_id = industry_id
       @sb_client.industry_optional = industry_optional
+      @sb_client.established_in = established_in
       @sb_client.annual_sales = annual_sales
       @sb_client.capital = capital
-      @sb_client.registration_form_file = registration_form_file
+
+      if registration_form_file.present?
+        @sb_client.registration_form_file = registration_form_file
+      end
+
+      if other_files.present?
+        @sb_client.other_files = other_files
+      end
 
       @sb_client.save!
 
-      # sb_client.reload
-      # @sb_client = sb_client
     end
 
     def sb_client_validate?
@@ -58,7 +62,7 @@ module Client
     end
 
     def to_sb_client
-      sb_client = SbClient.new
+      sb_client = @sb_client.clone
       sb_client.area_id = area_id
       sb_client.sb_tanto_id = sb_tanto_id
       sb_client.name = name
@@ -69,15 +73,12 @@ module Client
       sb_client.tel = tel
       sb_client.industry_id = industry_id
       sb_client.industry_optional = industry_optional
+      sb_client.established_in = established_in
       sb_client.annual_sales = annual_sales
       sb_client.capital = capital
       sb_client
+
     end
   end
-
-  # def add_sb_client(hash)
-  #   @users = [] unless @users
-  #   @users << hash
-  # end
 
 end
