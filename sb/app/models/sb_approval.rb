@@ -85,13 +85,13 @@ end
 class SbApproval::ClientExam < SbApproval
   belongs_to :sb_client_exam, class_name: "SbClientExam", foreign_key: "relation_id"
 
-  def has_approvable_permission?(_user)
+  def has_approvable_permission?(user)
     # 特にチェックなし
     # 審査対象を参照したい場合はrelationでたどれます
     # sb_client_exam.sb_client
 
     # ユーザがマネージャー以上かどうかチェック
-    _user.is_position_upper_than_or_equal?(SbUserPosition::MANAGER)
+    user.is_position_upper_than_or_equal?(SbUserPosition::MANAGER)
   end
 end
 
