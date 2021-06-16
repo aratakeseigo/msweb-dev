@@ -25,7 +25,7 @@
     <div class="row">
       <div class="form-group col">
         <%= link_to @form.sb_client.registration_form_file.filename, controller: "exam", action: "download", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name %>
-        <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name}, method: "post" %>
+        <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name}, method: "post", class: "m-5" %>
       </div>
     </div>
   <% end %>
@@ -40,7 +40,7 @@
       <div class="row">
         <div class="form-group col">
           <%= link_to file.filename, clients_exam_download_path(file_id: file.id, type: file.name)  %>
-          <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: file.id, type: file.name}, method: "post" %>
+          <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: file.id, type: file.name}, method: "post", class: "m-5" %>
         </div>
       </div>
     <% end %>
