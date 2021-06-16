@@ -18,6 +18,9 @@ module Client
 
     attr_accessor :sb_client, :registration_form_file, :other_files
 
+    ## 定数 ##
+    MAX_OTHER_FILES_COUNT = 5
+
     def initialize(attributes, sb_client)
       @sb_client = sb_client[:sb_client]
       if attributes.present?
@@ -43,7 +46,6 @@ module Client
       if registration_form_file.present?
         @sb_client.registration_form_file = registration_form_file
       end
-
       if other_files.present?
         @sb_client.other_files = other_files
       end
@@ -57,6 +59,16 @@ module Client
       unless sb_client.valid?
         sb_client.errors.each do |attr, error|
           errors.add(attr, error)
+        end
+      end
+    end
+
+    def other_files_validate?
+      current_files_count = @sb_client.other_files.size
+      if other_files.present?
+        input_other_files_count = other_files.size
+        if current_files_count + input_other_files_count > MAX_OTHER_FILES_COUNT
+          errors.add(:other_files, "は5件までしか保存できません")
         end
       end
     end
@@ -76,9 +88,8 @@ module Client
       sb_client.established_in = established_in
       sb_client.annual_sales = annual_sales
       sb_client.capital = capital
-      sb_client
 
+      sb_client
     end
   end
-
 end

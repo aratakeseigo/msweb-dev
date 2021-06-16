@@ -21,12 +21,30 @@
       <%= f.file_field :registration_form_file %><br>
     </div>
   </div>
+  <% if @form.sb_client.registration_form_file.attached? %>
+    <div class="row">
+      <div class="form-group col">
+        <%= link_to @form.sb_client.registration_form_file.filename, controller: "exam", action: "download", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name %>
+        <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name}, method: "post" %>
+      </div>
+    </div>
+  <% end %>
   <div class="row">
     <div class="form-group col">
       <%= f.label :other_files, "ファイル", class: "col-form-label col-form-label-sm" %>
       <%= f.file_field :other_files, multiple: true %><br>
     </div>
   </div>
+  <% if @form.sb_client.other_files.attached? %>
+    <% @form.sb_client.other_files.each do |file| %>
+      <div class="row">
+        <div class="form-group col">
+          <%= link_to file.filename, clients_exam_download_path(file_id: file.id, type: file.name)  %>
+          <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: file.id, type: file.name}, method: "post" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
   <div class="row">
     <div class="form-group col">
       <%= f.submit %>

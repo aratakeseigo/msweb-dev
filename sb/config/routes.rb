@@ -23,7 +23,8 @@ Rails.application.routes.draw do
     namespace :exam do
       get "/:id", action: "edit", as: "edit"
       post "/:id/update", action: "update", as: "update"
-      #patch "/:id/update", action: "update", as: "update"
+      get "/:id/download", action: "download", as: "download"
+      post "/:id/delete_file", action: "delete_file"
     end
   end
 end
