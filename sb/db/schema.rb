@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_16_094338) do
+ActiveRecord::Schema.define(version: 2021_06_16_094400) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2020,41 +2020,40 @@ ActiveRecord::Schema.define(version: 2021_06_16_094338) do
   end
 
   create_table "sb_guarantee_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.integer "sb_client_id", null: false, comment: "SBクライアントID"
+    t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.string "company_name", null: false, comment: "保証元法人名"
     t.string "address", comment: "保証元住所"
     t.string "tel", comment: "保証元電話"
     t.string "daihyo_name", comment: "保証元代表者名"
     t.string "taxagency_corporate_number", comment: "保証元法人番号"
-    t.integer "entity_id", comment: "法人ID"
-    t.integer "created_by", null: false, comment: "作成者"
-    t.integer "updated_by", null: false, comment: "更新者"
+    t.bigint "entity_id", comment: "法人ID"
+    t.bigint "created_by", null: false, comment: "作成者"
+    t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "sb_guarantee_customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.integer "sb_client_id", null: false, comment: "SBクライアントID"
-    t.integer "sb_guarantee_client_id", null: false, comment: "SB保証元ID"
+    t.bigint "sb_guarantee_client_id", null: false, comment: "SB保証元ID"
     t.string "company_name", null: false, comment: "法人名"
-    t.integer "entity_id", comment: "法人ID"
+    t.bigint "entity_id", comment: "法人ID"
     t.string "address", comment: "住所"
     t.string "tel", comment: "電話"
     t.string "daihyo_name", comment: "代表者名"
     t.string "stock_securities_code", comment: "証券番号"
     t.string "stock_market", comment: "市場"
-    t.integer "created_by", null: false, comment: "作成者"
-    t.integer "updated_by", null: false, comment: "更新者"
+    t.bigint "created_by", null: false, comment: "作成者"
+    t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "sb_guarantee_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.datetime "accepted_at", null: false, comment: "受付日"
-    t.integer "sb_approval_id", comment: "決裁ID"
-    t.integer "sb_client_id", null: false, comment: "SBクライアントID"
-    t.integer "sb_guarantee_client_id", null: false, comment: "SB保証元ID"
-    t.integer "sb_guarantee_custromer_id", null: false, comment: "SB保証先ID"
+    t.bigint "sb_approval_id", comment: "決裁日"
+    t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
+    t.bigint "sb_guarantee_client_id", null: false, comment: "SB保証元ID"
+    t.bigint "sb_guarantee_customer_id", null: false, comment: "SB保証先ID"
     t.string "shozai", comment: "取り扱い商品"
     t.string "payment_method", comment: "決済条件"
     t.boolean "new_transaction", comment: "新規取引"
@@ -2087,7 +2086,7 @@ ActiveRecord::Schema.define(version: 2021_06_16_094338) do
     t.string "bl_memo", comment: "BL備考"
     t.string "anti_social", comment: "反社チェック"
     t.string "hp", comment: "ＨＰ種別"
-    t.string "hp_url", comment: "HP　URL"
+    t.string "hp_url", comment: "HPURL"
     t.string "hp_memo", comment: "特記事項"
     t.boolean "zaiseki", comment: "在籍"
     t.string "gyosei_shobun", comment: "消費者庁、国土交通省等の行政処分の有無"
@@ -2096,10 +2095,10 @@ ActiveRecord::Schema.define(version: 2021_06_16_094338) do
     t.string "parent_company_bl", comment: "不芳情報"
     t.string "bs_pl", comment: "決算資料"
     t.string "parent_company_hp", comment: "親会社HP"
-    t.integer "other_guarantee_limits_sum", comment: "他保証額合計"
+    t.integer "other_guarantee_limits_sum", comment: "他保証"
     t.integer "risk_ammount", comment: "リスク金額合計"
-    t.integer "created_by", null: false, comment: "作成者"
-    t.integer "updated_by", null: false, comment: "更新者"
+    t.bigint "created_by", null: false, comment: "作成者"
+    t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -1,13 +1,15 @@
 class CreateSbGuaranteeExams < ActiveRecord::Migration[5.2]
   def change
     create_table :sb_guarantee_exams do |t|
+      #sb_guarantee_exam
+
       t.datetime :accepted_at, null: false, comment: "受付日"
-      t.integer :sb_approval_id, comment: "決裁ID"
+      t.bigint :sb_approval_id, comment: "決裁日"
 
-      t.integer :sb_client_id, null: false, comment: "SBクライアントID"
+      t.bigint :sb_client_id, null: false, comment: "SBクライアントID"
 
-      t.integer :sb_guarantee_client_id, null: false, comment: "SB保証元ID"
-      t.integer :sb_guarantee_custromer_id, null: false, comment: "SB保証先ID"
+      t.bigint :sb_guarantee_client_id, null: false, comment: "SB保証元ID"
+      t.bigint :sb_guarantee_customer_id, null: false, comment: "SB保証先ID"
 
       t.string :shozai, comment: "取り扱い商品"
       t.string :payment_method, comment: "決済条件"
@@ -50,7 +52,7 @@ class CreateSbGuaranteeExams < ActiveRecord::Migration[5.2]
 
       t.string :anti_social, comment: "反社チェック"
       t.string :hp, comment: "ＨＰ種別"
-      t.string :hp_url, comment: "HP　URL"
+      t.string :hp_url, comment: "HPURL"
       t.string :hp_memo, comment: "特記事項"
       t.boolean :zaiseki, comment: "在籍"
       t.string :gyosei_shobun, comment: "消費者庁、国土交通省等の行政処分の有無"
@@ -61,11 +63,10 @@ class CreateSbGuaranteeExams < ActiveRecord::Migration[5.2]
       t.string :bs_pl, comment: "決算資料"
       t.string :parent_company_hp, comment: "親会社HP"
 
-      t.integer :other_guarantee_limits_sum, comment: "他保証額合計"
+      t.integer :other_guarantee_limits_sum, comment: "他保証"
       t.integer :risk_ammount, comment: "リスク金額合計"
-      t.integer :created_by, null: false, comment: "作成者"
-      t.integer :updated_by, null: false, comment: "更新者"
-
+      t.bigint :created_by, null: false, comment: "作成者"
+      t.bigint :updated_by, null: false, comment: "更新者"
       t.timestamps
     end
   end
