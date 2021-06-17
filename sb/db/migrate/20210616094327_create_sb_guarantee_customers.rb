@@ -13,9 +13,6 @@ class CreateSbGuaranteeCustomers < ActiveRecord::Migration[5.2]
       t.string :tel, comment: "電話"
       t.string :daihyo_name, comment: "代表者名"
 
-      t.string :stock_securities_code, comment: "証券番号"
-      t.string :stock_market, comment: "市場"
-
       t.bigint :created_by, null: false, comment: "作成者"
       t.bigint :updated_by, null: false, comment: "更新者"
       t.timestamps
