@@ -1,43 +1,60 @@
 <% provide :title, "企業特定" %>
 
-<table class="table table-hover">
-  <tbody>
-    <tr>
-      <th class="text-right"><%= SbClient.human_attribute_name(:name) %></th>
-      <td class="text-left"><%= @identify_company.name %></td>
-    <tr>
-    <tr>
-      <th class="text-right"><%= SbClient.human_attribute_name(:daihyo_name) %></th>
-      <td class="text-left"><%= @identify_company.daihyo_name %></td>
-    <tr>
-    <tr>
-      <th class="text-right"><%= SbClient.human_attribute_name(:address) %></th>
-      <td class="text-left"><%= @identify_company.address %></td>
-    <tr>
-    <tr>
-      <th class="text-right"><%= SbClient.human_attribute_name(:taxagency_corporate_number) %></th>
-      <td class="text-left"><%= @identify_company.taxagency_corporate_number %></td>
-    <tr>
-  </tbody>
-</table>
-clientId = <%= params[:id] %><br/>
-classification = <%= %>
 <div class="row">
   <div class="col">
-    <table class="table table-hover table-striped table_sticky">
+    <div class="text-right">
+      <span><%= link_to "新規", "dummy", :class => "btn btn-primary" %>
+    </div>
+  </div>
+</div>
+      <table class="table table-hover">
+        <tbody>
+          <tr>
+            <th class="text-right">法人番号</th>
+            <td class="text-left"><%= @identify_company.taxagency_corporate_number %></td>
+          </tr>
+          <tr>
+            <th class="text-right">企業名</th>
+            <td class="text-left"><%= @identify_company.name %></td>
+          </tr>
+          <tr>
+            <th class="text-right">代表者名</th>
+            <td class="text-left"><%= @identify_company.daihyo_name %></td>
+          </tr>
+          <tr>
+            <th class="text-right">住所</th>
+            <td class="text-left"><%= @identify_company.address %></td>
+          </tr>
+        </tbody>
+      </table>
+<!-- -->
+<%= form_with url: identify_company_update_path, local: true do |f| %>
+<div class="row">
+  <div class="col">
+    <div class="text-right">
+      <%= f.submit "更新" ,:id => "update", :class => "btn btn-primary", :disabled => "true" %>
+      <%= f.hidden_field :classification, value: params[:classification] %>
+      <%= f.hidden_field :id, value: @identify_company.id %>
+    </div>
+  </div>
+</div>
+<!-- -->
+<div class="row">
+  <div class="col">
+    <table class="table table-hover table-striped">
       <thead>
         <tr>
           <th>-</th>
-          <th>法人番号</th>
-          <th>法人名</th>
-          <th>代表者名</th>
-          <th>住所</th>
+          <th><%= Entity.human_attribute_name(:corporation_number) %></th>
+          <th><%= Entity.human_attribute_name(:corporation_name) %></th>
+          <th><%= Entity.human_attribute_name(:daihyo_name) %></th>
+          <th><%= Entity.human_attribute_name(:address) %></th>
         </tr>
       </thead>
       <tbody>
         <% @entities.each do |entity| %>
           <tr>
-            <td><%= radio_button_tag "radio_id", entity.id, false %></td>
+            <td><%= f.radio_button :entity_id, entity.id, onclick: "document.getElementById('update').removeAttribute('disabled');"  %></td>
             <td><%= entity.corporation_number %></td>
             <td><%= entity.entity_profile.corporation_name %></td>
             <td><%= entity.entity_profile.daihyo_name %></td>
@@ -46,6 +63,6 @@ classification = <%= %>
         <% end %>
       </tbody>
     </table>
-    <%= paginate @entities %>
   </div>
 </div>
+<% end %>

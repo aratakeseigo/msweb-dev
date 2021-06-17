@@ -24,6 +24,7 @@ Rails.application.routes.draw do
 
   namespace :identify_company do
     get "/", action: "index"
+    post "/update", action: "update"
   end
 
 end
