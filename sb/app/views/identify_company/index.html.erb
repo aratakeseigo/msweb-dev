@@ -1,0 +1,51 @@
+<% provide :title, "企業特定" %>
+
+<table class="table table-hover">
+  <tbody>
+    <tr>
+      <th class="text-right"><%= SbClient.human_attribute_name(:name) %></th>
+      <td class="text-left"><%= @identify_company.name %></td>
+    <tr>
+    <tr>
+      <th class="text-right"><%= SbClient.human_attribute_name(:daihyo_name) %></th>
+      <td class="text-left"><%= @identify_company.daihyo_name %></td>
+    <tr>
+    <tr>
+      <th class="text-right"><%= SbClient.human_attribute_name(:address) %></th>
+      <td class="text-left"><%= @identify_company.address %></td>
+    <tr>
+    <tr>
+      <th class="text-right"><%= SbClient.human_attribute_name(:taxagency_corporate_number) %></th>
+      <td class="text-left"><%= @identify_company.taxagency_corporate_number %></td>
+    <tr>
+  </tbody>
+</table>
+clientId = <%= params[:id] %><br/>
+classification = <%= %>
+<div class="row">
+  <div class="col">
+    <table class="table table-hover table-striped table_sticky">
+      <thead>
+        <tr>
+          <th>-</th>
+          <th>法人番号</th>
+          <th>法人名</th>
+          <th>代表者名</th>
+          <th>住所</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @entities.each do |entity| %>
+          <tr>
+            <td><%= radio_button_tag "radio_id", entity.id, false %></td>
+            <td><%= entity.corporation_number %></td>
+            <td><%= entity.entity_profile.corporation_name %></td>
+            <td><%= entity.entity_profile.daihyo_name %></td>
+            <td><%= entity.entity_profile.address %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @entities %>
+  </div>
+</div>

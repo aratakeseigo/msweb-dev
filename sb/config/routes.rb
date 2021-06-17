@@ -21,4 +21,9 @@ Rails.application.routes.draw do
       post "/create", action: "create"
     end
   end
+
+  namespace :identify_company do
+    get "/", action: "index"
+  end
+
 end

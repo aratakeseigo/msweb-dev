@@ -76,20 +76,28 @@
 <div class="row">
   <div class="col">
     <div class="text-right">
-      <span><%= link_to "企業特定", new_internal_user_registration_path, :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-company_not_detected" %>
-      <span><%= link_to "審査登録をする", new_internal_user_registration_path, :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_exam" %>
-      <span><%= link_to "保証登録をする", new_internal_user_registration_path, :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_aguarantee" %>
-      <span><%= link_to "CL審査をする", new_internal_user_registration_path, :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_cl_exam" %>
-      <span><%= link_to "CL決裁をする", new_internal_user_registration_path, :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_cl_approval" %>
+      <span><%= link_to "企業特定", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-company_not_detected" %>
+      <span><%= link_to "審査登録をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_exam" %>
+      <span><%= link_to "保証登録をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_aguarantee" %>
+      <span><%= link_to "CL審査をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_cl_exam" %>
+      <span><%= link_to "CL決裁をする", "dummy" , :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_cl_approval" %>
     </div>
   </div>
 </div>
 <!-- -->
 <div class="row">
   <div class="col">
-    <table class="table table-hover table-striped table_sticky">
+    <table class="table_sticky table table-hover table-striped text-center">
       <thead>
         <tr>
+<!--
+          <th width="30px">-</th>
+          <th width="8%"><%= sort_link(@q, :status_id, "状態") %></th>
+          <th width="8%"><%= sort_link(@q, :area_id, "エリア") %></th>
+          <th width="8%"><%= sort_link(@q, :sb_tanto_id, "SB担当者") %></th>
+          <th width="8%"><%= sort_link(@q, :name, "企業名") %></th>
+          <th width="8%"><%= sort_link(@q, :daihyo_name, "代表者名") %></th>
+-->
           <th>-</th>
           <th><%= sort_link(@q, :status_id, "状態") %></th>
           <th><%= sort_link(@q, :area_id, "エリア") %></th>

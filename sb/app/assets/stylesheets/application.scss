@@ -35,10 +35,10 @@
     display: block;
     overflow-y: scroll;
     height: calc(100vh/2);
-//    border:0px solid;
-//    border-collapse: collapse;
-    width: 100%;
+    border-collapse: collapse;
 }
+
+  
 .table_sticky thead th {
     position: sticky;
     top: 0;
@@ -46,3 +46,4 @@
     background: #FFFFFF;
     border-top:#FFFFFF;
 }
+
