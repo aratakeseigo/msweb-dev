@@ -20,5 +20,10 @@ Rails.application.routes.draw do
       post "/upload", action: "upload"
       post "/create", action: "create"
     end
+    namespace :registration_exams do
+      get "/:id/", action: "index", as: "index"
+      post "/:id/upload", action: "upload", as: "upload"
+      post "/:id/create", action: "create", as: "create"
+    end
   end
 end

@@ -15,5 +15,12 @@ module Utils
       return address unless m #分割できなければそのまま
       m[1]
     end
+
+    def self.split_prefecture_and_other(address)
+      return { prefecture: nil, address: address } if address.nil?
+      Prefecture.all.each do |prefecture|
+        return { prefecture: prefecture, address: address.sub(prefecture.name, "") } if address.starts_with? prefecture.name
+      end
+    end
   end
 end

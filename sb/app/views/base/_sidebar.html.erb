@@ -50,17 +50,31 @@
                   <p>TOP</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="<%=clients_list_path%>" class="nav-link">
+              <li class="nav-item　menu-open">
+                <a href="#" class="nav-link">
                   <i class="far fa-address-book nav-icon"></i>
                   <p>クライアント</p>
                 </a>
-              </li>
-              <li class="nav-item">
-                <a href="<%=clients_registration_index_path%>" class="nav-link">
-                  <i class="far fa-address-book nav-icon"></i>
-                  <p>クライアント登録(仮)</p>
-                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="<%=clients_list_path%>" class="nav-link">
+                      <i class="far fa-address-book nav-icon"></i>
+                      <p>クライアント一覧</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<%=clients_registration_index_path%>" class="nav-link">
+                      <i class="far fa-address-book nav-icon"></i>
+                      <p>クライアント登録(仮)</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<%=clients_registration_exams_index_path(id: 1)%>" class="nav-link">
+                      <i class="far fa-address-book nav-icon"></i>
+                      <p>保証審査登録(仮)</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link">
