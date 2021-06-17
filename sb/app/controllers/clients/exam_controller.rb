@@ -1,12 +1,13 @@
 class Clients::ExamController < ApplicationController
   def edit
     load_client
-    @form = Client::ExamForm.new(nil, sb_client: @sb_client)
+    @form = Client::ExamForm.new(nil, @sb_client)
   end
 
   def update
     load_client
-    @form = Client::ExamForm.new(client_params, sb_client: @sb_client)
+    @form = Client::ExamForm.new(client_params, @sb_client)
+    @form.current_user = current_internal_user
 
     if @form.other_files_validate?
       render :edit and return

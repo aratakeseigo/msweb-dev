@@ -16,33 +16,19 @@ module Client
 
     validate :sb_client_validate?
 
-    attr_accessor :sb_client, :registration_form_file, :other_files
+    attr_accessor :sb_client, :registration_form_file, :other_files, :current_user
 
     ## 定数 ##
     MAX_OTHER_FILES_COUNT = 5
 
     def initialize(attributes, sb_client)
-      @sb_client = sb_client[:sb_client]
+      @sb_client = sb_client
       if attributes.present?
         super(attributes)
       end
     end
 
     def save_client
-      @sb_client.area_id = area_id
-      @sb_client.sb_tanto_id = sb_tanto_id
-      @sb_client.name = name
-      @sb_client.daihyo_name = daihyo_name
-      @sb_client.zip_code = zip_code
-      @sb_client.prefecture_code = prefecture_code
-      @sb_client.address = address
-      @sb_client.tel = tel
-      @sb_client.industry_id = industry_id
-      @sb_client.industry_optional = industry_optional
-      @sb_client.established_in = established_in
-      @sb_client.annual_sales = annual_sales
-      @sb_client.capital = capital
-
       if registration_form_file.present?
         @sb_client.registration_form_file = registration_form_file
       end
@@ -55,7 +41,7 @@ module Client
     end
 
     def sb_client_validate?
-      sb_client = to_sb_client
+      to_sb_client
       unless sb_client.valid?
         sb_client.errors.each do |attr, error|
           errors.add(attr, error)
@@ -74,22 +60,26 @@ module Client
     end
 
     def to_sb_client
-      sb_client = @sb_client.clone
-      sb_client.area_id = area_id
-      sb_client.sb_tanto_id = sb_tanto_id
-      sb_client.name = name
-      sb_client.daihyo_name = daihyo_name
-      sb_client.zip_code = zip_code
-      sb_client.prefecture_code = prefecture_code
-      sb_client.address = address
-      sb_client.tel = tel
-      sb_client.industry_id = industry_id
-      sb_client.industry_optional = industry_optional
-      sb_client.established_in = established_in
-      sb_client.annual_sales = annual_sales
-      sb_client.capital = capital
-
-      sb_client
+      @sb_client.area_id = area_id
+      @sb_client.sb_tanto_id = sb_tanto_id
+      @sb_client.name = name
+      @sb_client.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name if daihyo_name.present?
+      @sb_client.zip_code = zip_code
+      @sb_client.prefecture_code = prefecture_code
+      @sb_client.address = address
+      @sb_client.tel = tel
+      @sb_client.industry_id = industry_id
+      @sb_client.industry_optional = industry_optional
+      @sb_client.established_in = established_in
+      @sb_client.annual_sales = annual_sales
+      @sb_client.capital = capital
+      @sb_client.updated_user = @current_user
     end
+
+    ## 保存しないので常にtrue(rspec用)
+    def save!
+      return true
+    end
+
   end
 end
