@@ -35,7 +35,8 @@ class Entity < ActiveRecord::Base
   end
 
   #
-  # 複数ヒットがあり、特定できなかった場合はnilが返ります
+  # 複数ヒットがあり、特定できなかった場合、
+  # 全くヒットしなかった場合はnilが返ります
   #
   def self.assign_entity(company_name: nil, daihyo_name: nil, taxagency_corporate_number: nil, address: nil)
     # 全パラメータで検索して１件一致したら特定
@@ -53,6 +54,32 @@ class Entity < ActiveRecord::Base
     # 会社名と代表者で１件一致したら特定
     recommend_entities = select_by_company_name_and_daihyo_name(company_name: company_name, daihyo_name: daihyo_name)
     return recommend_entities.first if recommend_entities&.size == 1
+    nil
+  end
+
+  #
+  # 複数ヒットがあり、特定できなかった場合、nilが返りますが
+  # 全くヒットしなかった場合は新規作成します
+  #
+  def self.assign_or_create_entity(company_name: nil, daihyo_name: nil,
+                                   taxagency_corporate_number: nil,
+                                   prefecture: nil, address: nil)
+    entity = Entity.assign_entity(company_name: company_name, daihyo_name: daihyo_name,
+                                  taxagency_corporate_number: taxagency_corporate_number,
+                                  address: address)
+
+    return entity if entity.present?
+
+    ## 候補がない場合はExtityを作成する
+    unless recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
+                                    taxagency_corporate_number: taxagency_corporate_number)
+      entity = Entity.new(corporation_number: taxagency_corporate_number)
+      entity.assign_house_company_code
+      entity.build_entity_profile(corporation_name: company_name, daihyo_name: daihyo_name,
+                                  prefecture: prefecture, address: address)
+      entity.save!
+      return entity
+    end
     nil
   end
 

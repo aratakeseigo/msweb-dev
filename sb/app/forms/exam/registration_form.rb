@@ -2,10 +2,9 @@ module Exam
   class RegistrationForm < ApplicationForm
     attribute :id, :integer # クライアントID
 
-    attr_accessor :exams, :current_user
-    # , :sb_client, :entity, :status, :is_assign_new_entity
+    attr_accessor :exams
 
-    def self.initFromFile(sb_client, file)
+    def self.initFromFile(sb_client, current_user, file)
       column_mapping_client = {
         "法人名(保証元)" => "cl_company_name",
         "代表者名(保証元)" => "cl_address",
@@ -44,7 +43,7 @@ module Exam
                                                             end_col_index: 30,
                                                             header_mapping: column_mapping)
 
-      form = Exam::RegistrationForm.new(sb_client)
+      form = Exam::RegistrationForm.new(sb_client, current_user)
 
       exam_request_hash_list.each do |h|
         next if h.values.join.blank?
@@ -57,8 +56,9 @@ module Exam
       form
     end
 
-    def initialize(sb_client)
+    def initialize(sb_client, current_user)
       @sb_client = sb_client
+      @current_user = current_user
     end
 
     def add_exam(client_hash, customer_hash, exam_hash)
@@ -81,114 +81,36 @@ module Exam
 
     def specify_customer(customer_hash)
       ## addressに都道府県が含まれているので分割
-      _address = Utils::AddressUtils.split_prefecture_and_other(customer_hash["address"])
-      prefecture = _address[:prefecture]
-      address = _address[:address]
+      full_address = Utils::AddressUtils.split_prefecture_and_other(customer_hash["address"])
+      prefecture = full_address[:prefecture]
+      address = full_address[:address]
       daihyo_name = customer_hash["daihyo_name"]
       company_name = customer_hash["company_name"]
       taxagency_corporate_number = customer_hash["taxagency_corporate_number"]
-
-      # 既存の保証先だった場合にはそれを返す
-      ## 企業名と代表者名で特定できた場合
-      sbg_clustomers = SbGuaranteeCustomer
-        .select_company_name(company_name)
-        .where(daihyo_name: daihyo_name)
-      return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size == 1
-
-      ## 法人番号と住所(町名)で特定できた場合
-      sbg_clustomers = SbGuaranteeCustomer
-        .select_adress_choumei(address)
-        .where(taxagency_corporate_number: taxagency_corporate_number)
-      return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size == 1
-
-      # 既存でない場合は新規保証元を作成する
-      sbg_clustomer = SbGuaranteeCustomer.new(
-        company_name: company_name, daihyo_name: daihyo_name,
-        taxagency_corporate_number: taxagency_corporate_number,
-        prefecture: prefecture, address: address,
-      )
-
-      ## 新規保証先を作成した場合、
-      ## 対象が絞れた場合にはExtityをアサインする
-      entity = assign_entity(company_name: company_name, daihyo_name: daihyo_name,
-                             taxagency_corporate_number: taxagency_corporate_number,
-                             address: address,
-                             prefecture: prefecture)
-
-      if entity.present?
-        sbg_clustomer.entity = entity
-        return sbg_clustomer
-      end
-
-      sbg_clustomer #企業未特定のまま返却
+      SbGuaranteeCustomer.specify_customer(@current_user, company_name: company_name, daihyo_name: daihyo_name,
+                                                          taxagency_corporate_number: taxagency_corporate_number,
+                                                          prefecture: prefecture, address: address)
     end
 
     def specify_client(client_hash)
       # 保証元情報がない場合sb_clientの情報を設定する
-      if client_hash.nil? || client_hash.empty?
-        return @sb_client.as_sb_guarantee_client
+      if client_hash.nil? || client_hash.values.compact.empty?
+        return SbGuaranteeClient.assign_client_myself(@sb_client, @current_user)
       end
 
       ## addressに都道府県が含まれているので分割
-      _address = Utils::AddressUtils.split_prefecture_and_other(client_hash["cl_address"])
-      prefecture = _address[:prefecture]
-      address = _address[:address]
+      full_address = Utils::AddressUtils.split_prefecture_and_other(client_hash["cl_address"])
+      prefecture = full_address[:prefecture]
+      address = full_address[:address]
       daihyo_name = client_hash["cl_daihyo_name"]
       company_name = client_hash["cl_company_name"]
       taxagency_corporate_number = client_hash["cl_taxagency_corporate_number"]
 
-      # 既存の保証元だった場合にはそれを返す
-      ## 企業名と代表者名で特定できた場合
-      sbg_clients = @sb_client.sb_guarantee_clients
-        .select_company_name(company_name)
-        .where(daihyo_name: daihyo_name)
-      return sbg_clients.first if sbg_clients.present? and sbg_clients.size == 1
-
-      ## 法人番号と住所(町名)で特定できた場合
-      sbg_clients = @sb_client.sb_guarantee_clients
-        .select_adress_choumei(address)
-        .where(taxagency_corporate_number: cl_taxagency_corporate_number)
-      return sbg_clients.first if sbg_clients.present? and sbg_clients.size == 1
-
-      # 既存でない場合は新規保証元を作成する
-      sbg_client = @sb_client.sb_guarantee_clients.build(
-        company_name: company_name, daihyo_name: daihyo_name,
-        taxagency_corporate_number: taxagency_corporate_number,
-        prefecture: prefecture, address: address,
-      )
-      ## 新規保証先を作成した場合、
-      ## 対象が絞れた場合にはExtityをアサインする
-      entity = assign_entity(company_name: company_name, daihyo_name: daihyo_name,
-                             taxagency_corporate_number: taxagency_corporate_number,
-                             address: address,
-                             prefecture: prefecture)
-      if entity.present?
-        sbg_client.entity = entity
-        return sbg_client
-      end
-      sbg_client #企業未特定のまま返却
-    end
-
-    def assign_entity(company_name: nil, daihyo_name: nil,
-                      taxagency_corporate_number: nil,
-                      prefecture: nil, address: nil)
-      entity = Entity.assign_entity(company_name: company_name, daihyo_name: daihyo_name,
-                                    taxagency_corporate_number: taxagency_corporate_number,
-                                    address: address)
-
-      return entity if entity.present?
-
-      ## 候補がない場合はExtityを作成する
-      unless Entity.recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
-                                             taxagency_corporate_number: taxagency_corporate_number)
-        entity = Entity.new(corporation_number: taxagency_corporate_number)
-        entity.assign_house_company_code
-        entity.build_entity_profile(corporation_name: company_name, daihyo_name: daihyo_name,
-                                    prefecture: prefecture, address: address)
-        entity.save!
-        return entity
-      end
-      nil
+      SbGuaranteeClient.assign_client(@sb_client,
+                                      @current_user,
+                                      company_name: company_name, daihyo_name: daihyo_name,
+                                      taxagency_corporate_number: taxagency_corporate_number,
+                                      prefecture: prefecture, address: address)
     end
 
     ## 保存しないので常にtrue(rspec用)

@@ -1,5 +1,6 @@
 class SbClient < ApplicationRecord
   extend ActiveHash::Associations::ActiveRecordExtensions
+
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   belongs_to_active_hash :area
   belongs_to_active_hash :industry
@@ -34,21 +35,4 @@ class SbClient < ApplicationRecord
   validates :channel, allow_blank: true, inclusion: { in: Channel.all, message: :not_in_master }
   validates :sb_agent, allow_blank: true, inclusion: { in: Proc.new { SbAgent.all }, message: :not_in_master }
   validates :area, allow_blank: true, inclusion: { in: Area.all, message: :not_in_master }
-
-  def as_sb_guarantee_client
-    # 自身のクライアントを自身のEntityIDで検索して存在した場合自身が登録済みなのでそれを返す
-    my_clients_myself = sb_guarantee_clients.where(entity_id: entity_id)
-    return my_clients_myself.first if my_clients_myself.present?
-
-    # そうでない場合は新しく登録する
-    sb_guarantee_client = sb_guarantee_clients.build
-    sb_guarantee_client.company_name = name
-    sb_guarantee_client.daihyo_name = daihyo_name
-    sb_guarantee_client.prefecture = prefecture
-    sb_guarantee_client.address = address
-    sb_guarantee_client.tel = tel
-    sb_guarantee_client.taxagency_corporate_number = taxagency_corporate_number
-    sb_guarantee_client.entity_id = entity_id
-    sb_guarantee_client
-  end
 end
