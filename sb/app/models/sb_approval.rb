@@ -95,13 +95,14 @@ class SbApproval::ClientExam < SbApproval
   end
 end
 
-# class SbApproval::Exam < SbApproval
-#   belongs_to :sb_exam, class_name: "SbExam", foreign_key: "relation_id"
+class SbApproval::GuaranteeExam < SbApproval
+  belongs_to :sb_guarantee_exam, class_name: "SbGuaranteeExam", foreign_key: "relation_id"
 
-#   def has_approvable_permission?(user)
-#     # 役職ごとの金額チェック
-#   end
-# end
+  def has_approvable_permission?(_user)
+    # 役職ごとの金額チェック
+    true
+  end
+end
 
 # class SbApproval::Guarantee < SbApproval
 #   belongs_to :sb_guarantee, class_name: "SbGuarantee", foreign_key: "relation_id"
