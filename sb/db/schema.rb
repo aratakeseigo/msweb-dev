@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_17_122633) do
+ActiveRecord::Schema.define(version: 2021_06_18_055635) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2019,7 +2019,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_122633) do
     t.index ["sb_agent_id"], name: "index_sb_clients_on_sb_agent_id"
   end
 
-  create_table "sb_guarantee_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "sb_guarantee_clients", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証元", force: :cascade do |t|
     t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.string "company_name", null: false, comment: "保証元法人名"
     t.string "address", comment: "保証元住所"
@@ -2034,8 +2034,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_122633) do
     t.integer "prefecture_code", comment: "都道府県"
   end
 
-  create_table "sb_guarantee_customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.bigint "sb_guarantee_client_id", null: false, comment: "SB保証元ID"
+  create_table "sb_guarantee_customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証先", force: :cascade do |t|
     t.string "company_name", null: false, comment: "法人名"
     t.bigint "entity_id", comment: "法人ID"
     t.string "address", comment: "住所"
@@ -2049,7 +2048,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_122633) do
     t.string "taxagency_corporate_number", comment: "保証元法人番号"
   end
 
-  create_table "sb_guarantee_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "sb_guarantee_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証審査", force: :cascade do |t|
     t.datetime "accepted_at", null: false, comment: "受付日"
     t.bigint "sb_approval_id", comment: "決裁日"
     t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
