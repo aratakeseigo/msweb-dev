@@ -49,12 +49,12 @@
   </div>
   <div class="form-group col">
     <%= f.label :annual_sales, "年商", class: "col-form-label col-form-label-sm" %>
-    <%= f.text_field :annual_sales, value: @form.sb_client.annual_sales, class: " form-control form-control-sm" %>
+    <%= f.number_field :annual_sales, value: @form.sb_client.annual_sales, class: " form-control form-control-sm" %>
   </div>
 </div>
 <div class="row">
   <div class="form-group col-3">
     <%= f.label :capital, "資本金", class: "col-form-label col-form-label-sm" %>
-    <%= f.text_field :capital, value: @form.sb_client.capital, class: " form-control form-control-sm" %>
+    <%= f.number_field :capital, value: @form.sb_client.capital, class: " form-control form-control-sm" %>
   </div>
 </div>

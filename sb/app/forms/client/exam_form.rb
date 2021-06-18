@@ -49,7 +49,7 @@ module Client
       end
     end
 
-    def other_files_validate?
+    def other_files_invalid?
       current_files_count = @sb_client.other_files.size
       if other_files.present?
         input_other_files_count = other_files.size
@@ -63,7 +63,7 @@ module Client
       @sb_client.area_id = area_id
       @sb_client.sb_tanto_id = sb_tanto_id
       @sb_client.name = name
-      @sb_client.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name if daihyo_name.present?
+      @sb_client.daihyo_name = daihyo_name.present? ? (Utils::StringUtils.to_zenkaku daihyo_name) : daihyo_name
       @sb_client.zip_code = zip_code
       @sb_client.prefecture_code = prefecture_code
       @sb_client.address = address

@@ -9,7 +9,7 @@ class Clients::ExamController < ApplicationController
     @form = Client::ExamForm.new(client_params, @sb_client)
     @form.current_user = current_internal_user
 
-    if @form.other_files_validate?
+    if @form.other_files_invalid?
       render :edit and return
     end
 
