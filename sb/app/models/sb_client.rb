@@ -12,6 +12,9 @@ class SbClient < ApplicationRecord
 
   has_many :sb_client_users
   has_many :sb_client_exams
+  has_many :sb_guarantee_clients
+  has_many :sb_guarantee_exams
+
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
 
