@@ -8,16 +8,16 @@ RSpec.describe Client::ExamForm, type: :model do
 
   describe "初期化" do
     let(:client) { create :sb_client, :has_agent }
+    let(:user) {create :internal_user}
     context "初期表示" do
-      it "有効である" do
-        
+      it "一覧画面で選択されたidのsb_clientが表示される" do
         form = Client::ExamForm.new(nil, client)
         expect(form.sb_client.name).to eq "東沖縄電力株式会社"
       end
     end
 
     context "更新時" do
-      it "有効である" do
+      it "対象データが更新される" do
         params = {area_id: "1",
                   sb_tanto_id: "1",
                   name: "アラームボックス",
@@ -36,7 +36,13 @@ RSpec.describe Client::ExamForm, type: :model do
         
         form = Client::ExamForm.new(params, client)
         form.invalid?
+        form.sb_client.updated_user = user
+        form.save_client
+        # 更新されているか確認の為client.idでsb_clientを検索
+        new_sb_client = SbClient.find(client.id)
+        expect(form.invalid?).to eq false
         expect(form.sb_client.name).to eq "アラームボックス"
+        expect(new_sb_client.name).to eq "アラームボックス"
       end
     end
   end
@@ -235,10 +241,8 @@ RSpec.describe Client::ExamForm, type: :model do
                                                                       fixture_file_upload("files/client_exam/test4.pdf"),
                                                                       fixture_file_upload("files/client_exam/test5.pdf")]
       }
-      before { 
-        client_exam_form.other_files_invalid?
-      }
       it "エラーにならない" do
+        expect(client_exam_form.other_files_invalid?).to eq false
         expect(client_exam_form.errors[:other_files]).to eq []
       end
     end
@@ -251,10 +255,8 @@ RSpec.describe Client::ExamForm, type: :model do
                                                                       fixture_file_upload("files/client_exam/test5.pdf"),
                                                                       fixture_file_upload("files/client_exam/test6.pdf")]
       }
-      before { 
-        client_exam_form.other_files_invalid?
-      }
       it "エラーになる" do
+        expect(client_exam_form.other_files_invalid?).to eq true
         expect(client_exam_form.errors[:other_files]).to eq ["は5件までしか保存できません"]
       end
     end

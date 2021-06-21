@@ -55,8 +55,10 @@ module Client
         input_other_files_count = other_files.size
         if current_files_count + input_other_files_count > MAX_OTHER_FILES_COUNT
           errors.add(:other_files, "は5件までしか保存できません")
+          return true
         end
       end
+      return false
     end
 
     def to_sb_client

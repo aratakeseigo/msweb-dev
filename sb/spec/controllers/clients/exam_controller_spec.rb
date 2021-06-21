@@ -19,7 +19,7 @@ RSpec.describe Clients::ExamController, type: :controller do
   end
 
   describe "POST #update" do
-    context "バリデーションOKの項目でをアップデートした場合" do
+    context "バリデーションOKの項目でアップデートした場合" do
       before { post :update, params: {id: client.id,
                                       area_id: "2",
                                       sb_tanto_id: "2",
@@ -65,7 +65,7 @@ RSpec.describe Clients::ExamController, type: :controller do
       end
     end
 
-    context "バリデーションNGの項目でをアップデートした場合" do
+    context "バリデーションNGの項目でアップデートした場合" do
       before { post :update, params: { id: client.id,tel: "123456789" } }
       it "クライアント一覧画面へ遷移する" do
         expect(response).to render_template :edit
