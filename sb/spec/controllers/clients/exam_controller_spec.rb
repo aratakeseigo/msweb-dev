@@ -60,7 +60,6 @@ RSpec.describe Clients::ExamController, type: :controller do
                                                     fixture_file_upload("files/client_exam/test6.pdf")]
         }}
       it "クライアント一覧画面へ遷移する" do
-        updated_sb_client = SbClient.find(client.id)
         expect(response).to render_template :edit
         expect(assigns(:form).errors[:other_files]).to eq ["は5件までしか保存できません"]
       end
@@ -69,7 +68,6 @@ RSpec.describe Clients::ExamController, type: :controller do
     context "バリデーションNGの項目でをアップデートした場合" do
       before { post :update, params: { id: client.id,tel: "123456789" } }
       it "クライアント一覧画面へ遷移する" do
-        updated_sb_client = SbClient.find(client.id)
         expect(response).to render_template :edit
         expect(assigns(:form).errors[:tel]).to eq ["は10桁または11桁で入力してください"]
       end
