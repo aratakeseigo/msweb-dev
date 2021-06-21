@@ -41,7 +41,19 @@ class Clients::ExamController < ApplicationController
 
   private
   def client_params
-    params.permit(:area_id, :sb_tanto_id, :name, :daihyo_name, :zip_code, :zip_code, :prefecture_code, :address, :tel, :industry_id, :industry_optional, :established_in, :annual_sales, :capital, :registration_form_file, other_files: [])
+    params.permit(:area_id,
+                  :sb_tanto_id,
+                  :name, :daihyo_name,
+                  :zip_code, :zip_code,
+                  :prefecture_code,
+                  :address,
+                  :tel,
+                  :industry_id,
+                  :industry_optional,
+                  :established_in,
+                  :annual_sales, :capital,
+                  :registration_form_file,
+                  other_files: [])
   end
 
   def load_client

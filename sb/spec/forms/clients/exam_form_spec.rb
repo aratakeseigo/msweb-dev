@@ -18,7 +18,21 @@ RSpec.describe Client::ExamForm, type: :model do
 
     context "更新時" do
       it "有効である" do
-        params = { area_id: "1",sb_tanto_id: "1",name: "アラームボックス",daihyo_name: "武田　太郎",zip_code: "9012102",prefecture_code: "14",address: "川崎市高津区北見方9-9-9",tel: "12345678901",industry_id: "1",industry_optional: "ブランド品",established_in: "202106",annual_sales: "33000000",capital: "10000000",registration_form_file: nil,other_files: nil}
+        params = {area_id: "1",
+                  sb_tanto_id: "1",
+                  name: "アラームボックス",
+                  daihyo_name: "武田　太郎",
+                  zip_code: "9012102",
+                  prefecture_code: "14",
+                  address: "川崎市高津区北見方9-9-9",
+                  tel: "12345678901",
+                  industry_id: "1",
+                  industry_optional: "ブランド品",
+                  established_in: "202106",
+                  annual_sales: "33000000",
+                  capital: "10000000",
+                  registration_form_file: nil,other_files: nil
+        }
         
         form = Client::ExamForm.new(params, client)
         form.invalid?
@@ -201,7 +215,8 @@ RSpec.describe Client::ExamForm, type: :model do
                                                                       fixture_file_upload("files/client_exam/test2.pdf"),
                                                                       fixture_file_upload("files/client_exam/test3.pdf"),
                                                                       fixture_file_upload("files/client_exam/test4.pdf"),
-                                                                      fixture_file_upload("files/client_exam/test5.pdf")] }
+                                                                      fixture_file_upload("files/client_exam/test5.pdf")]
+      }
       before { 
         client_exam_form.save_client
       }
@@ -218,7 +233,8 @@ RSpec.describe Client::ExamForm, type: :model do
                                                                       fixture_file_upload("files/client_exam/test2.pdf"),
                                                                       fixture_file_upload("files/client_exam/test3.pdf"),
                                                                       fixture_file_upload("files/client_exam/test4.pdf"),
-                                                                      fixture_file_upload("files/client_exam/test5.pdf")] }
+                                                                      fixture_file_upload("files/client_exam/test5.pdf")]
+      }
       before { 
         client_exam_form.other_files_invalid?
       }
@@ -233,7 +249,8 @@ RSpec.describe Client::ExamForm, type: :model do
                                                                       fixture_file_upload("files/client_exam/test3.pdf"),
                                                                       fixture_file_upload("files/client_exam/test4.pdf"),
                                                                       fixture_file_upload("files/client_exam/test5.pdf"),
-                                                                      fixture_file_upload("files/client_exam/test6.pdf")] }
+                                                                      fixture_file_upload("files/client_exam/test6.pdf")]
+      }
       before { 
         client_exam_form.other_files_invalid?
       }
