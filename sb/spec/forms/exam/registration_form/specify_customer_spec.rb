@@ -21,6 +21,9 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       it "extityは増えない" do
         expect { res }.to change { Entity.count }.by(0)
       end
+      it "SbGuaranteeCustomerが増えない" do
+        expect { res.save }.to change { SbGuaranteeCustomer.count }.by(0)
+      end
     end
     context "既存の保証先と法人番号と住所(町名)で一致した場合" do
       let(:res) {
@@ -36,6 +39,9 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       end
       it "extityは増えない" do
         expect { res }.to change { Entity.count }.by(0)
+      end
+      it "SbGuaranteeCustomerが増えない" do
+        expect { res.save }.to change { SbGuaranteeCustomer.count }.by(0)
       end
     end
     describe "新規保証先の作成" do
@@ -56,6 +62,9 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
         it "extityは増えない" do
           expect { res }.to change { Entity.count }.by(0)
+        end
+        it "SbGuaranteeCustomerが増える" do
+          expect { res.save }.to change { SbGuaranteeCustomer.count }.by(1)
         end
       end
       context "法人情報と一致しなかった場合" do
@@ -79,28 +88,30 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(res.entity.entity_profile.corporation_name).to eq other_customer.company_name
           expect(res.entity.entity_profile.daihyo_name).to eq other_customer.daihyo_name
         end
+        it "SbGuaranteeCustomerが増える" do
+          expect { res.save }.to change { SbGuaranteeCustomer.count }.by(1)
+        end
       end
       context "法人情報に候補が存在した場合" do
-        let!(:entity_2) { create :entity }
-
         let(:res) {
+          # 会社名だけ一致
           exam_form.specify_customer({
             "company_name" => entity.entity_profile.corporation_name,
-            "daihyo_name" => entity_2.entity_profile.corporation_name,
+            "daihyo_name" => "柿谷　曜一朗",
             "taxagency_corporate_number" => nil,
             "address" => nil,
           })
         }
         it "新規の保証先にEntityが設定されずに返却される" do
           expect(res.company_name).to eq entity.entity_profile.corporation_name
-          expect(res.daihyo_name).to eq entity_2.entity_profile.corporation_name
+          expect(res.daihyo_name).to eq "柿谷　曜一朗"
           expect(res.entity_id).to be_nil
         end
         it "extityが増ない" do
           expect { res }.to change { Entity.count }.by(0)
         end
         it "SbGuaranteeCustomerが増える" do
-          expect { res }.to change { SbGuaranteeCustomer.count }.by(1)
+          expect { res.save }.to change { SbGuaranteeCustomer.count }.by(1)
         end
       end
     end

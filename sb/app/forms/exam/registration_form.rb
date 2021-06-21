@@ -4,6 +4,32 @@ module Exam
 
     attr_accessor :exams
 
+    validate :exam_validate?
+
+    def exam_validate?
+      if exams.nil? || exams.empty?
+        errors.add(:exams, :not_empty)
+        return
+      end
+      exams.each.with_index(1) do |exam, num|
+        unless exam.valid?
+          exam.errors.each do |attr, error|
+            errors.add(attr, error + "[#{num}行目]")
+          end
+        end
+        unless exam.sb_guarantee_customer.valid?
+          exam.sb_guarantee_customer.errors.each do |attr, error|
+            errors.add(attr, error + "[#{num}行目]")
+          end
+        end
+        unless exam.sb_guarantee_client.valid?
+          exam.sb_guarantee_client.errors.each do |attr, error|
+            errors.add(attr, error + "[#{num}行目]")
+          end
+        end
+      end
+    end
+
     def self.initFromFile(sb_client, current_user, file)
       column_mapping_client = {
         "法人名(保証元)" => "cl_company_name",
@@ -59,13 +85,15 @@ module Exam
     def initialize(sb_client, current_user)
       @sb_client = sb_client
       @current_user = current_user
+      # @file = file
+      @sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.create(created_user: current_user)
     end
 
     def add_exam(client_hash, customer_hash, exam_hash)
-      @exams = [] unless @exams
+      @exams = [] unless @exams.present?
 
       # clientを特定する（なければ新規作成）
-      sbg_client = specify_client(client_hash)
+      sbg_client = specify_client(client_hash || {})
       # customerを特定する（なければ新規作成）
       sbg_clustomer = specify_customer(customer_hash)
       # examを作成する
@@ -73,10 +101,12 @@ module Exam
         exam_hash.merge({
           sb_client: @sb_client,
           sb_guarantee_customer: sbg_clustomer,
+          sb_guarantee_exam_request: @sb_guarantee_exam_request,
         })
       )
 
       @exams << sbg_exam
+      sbg_exam
     end
 
     def specify_customer(customer_hash)
@@ -87,9 +117,10 @@ module Exam
       daihyo_name = customer_hash["daihyo_name"]
       company_name = customer_hash["company_name"]
       taxagency_corporate_number = customer_hash["taxagency_corporate_number"]
+      tel = customer_hash["tel"]
       SbGuaranteeCustomer.specify_customer(@current_user, company_name: company_name, daihyo_name: daihyo_name,
                                                           taxagency_corporate_number: taxagency_corporate_number,
-                                                          prefecture: prefecture, address: address)
+                                                          prefecture: prefecture, address: address, tel: tel)
     end
 
     def specify_client(client_hash)
@@ -105,12 +136,13 @@ module Exam
       daihyo_name = client_hash["cl_daihyo_name"]
       company_name = client_hash["cl_company_name"]
       taxagency_corporate_number = client_hash["cl_taxagency_corporate_number"]
+      tel = client_hash["cl_tel"]
 
       SbGuaranteeClient.assign_client(@sb_client,
                                       @current_user,
                                       company_name: company_name, daihyo_name: daihyo_name,
                                       taxagency_corporate_number: taxagency_corporate_number,
-                                      prefecture: prefecture, address: address)
+                                      prefecture: prefecture, address: address, tel: tel)
     end
 
     ## 保存しないので常にtrue(rspec用)

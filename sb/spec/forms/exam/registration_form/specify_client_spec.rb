@@ -4,8 +4,8 @@ RSpec.describe Exam::RegistrationForm, type: :model do
   describe "保証元の特定" do
     let(:internal_user) { create :internal_user }
     let!(:entity) { create :entity }
+    let!(:sb_client) { create :sb_client, entity: entity }
     let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
-    let(:sb_client) { create :sb_client, entity: entity, created_user: internal_user, updated_user: internal_user }
     context "保証元情報が存在しない場合" do
       context "クライアントがまだ保証元として登録されていない場合" do
         let(:res) {
@@ -20,7 +20,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(res.entity).to eq sb_client.entity
         end
         it "SbGuaranteeClientが増える" do
-          expect { res }.to change { SbGuaranteeClient.count }.by(1)
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
         end
       end
       context "クライアントがすでに保証元として登録されている場合" do
@@ -39,7 +39,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(res.entity).to eq grt_client_myself.entity
         end
         it "SbGuaranteeClientが増えない" do
-          expect { res }.to change { SbGuaranteeClient.count }.by(0)
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(0)
         end
       end
     end
@@ -60,6 +60,9 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       it "extityは増えない" do
         expect { res }.to change { Entity.count }.by(0)
       end
+      it "SbGuaranteeClientが増えない" do
+        expect { res.save }.to change { SbGuaranteeClient.count }.by(0)
+      end
     end
     context "クライアントがもつ既存の保証元と法人番号と住所(町名)で一致した場合" do
       let!(:grt_client) { create :sb_guarantee_client, sb_client: sb_client }
@@ -77,10 +80,13 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       it "extityは増えない" do
         expect { res }.to change { Entity.count }.by(0)
       end
+      it "SbGuaranteeClientが増えない" do
+        expect { res.save }.to change { SbGuaranteeClient.count }.by(0)
+      end
     end
     context "他のクライアントがもつ既存の保証元と一致した場合" do
       let(:entity_other) { create :entity }
-      let!(:sb_client_other) { create :sb_client, entity: entity_other, created_user: internal_user }
+      let!(:sb_client_other) { create :sb_client, entity: entity_other }
       let!(:grt_client) { create :sb_guarantee_client, sb_client: sb_client_other }
       context "企業名と代表者名で一致した場合" do
         let(:res) {
@@ -95,6 +101,9 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         it "既存の保証元は返却されない" do
           expect(res).not_to eq grt_client
         end
+        it "SbGuaranteeClientが増える" do
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
+        end
       end
       context "法人番号と住所(町名)で一致した場合" do
         let(:res) {
@@ -108,6 +117,9 @@ RSpec.describe Exam::RegistrationForm, type: :model do
 
         it "既存の保証元は返却されない" do
           expect(res).not_to eq grt_client
+        end
+        it "SbGuaranteeClientが増える" do
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
         end
       end
     end
@@ -129,8 +141,11 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         it "extityは増えない" do
           expect { res }.to change { Entity.count }.by(0)
         end
+        it "SbGuaranteeClientが増える" do
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
+        end
       end
-      xcontext "法人情報と一致しなかった場合" do
+      context "法人情報と一致しなかった場合" do
         # dbには保存せずに値を取得するために初期化
         let!(:other_customer) { build :sb_guarantee_customer, :other_customer }
         let(:res) {
@@ -151,26 +166,32 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(res.entity.entity_profile.corporation_name).to eq other_customer.company_name
           expect(res.entity.entity_profile.daihyo_name).to eq other_customer.daihyo_name
         end
-      end
-      xcontext "法人情報に候補が存在した場合" do
-        it "新規の保証元にEntityが設定されずに返却される" do
+        it "SbGuaranteeClientが増える" do
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
         end
       end
-    end
-  end
-  describe "企業特定" do
-    xcontext "法人情報が特定できた場合" do
-      it "既存のentityが返却される" do
-      end
-    end
-    xcontext "法人情報に候補が存在ない場合" do
-      it "新規のentityが保存される" do
-      end
-      it "新規のentityが返却される" do
-      end
-    end
-    xcontext "法人情報に候補が存在した場合" do
-      it "nilが返却される" do
+      context "法人情報に候補が存在した場合" do
+        let(:res) {
+          # 代表者名だけ一致
+          exam_form.specify_client({
+            "cl_company_name" => "株式会社セレッソ",
+            "cl_daihyo_name" => entity.entity_profile.daihyo_name,
+            "cl_taxagency_corporate_number" => nil,
+            "cl_address" => nil,
+          })
+        }
+
+        it "新規の保証元にEntityが設定されずに返却される" do
+          expect(res.company_name).to eq "株式会社セレッソ"
+          expect(res.daihyo_name).to eq entity.entity_profile.daihyo_name
+          expect(res.entity_id).to be_nil
+        end
+        it "extityは増えない" do
+          expect { res }.to change { Entity.count }.by(0)
+        end
+        it "SbGuaranteeClientが増える" do
+          expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
+        end
       end
     end
   end

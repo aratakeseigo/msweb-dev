@@ -1,0 +1,256 @@
+require "rails_helper"
+
+RSpec.describe Exam::RegistrationForm, type: :model do
+  let(:internal_user) { create :internal_user }
+  let(:entity) { create :entity }
+  let(:sb_client) { create :sb_client, entity: entity }
+  let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
+  let(:client_hash) {
+    {
+      "cl_company_name" => "株式会社ヨントリー",
+      "cl_daihyo_name" => "鳥居　太郎",
+      "cl_taxagency_corporate_number" => "4445556667779",
+      "cl_address" => "神奈川県川崎市高津区下野毛５－６－７",
+      "cl_tel" => "0442679999",
+    }
+  }
+  let(:customer_hash) {
+    {
+      "company_name" => "有限会社千本桜酒店",
+      "daihyo_name" => "千本　桜",
+      "taxagency_corporate_number" => "1234657980123",
+      "address" => "神奈川県大和市福田４５００",
+      "tel" => "0462679999",
+    }
+  }
+  let(:exam_hash) {
+    {
+      "transaction_contents" => "取扱い商品", # 取扱い商品
+      "payment_method_id" => PaymentMethod.all.sample, # 決済条件
+      "payment_method_optional" => "決済条件補足", # 決済条件補足
+      "new_transaction" => true, # 取引
+      "transaction_years" => 3, # 取引歴
+      "payment_delayed" => true, # 支払い遅延
+      "payment_delayed_memo" => "支払い遅延の状況", # 支払い遅延の状況
+      "payment_method_changed" => true, # 支払条件変更
+      "payment_method_changed_memo" => "支払条件変更内容", # 支払条件変更内容
+      "other_companies_ammount" => "ＡＢ蛇内保証会社", # 保証会社名
+      "other_guarantee_companies" => 900000, # 保証額
+      "guarantee_amount_hope" => 5000000, # 保証希望額
+    }
+  }
+
+  describe "保証審査依頼追加" do
+    context "add_examでclient_hashが空の{}の場合" do
+      let(:client_hash) { {} } # GMO以外は空のhash
+
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      it "SBクライアント＝保証元の審査依頼が作成される" do
+        expect(exam.sb_client).to eq sb_client
+        expect(exam.sb_guarantee_client.entity).to eq sb_client.entity
+        expect(exam.sb_guarantee_customer.company_name).to eq customer_hash["company_name"]
+        expect(exam.sb_guarantee_customer.entity).to be_present
+        expect(exam.sb_guarantee_exam_request).to be_present
+      end
+      it "フォームに審査依頼が１件追加されている" do
+        expect(exam_form.exams.size).to eq 1
+      end
+    end
+    context "add_examでclient_hashがnilの場合" do
+      let(:client_hash) { nil } # GMO以外は空のhash
+
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      it "空のHashとして扱われ、SBクライアント＝保証元の審査依頼が作成される" do
+        expect(exam.sb_client).to eq sb_client
+        expect(exam.sb_guarantee_client.entity).to eq sb_client.entity
+        expect(exam.sb_guarantee_customer.company_name).to eq customer_hash["company_name"]
+        expect(exam.sb_guarantee_customer.entity).to be_present
+        expect(exam.sb_guarantee_exam_request).to be_present
+      end
+      it "フォームに審査依頼が１件追加されている" do
+        expect(exam_form.exams.size).to eq 1
+      end
+    end
+    context "add_examでclient_hashが指定された場合" do
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      it "空のHashとして扱われ、SBクライアント＝保証元の審査依頼が作成される" do
+        expect(exam.sb_client).to eq sb_client
+        expect(exam.sb_guarantee_client.entity).to_not eq sb_client.entity
+        expect(exam.sb_guarantee_customer.company_name).to eq customer_hash["company_name"]
+        expect(exam.sb_guarantee_customer.entity).to be_present
+        expect(exam.sb_guarantee_exam_request).to be_present
+      end
+      it "フォームに審査依頼が１件追加されている" do
+        expect(exam_form.exams.size).to eq 1
+      end
+    end
+  end
+  describe "バリデーション" do
+    describe "審査依頼" do
+      context "審査依頼が０件の場合" do
+        # 何もしないでいきなりバリデーションをかける
+        it "無効である" do
+          expect(exam_form.valid?).to eq false
+          expect(exam_form.errors).to be_added(:exams, :not_empty)
+        end
+      end
+    end
+    context "審査の情報にバリデーションエラーがある場合" do
+      let(:exam_hash_over_words) {
+        exam_hash["transaction_contents"] = "あ" * 256
+        exam_hash
+      }
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+      it "無効である" do
+        expect(exam_form.valid?).to eq false
+        expect(exam_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[1行目]"
+      end
+    end
+    context "保証元の情報にバリデーションエラーがある場合" do
+      let(:client_hash) {
+        {
+          "cl_company_name" => "株式会社ヨントリー",
+          "cl_daihyo_name" => "鳥居　太郎",
+          "cl_taxagency_corporate_number" => "AAA",
+          "cl_address" => "神奈川県川崎市高津区下野毛５－６－７",
+          "cl_tel" => "0442679999",
+        }
+      }
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      it "無効である" do
+        expect(exam_form.valid?).to eq false
+        expect(exam_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
+      end
+    end
+    context "保証先の情報にバリデーションエラーがある場合" do
+      let(:customer_hash) {
+        {
+          "company_name" => "有限会社千本桜酒店",
+          "daihyo_name" => "千本　桜",
+          "taxagency_corporate_number" => "1234657980123",
+          "address" => "神奈川県大和市福田４５００",
+          "tel" => "神奈川県大和市福田４５００",
+        }
+      }
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      it "無効である" do
+        expect(exam_form.valid?).to eq false
+        expect(exam_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
+      end
+    end
+    describe "複数行にバリデーションエラーがある場合、エラー業を特定できるか" do
+      context "保証元の情報に複数のバリデーションエラーがある場合" do
+        let(:client_hash) {
+          {
+            "cl_company_name" => "株式会社ヨントリー",
+            "cl_daihyo_name" => "鳥居　太郎",
+            "cl_taxagency_corporate_number" => "AAA",
+            "cl_address" => "神奈川県川崎市高津区下野毛５－６－７",
+            "cl_tel" => "0442679999",
+          }
+        }
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam3) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        it "行番号が指定されすべての行のエラーが表示される" do
+          expect(exam_form.valid?).to eq false
+          expect(exam_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
+          expect(exam_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[2行目]"
+          expect(exam_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[3行目]"
+        end
+      end
+      context "保証先の情報に複数バリデーションエラーがある場合" do
+        let(:customer_hash) {
+          {
+            "company_name" => "有限会社千本桜酒店",
+            "daihyo_name" => "千本　桜",
+            "taxagency_corporate_number" => "1234657980123",
+            "address" => "神奈川県大和市福田４５００",
+            "tel" => "神奈川県大和市福田４５００",
+          }
+        }
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam3) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        it "行番号が指定されすべての行のエラーが表示される" do
+          expect(exam_form.valid?).to eq false
+          expect(exam_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
+          expect(exam_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[2行目]"
+          expect(exam_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[3行目]"
+        end
+      end
+      context "審査の情報に複数バリデーションエラーがある場合" do
+        let(:exam_hash_over_words) {
+          exam_hash["transaction_contents"] = "あ" * 256
+          exam_hash
+        }
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+        let!(:exam3) { exam_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+        it "無効である" do
+          expect(exam_form.valid?).to eq false
+          expect(exam_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[1行目]"
+          expect(exam_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[2行目]"
+          expect(exam_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[3行目]"
+        end
+      end
+    end
+  end
+
+  describe "ファイル読み込み" do
+    let(:current_user) { create :internal_user }
+    let(:form) { Exam::RegistrationForm.initFromFile(sb_client, current_user, file) }
+    context "異常なファイルを読み込んだ場合" do
+      context "空のExcel" do
+        let(:file) { file_fixture("exam_registration/empty.xlsx") }
+        it "初期化できるがバリデーションエラーになる" do
+          expect(form).to be_invalid
+        end
+      end
+      context "旧Excelの拡張子の場合" do
+        let(:file) { file_fixture("exam_registration/ok.xls") }
+        it "読み込みエラーになる" do
+          expect {
+            form
+          }.to raise_error(ArgumentError)
+        end
+      end
+      context "画像ファイルの場合" do
+        let(:file) { file_fixture("exam_registration/logo.jpg") }
+
+        it "読み込みエラーになる" do
+          expect {
+            form
+          }.to raise_error(ArgumentError)
+        end
+      end
+    end
+
+    context "内容がNGなファイルを読み込んだ場合" do
+      let(:file) { file_fixture("exam_registration/ng.xlsx") }
+      it "初期化できるがバリデーションエラーになる" do
+        expect(form).to be_invalid
+      end
+    end
+    context "正常なファイルを読み込んだ場合" do
+      #   let(:file) { file_fixture("exam_registration/ok_no_client.xlsx") }
+      #   it "初期化できる" do
+      #     expect(form).to be_valid
+      #   end
+      #   it "審査が３行ある" do
+      #     expect(form.exams.size).to eq 3
+      #   end
+      #   it "審査が正しく格納されている" do
+      #     牛肉	既存	2	末・末	決済条件補足	無	支払い遅延の状況	無	支払条件変更内容	5,000,000	保証会社名	900,000
+
+      #     exam = form.exams.first
+      #     expect(exam.).to eq 3
+      #   end
+      #   it "保証先が正しく格納されている" do
+      #     株式会社PONY	牧場　牛男	東京都新宿区西新宿３－６－８	0399999999	1234567890123
+      #   end
+      #   it "保証元が正しく格納されている" do
+      #   end
+    end
+  end
+end

@@ -6,8 +6,13 @@ class SbGuaranteeClient < ApplicationRecord
   belongs_to :sb_client
   has_many :sb_guarantee_exams
   belongs_to :entity, optional: true
-  belongs_to :created_user, optional: true, class_name: "InternalUser", foreign_key: "created_by"
-  belongs_to :updated_user, optional: true, class_name: "InternalUser", foreign_key: "updated_by"
+
+  validates :company_name, presence: true, length: { maximum: 255 }
+  validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
+  validates :address, allow_blank: true, length: { maximum: 255 }
+  validates :tel, allow_blank: true, tel: true
+  validates :taxagency_corporate_number, allow_blank: true, taxagency_corporate_number: true
+  validates :prefecture, allow_blank: true, inclusion: { in: Prefecture.all, message: :inclusion_prefecture_code }
 
   scope :select_company_name, ->(company_name) {
           where(company_name: company_name)
@@ -24,7 +29,7 @@ class SbGuaranteeClient < ApplicationRecord
                          user,
                          company_name: nil, daihyo_name: nil,
                          taxagency_corporate_number: nil,
-                         prefecture: nil, address: nil)
+                         prefecture: nil, address: nil, tel: nil)
     # 既存の保証元だった場合にはそれを返す
     ## 企業名と代表者名で特定できた場合
     sbg_clients = sb_client.sb_guarantee_clients
@@ -49,13 +54,11 @@ class SbGuaranteeClient < ApplicationRecord
     entity = Entity.assign_or_create_entity(company_name: company_name, daihyo_name: daihyo_name,
                                             taxagency_corporate_number: taxagency_corporate_number,
                                             address: address,
-                                            prefecture: prefecture)
+                                            prefecture: prefecture, daihyo_tel: tel)
     if entity.present?
       sbg_client.entity = entity
-      return sbg_client
     end
-    sbg_clustomer.created_user = user
-    sbg_clustomer.save!
+    sbg_client.created_user = user
     sbg_client #企業未特定のまま返却
   end
 

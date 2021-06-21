@@ -63,7 +63,10 @@ class Entity < ActiveRecord::Base
   #
   def self.assign_or_create_entity(company_name: nil, daihyo_name: nil,
                                    taxagency_corporate_number: nil,
-                                   prefecture: nil, address: nil)
+                                   prefecture: nil, address: nil,
+                                   daihyo_tel: nil,
+                                   established: nil,
+                                   zip_code: nil)
     entity = Entity.assign_entity(company_name: company_name, daihyo_name: daihyo_name,
                                   taxagency_corporate_number: taxagency_corporate_number,
                                   address: address)
@@ -73,14 +76,34 @@ class Entity < ActiveRecord::Base
     ## 候補がない場合はExtityを作成する
     unless recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
                                     taxagency_corporate_number: taxagency_corporate_number)
-      entity = Entity.new(corporation_number: taxagency_corporate_number)
-      entity.assign_house_company_code
-      entity.build_entity_profile(corporation_name: company_name, daihyo_name: daihyo_name,
-                                  prefecture: prefecture, address: address)
+      entity = create_entity(company_name: company_name, daihyo_name: daihyo_name,
+                             taxagency_corporate_number: taxagency_corporate_number,
+                             address: address, daihyo_tel: daihyo_tel, established: established,
+                             zip_code: zip_code)
       entity.save!
       return entity
     end
     nil
+  end
+
+  def self.create_entity(company_name: nil, daihyo_name: nil,
+                         taxagency_corporate_number: nil,
+                         prefecture: nil, address: nil,
+                         daihyo_tel: nil,
+                         established: nil,
+                         zip_code: nil)
+    entity = Entity.new(established: established,
+                        corporation_number: taxagency_corporate_number)
+    entity.assign_house_company_code
+    profile = entity.build_entity_profile(
+      prefecture: prefecture,
+      address: address,
+      daihyo_tel: daihyo_tel,
+      zip_code: zip_code,
+    )
+    profile.corporation_name = company_name
+    profile.daihyo_name = daihyo_name
+    entity
   end
 
   # 法人番号と会社名と代表者でどれか一致するExtityがあるか

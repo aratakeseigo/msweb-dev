@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_18_055635) do
+ActiveRecord::Schema.define(version: 2021_06_18_134036) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2048,6 +2048,14 @@ ActiveRecord::Schema.define(version: 2021_06_18_055635) do
     t.string "taxagency_corporate_number", comment: "保証元法人番号"
   end
 
+  create_table "sb_guarantee_exam_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "保証審査依頼", force: :cascade do |t|
+    t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
+    t.bigint "created_by", null: false, comment: "作成者"
+    t.bigint "updated_by", null: false, comment: "更新者"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sb_guarantee_exams", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証審査", force: :cascade do |t|
     t.datetime "accepted_at", null: false, comment: "受付日"
     t.bigint "sb_approval_id", comment: "決裁日"
@@ -2098,6 +2106,7 @@ ActiveRecord::Schema.define(version: 2021_06_18_055635) do
     t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "sb_guarantee_exam_request_id", comment: "保証審査依頼ID"
   end
 
   create_table "sb_user_permissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

@@ -28,8 +28,76 @@ ja:
         position: "役職"
         department: "部署"
         contact_tel: "希望連絡先"
+      sb_guarantee_custromer:
+        sb_guarantee_client_id: "SB保証元ID"
+        company_name: "法人名"
+        address: "住所"
+        tel: "電話番号"
+        daihyo_name: "代表者名"
+        taxagency_corporate_number: "法人番号"
+      sb_guarantee_client:
+        company_name: "保証元法人名"
+        address: "保証元住所"
+        tel: "保証元電話"
+        daihyo_name: "保証元代表者名"
+        taxagency_corporate_number: "保証元法人番号"
+      sb_guarantee_exam:
+        accepted_at: "受付日"
+        sb_approval_id: "決裁ID"
+        sb_client_id: "SBクライアントID"
+        sb_guarantee_client_id: "SB保証元ID"
+        sb_guarantee_customer_id: "SB保証先ID"
+        transaction_contents: "取り扱い商品"
+        payment_method_id: "決済条件"
+        payment_method_optional: "決済条件(補足) "
+        new_transaction: "新規取引"
+        transaction_years: "取引歴"
+        payment_delayed: "遅延の有無"
+        payment_delayed_memo: "遅延内容"
+        payment_method_changed: "決済条件変更の有無"
+        payment_method_changed_memo: "変更内容"
+        other_companies_ammount: "他社保証枠"
+        other_guarantee_companies: "他保証会社名"
+        guarantee_amount_hope: "希望限度額"
+        guarantee_amount_suggested: "限度額案"
+        guarantee_amount_fix: "決定限度額"
+        reinsured: "再保険有無"
+        reinsurance_ammount: "再保険額"
+        gmo_reinsured: "ＧＭＯ再保険有無"
+        gmo_reinsurance_ammount: "ＧＭＯ再保険額"
+        memo: "備考"
+        tsr_corporate_code: "TSRコード"
+        tsr_score: "TSR評点"
+        tsr_memo: "TSR備考"
+        toki_corporate_code: "登記コード"
+        toki_memo: "登記備考"
+        tdb_corporate_code: "帝国コード"
+        tdb_score: "帝国評点"
+        tdb_memo: "帝国備考"
+        shinko_corporate_code: "信用交換所コード"
+        shinko_score: "信交評点"
+        shinko_memo: "信交備考"
+        taxagency_memo: "法人番号備考"
+        bl_memo: "BL備考"
+        anti_social: "反社"
+        hp_type_id: "ＨＰ種別"
+        hp_type_optional: "ＨＰ種別(補足)"
+        hp_url: "HPURL"
+        exam_memo: "特記事項"
+        other_guarantee_limits_sum: "他保証"
+        risk_ammount: "リスク金額合計"
+
   activemodel:
     attributes:
+      exam/registration_form:
+        exams: "保証審査依頼"
+        company_name: "法人名"
+        address: "住所"
+        tel: "電話番号"
+        daihyo_name: "代表者名"
+        taxagency_corporate_number: "法人番号"
+        transaction_contents: "取り扱い商品"
+        sb_guarantee_exams: "保証審査"
       client/registration_form:
         name: "クライアント名"
         daihyo_name: "代表者名"
@@ -182,6 +250,7 @@ ja:
       length_10_or_11: は10桁または11桁で入力してください
       inclusion_prefecture_code: は1-47の数値で入力してください
       user_name_split_fullspace: の姓名は全角スペースで区切ってください
+      not_empty: は１件以上入力してください
     template:
       body: 次の項目を確認してください
       header:

@@ -21,6 +21,7 @@ module Utils
       Prefecture.all.each do |prefecture|
         return { prefecture: prefecture, address: address.sub(prefecture.name, "") } if address.starts_with? prefecture.name
       end
+      return { prefecture: nil, address: address }
     end
   end
 end
