@@ -17,12 +17,13 @@ class SbGuaranteeClient < ApplicationRecord
   scope :select_company_name, ->(company_name) {
           where(company_name: company_name)
         }
-  scope :select_adress_choumei, ->(address) {
+  scope :select_adress_choumei, ->(prefecture, address) {
       address_before_choumei = Utils::AddressUtils.substr_before_choumei(address)
       unless address_before_choumei.nil?
         address_before_choumei = Entity.sanitize_sql_like(address_before_choumei)
       end
       where(SbGuaranteeClient.arel_table[:address].matches("#{address_before_choumei}%"))
+        .where(prefecture_code: prefecture&.code)
     }
 
   def self.assign_client(sb_client,
@@ -37,9 +38,9 @@ class SbGuaranteeClient < ApplicationRecord
       .where(daihyo_name: daihyo_name)
     return sbg_clients.first if sbg_clients.present? and sbg_clients.size == 1
 
-    ## 法人番号と住所(町名)で特定できた場合
+    ## 法人番号と住所(町名まで)で特定できた場合
     sbg_clients = sb_client.sb_guarantee_clients
-      .select_adress_choumei(address)
+      .select_adress_choumei(prefecture, address)
       .where(taxagency_corporate_number: taxagency_corporate_number)
     return sbg_clients.first if sbg_clients.present? and sbg_clients.size == 1
 
@@ -77,7 +78,6 @@ class SbGuaranteeClient < ApplicationRecord
     sb_guarantee_client.taxagency_corporate_number = sb_client.taxagency_corporate_number
     sb_guarantee_client.entity_id = sb_client.entity_id
     sb_guarantee_client.created_user = user
-    sb_guarantee_client.save!
     sb_guarantee_client
   end
 end

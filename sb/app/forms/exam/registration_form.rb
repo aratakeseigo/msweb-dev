@@ -34,7 +34,6 @@ module Exam
     end
 
     def self.initFromFile(sb_client, current_user, file)
-      puts "aaaa"
       column_mapping_client = {
         "法人名(保証元)" => "cl_company_name",
         "代表者名(保証元)" => "cl_daihyo_name",
@@ -64,7 +63,6 @@ module Exam
         "保証希望額" => "guarantee_amount_hope",
       }
       column_mapping = (column_mapping_client.merge column_mapping_customer).merge column_mapping_exam
-      puts "bbb"
       exam_request_hash_list = Utils::ExcelUtils.excel_to_h(file,
                                                             worksheet_index: 0,
                                                             header_row_index: 1,
@@ -76,7 +74,6 @@ module Exam
 
       form = Exam::RegistrationForm.new(sb_client, current_user)
 
-      puts "cccc"
       exam_request_hash_list.each do |h|
         next if h.values.join.blank?
         client_hash = h.select { |key| column_mapping_client.values.include? key }
@@ -85,7 +82,6 @@ module Exam
 
         form.add_exam(client_hash, customer_hash, exam_hash)
       end
-      puts "dddd"
       form
     end
 

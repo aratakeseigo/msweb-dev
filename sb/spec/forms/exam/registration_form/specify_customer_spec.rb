@@ -25,13 +25,14 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         expect { res.save }.to change { SbGuaranteeCustomer.count }.by(0)
       end
     end
-    context "既存の保証先と法人番号と住所(町名)で一致した場合" do
+    context "既存の保証先と法人番号と住所(町名まで)で一致した場合" do
       let(:res) {
         exam_form.specify_customer({
           "company_name" => nil,
           "daihyo_name" => nil,
           "taxagency_corporate_number" => customer.taxagency_corporate_number,
-          "address" => customer.prefecture.name + customer.address,
+          "prefecture" => customer.prefecture,
+          "address" => customer.address,
         })
       }
       it "既存の保証先が返却される" do

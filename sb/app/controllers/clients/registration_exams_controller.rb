@@ -4,9 +4,7 @@ class Clients::RegistrationExamsController < ApplicationController
 
   def upload
     begin
-      puts sss
       @form = Exam::RegistrationForm.initFromFile(SbClient.find(params[:id]), current_internal_user, upload_params[:input_file].tempfile)
-      p @form
       if @form.invalid?
         render :index and return
       end

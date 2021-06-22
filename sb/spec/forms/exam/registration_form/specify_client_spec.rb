@@ -64,14 +64,15 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         expect { res.save }.to change { SbGuaranteeClient.count }.by(0)
       end
     end
-    context "クライアントがもつ既存の保証元と法人番号と住所(町名)で一致した場合" do
+    context "クライアントがもつ既存の保証元と法人番号と住所(町名まで)で一致した場合" do
       let!(:grt_client) { create :sb_guarantee_client, sb_client: sb_client }
       let(:res) {
         exam_form.specify_client({
           "cl_company_name" => grt_client.company_name + "東京",
           "cl_daihyo_name" => grt_client.daihyo_name + "　闘莉王",
           "cl_taxagency_corporate_number" => grt_client.taxagency_corporate_number,
-          "cl_address" => grt_client.prefecture.name + grt_client.address,
+          "prefecture" => grt_client.prefecture,
+          "address" => grt_client.address,
         })
       }
       it "既存の保証先が返却される" do
@@ -105,13 +106,14 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect { res.save }.to change { SbGuaranteeClient.count }.by(1)
         end
       end
-      context "法人番号と住所(町名)で一致した場合" do
+      context "法人番号と住所(町名まで)で一致した場合" do
         let(:res) {
           exam_form.specify_client({
             "cl_company_name" => grt_client.company_name + "　ロンドン支局",
             "cl_daihyo_name" => grt_client.daihyo_name + "　チマ",
             "cl_taxagency_corporate_number" => grt_client.taxagency_corporate_number,
-            "cl_address" => grt_client.prefecture.name + grt_client.address,
+            "prefecture" => grt_client.prefecture,
+            "address" => grt_client.address,
           })
         }
 
