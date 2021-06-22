@@ -4,13 +4,14 @@ class Clients::RegistrationExamsController < ApplicationController
 
   def upload
     begin
-      @form = Exam::RegistrationForm.initFromFile(SbClient.find(params[:id]), upload_params[:input_file].tempfile)
-
-      @form.current_user = current_internal_user
+      puts sss
+      @form = Exam::RegistrationForm.initFromFile(SbClient.find(params[:id]), current_internal_user, upload_params[:input_file].tempfile)
+      p @form
       if @form.invalid?
         render :index and return
       end
     rescue ArgumentError => e
+      @form
       output_error(e)
       @form = Exam::RegistrationForm.new
       @form.errors.add(:base, e.message)

@@ -16,24 +16,24 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">担当者名</th>
-                    <th scope="col">担当者名カナ</th>
-                    <th scope="col">メールアドレス</th>
-                    <th scope="col">役職</th>
-                    <th scope="col">部署</th>
-                    <th scope="col">希望連絡先</th>
+                    <th scope="col">クライアント</th>
+                    <th scope="col">保証元</th>
+                    <th scope="col">保証先</th>
+                    <th scope="col">取引区分</th>
+                    <th scope="col">希望保証額</th>
+                    <th scope="col">他社保証額</th>
                 </tr>
             </thead>
             <tbody>
                 <% @form.exams.each.with_index(1) do |exam, index| %>
                 <tr>
                     <td><%= index %></td>
-                    <td><%= exam.to_json %></td>
-                    <td><%= exam["user_name_kana"] %></td>
-                    <td><%= exam["email"] %></td>
-                    <td><%= exam["position"] %></td>
-                    <td><%= exam["department"] %></td>
-                    <td><%= exam["contact_tel"] %></td>
+                    <td><%= exam.sb_client.name %></td>
+                    <td><%= exam.sb_guarantee_client.company_name %></td>
+                    <td><%= exam.sb_guarantee_customer.company_name %></td>
+                    <td><%= exam.new_transaction ? "新規" : "既存" %></td>
+                    <td><%= exam.guarantee_amount_hope %></td>
+                    <td><%= exam.other_companies_ammount %></td>
                 </tr>
                 <% end %>
             </tbody>

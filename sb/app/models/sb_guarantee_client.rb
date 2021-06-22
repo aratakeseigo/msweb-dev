@@ -47,7 +47,7 @@ class SbGuaranteeClient < ApplicationRecord
     sbg_client = sb_client.sb_guarantee_clients.build(
       company_name: company_name, daihyo_name: daihyo_name,
       taxagency_corporate_number: taxagency_corporate_number,
-      prefecture: prefecture, address: address,
+      prefecture: prefecture, address: address, tel: tel,
     )
     ## 新規保証先を作成した場合、
     ## 対象が絞れた場合にはExtityをアサインする

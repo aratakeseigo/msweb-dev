@@ -233,24 +233,92 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       end
     end
     context "正常なファイルを読み込んだ場合" do
-      #   let(:file) { file_fixture("exam_registration/ok_no_client.xlsx") }
-      #   it "初期化できる" do
-      #     expect(form).to be_valid
-      #   end
-      #   it "審査が３行ある" do
-      #     expect(form.exams.size).to eq 3
-      #   end
-      #   it "審査が正しく格納されている" do
-      #     牛肉	既存	2	末・末	決済条件補足	無	支払い遅延の状況	無	支払条件変更内容	5,000,000	保証会社名	900,000
-
-      #     exam = form.exams.first
-      #     expect(exam.).to eq 3
-      #   end
-      #   it "保証先が正しく格納されている" do
-      #     株式会社PONY	牧場　牛男	東京都新宿区西新宿３－６－８	0399999999	1234567890123
-      #   end
-      #   it "保証元が正しく格納されている" do
-      #   end
+      context "保証元＝クライアントのフォーマットの場合" do
+        let(:file) { file_fixture("exam_registration/ok_no_client.xlsx") }
+        it "初期化できる" do
+          expect(form).to be_valid
+        end
+        it "審査が３行ある" do
+          expect(form.exams.size).to eq 3
+        end
+        it "審査がファイルから正しく格納されている" do
+          exam = form.exams.first
+          expect(exam.transaction_contents).to eq "牛肉"
+          expect(exam.payment_method_id).to eq PaymentMethod.find_by_name("末・末").id
+          expect(exam.payment_method_optional).to eq "決済条件補足"
+          expect(exam.new_transaction).to eq "既存" == "新規"
+          expect(exam.transaction_years).to eq 2
+          expect(exam.payment_delayed).to eq "無" == "有"
+          expect(exam.payment_delayed_memo).to eq "支払い遅延の状況"
+          expect(exam.payment_method_changed).to eq "無" == "有"
+          expect(exam.payment_method_changed_memo).to eq "支払条件変更内容"
+          expect(exam.other_companies_ammount).to eq 900000
+          expect(exam.other_guarantee_companies).to eq "保証会社名"
+          expect(exam.guarantee_amount_hope).to eq 5000000
+        end
+        it "保証先がファイルから正しく格納されている" do
+          customer = form.exams.first.sb_guarantee_customer
+          expect(customer.company_name).to eq "株式会社PONY"
+          expect(customer.daihyo_name).to eq "牧場　牛男"
+          expect(customer.prefecture).to eq Prefecture.find_by_name("東京都")
+          expect(customer.address).to eq "新宿区西新宿３－６－８"
+          expect(customer.tel).to eq "0399999999"
+          expect(customer.taxagency_corporate_number).to eq "1234567890123"
+        end
+        it "保証元がSBクライアントである" do
+          client = form.exams.first.sb_guarantee_client
+          expect(client.company_name).to eq sb_client.name
+          expect(client.daihyo_name).to eq sb_client.daihyo_name
+          expect(client.prefecture).to eq sb_client.prefecture
+          expect(client.address).to eq sb_client.address
+          expect(client.tel).to eq sb_client.tel
+          expect(client.taxagency_corporate_number).to eq sb_client.taxagency_corporate_number
+          expect(client.sb_client).to eq sb_client
+        end
+      end
+      context "保証元を指定したフォーマットの場合" do
+        let(:file) { file_fixture("exam_registration/ok_with_client.xlsx") }
+        it "初期化できる" do
+          expect(form).to be_valid
+        end
+        it "審査が３行ある" do
+          expect(form.exams.size).to eq 3
+        end
+        it "審査がファイルから正しく格納されている" do
+          exam = form.exams.first
+          expect(exam.transaction_contents).to eq "牛肉"
+          expect(exam.payment_method_id).to eq PaymentMethod.find_by_name("末・末").id
+          expect(exam.payment_method_optional).to eq "決済条件補足"
+          expect(exam.new_transaction).to eq "既存" == "新規"
+          expect(exam.transaction_years).to eq 2
+          expect(exam.payment_delayed).to eq "無" == "有"
+          expect(exam.payment_delayed_memo).to eq "支払い遅延の状況"
+          expect(exam.payment_method_changed).to eq "無" == "有"
+          expect(exam.payment_method_changed_memo).to eq "支払条件変更内容"
+          expect(exam.other_companies_ammount).to eq 900000
+          expect(exam.other_guarantee_companies).to eq "保証会社名"
+          expect(exam.guarantee_amount_hope).to eq 5000000
+        end
+        it "保証先がファイルから正しく格納されている" do
+          customer = form.exams.first.sb_guarantee_customer
+          expect(customer.company_name).to eq "株式会社PONY"
+          expect(customer.daihyo_name).to eq "牧場　牛男"
+          expect(customer.prefecture).to eq Prefecture.find_by_name("東京都")
+          expect(customer.address).to eq "新宿区西新宿３－６－８"
+          expect(customer.tel).to eq "0399999999"
+          expect(customer.taxagency_corporate_number).to eq "1234567890123"
+        end
+        it "保証元がファイルから正しく格納されている" do
+          client = form.exams.first.sb_guarantee_client
+          expect(client.company_name).to eq "千急株式会社"
+          expect(client.daihyo_name).to eq "田中　和夫"
+          expect(client.prefecture).to eq Prefecture.find_by_name("東京都")
+          expect(client.address).to eq "新宿区西新宿３－６－１０"
+          expect(client.tel).to eq "0399999900"
+          expect(client.taxagency_corporate_number).to eq "1234567890999"
+          expect(client.sb_client).to eq sb_client
+        end
+      end
     end
   end
 end
