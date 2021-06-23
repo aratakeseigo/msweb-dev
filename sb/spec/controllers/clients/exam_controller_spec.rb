@@ -11,9 +11,25 @@ RSpec.describe Clients::ExamController, type: :controller do
   describe "GET #edit" do
     context "存在するsb_clientsのidがパラメータで渡された場合" do
       before { get :edit, params: { id: client.id } }
-      it "編集画面が表示される" do
+      it "編集画面に遷移する" do        
         expect(response).to render_template :edit
-        expect(assigns(:form).sb_client.id).to eq client.id
+      end
+
+      it "一覧画面で選択されたデータの編集画面が表示される" do
+        expect(assigns(:form).name).to eq client.name
+        expect(assigns(:form).area_id).to eq client.area_id
+        expect(assigns(:form).sb_tanto_id).to eq client.sb_tanto_id
+        expect(assigns(:form).name).to eq client.name
+        expect(assigns(:form).daihyo_name).to eq client.daihyo_name
+        expect(assigns(:form).zip_code).to eq client.zip_code
+        expect(assigns(:form).prefecture_code).to eq client.prefecture_code
+        expect(assigns(:form).address).to eq client.address
+        expect(assigns(:form).tel).to eq client.tel
+        expect(assigns(:form).industry_id).to eq client.industry_id
+        expect(assigns(:form).industry_optional).to eq client.industry_optional
+        expect(assigns(:form).established_in).to eq client.established_in
+        expect(assigns(:form).annual_sales).to eq client.annual_sales
+        expect(assigns(:form).capital).to eq client.capital
       end
     end
   end
@@ -40,11 +56,26 @@ RSpec.describe Clients::ExamController, type: :controller do
                                                     fixture_file_upload("files/client_exam/test3.pdf"),
                                                     fixture_file_upload("files/client_exam/test4.pdf"),
                                                     fixture_file_upload("files/client_exam/test5.pdf")] 
-        }}
+      }}
       it "クライアント一覧画面へ遷移する" do
-        updated_sb_client = SbClient.find(client.id)
         expect(response).to redirect_to clients_list_path
+      end
+
+      it "sb_clientが更新されている" do
+        updated_sb_client = SbClient.find(client.id)
         expect(updated_sb_client.name).to eq "西東京建設"
+        expect(updated_sb_client.area_id).to eq 2
+        expect(updated_sb_client.sb_tanto_id).to eq 2
+        expect(updated_sb_client.daihyo_name).to eq "山田　一郎"
+        expect(updated_sb_client.zip_code).to eq "9012102"
+        expect(updated_sb_client.prefecture_code).to eq 33
+        expect(updated_sb_client.address).to eq "川崎市高津区北見方9-9-9"
+        expect(updated_sb_client.tel).to eq "12345678901"
+        expect(updated_sb_client.industry_id).to eq 1
+        expect(updated_sb_client.industry_optional).to eq "ブランド品"
+        expect(updated_sb_client.established_in).to eq "202106"
+        expect(updated_sb_client.annual_sales).to eq 33000000
+        expect(updated_sb_client.capital).to eq 10000000
         expect(updated_sb_client.registration_form_file.filename.to_s).to eq "registration_form_file1.pdf"
         expect(updated_sb_client.other_files.size).to eq 5
       end
@@ -59,16 +90,23 @@ RSpec.describe Clients::ExamController, type: :controller do
                                                     fixture_file_upload("files/client_exam/test5.pdf"),
                                                     fixture_file_upload("files/client_exam/test6.pdf")]
         }}
-      it "クライアント一覧画面へ遷移する" do
+      it "クライアント編集画面のまま遷移しない" do
         expect(response).to render_template :edit
-        expect(assigns(:form).errors[:other_files]).to eq ["は5件までしか保存できません"]
       end
+
+      it "エラーメッセージが表示される" do
+        expect(assigns(:form).errors[:other_files]).to eq ["は5件までしか保存できません"]        
+      end
+      
     end
 
     context "バリデーションNGの項目でアップデートした場合" do
       before { post :update, params: { id: client.id,tel: "123456789" } }
-      it "クライアント一覧画面へ遷移する" do
+      it "クライアント編集画面のまま遷移しない" do
         expect(response).to render_template :edit
+      end
+
+      it "エラーメッセージが表示される" do
         expect(assigns(:form).errors[:tel]).to eq ["は10桁または11桁で入力してください"]
       end
     end
@@ -111,6 +149,9 @@ RSpec.describe Clients::ExamController, type: :controller do
       it "申込書が削除される" do
         new_client = SbClient.find(client.id)
         expect(new_client.registration_form_file.attached?).to eq false
+      end
+
+      it "クライアント編集画面が更新される" do
         expect(response).to redirect_to clients_exam_edit_path
       end
     end
@@ -127,12 +168,14 @@ RSpec.describe Clients::ExamController, type: :controller do
       it "申込書が削除される" do
         new_client = SbClient.find(client.id)
         expect(new_client.other_files.size).to eq 4
-        expect(response).to redirect_to clients_exam_edit_path
         new_client.other_files.each do |f|
           expect(f.filename).not_to eq "test1.pdf"
         end
       end
-    end
 
+      it "クライアント編集画面が更新される" do
+        expect(response).to redirect_to clients_exam_edit_path
+      end
+    end
   end
 end

@@ -16,15 +16,55 @@ module Client
 
     validate :sb_client_validate?
 
-    attr_accessor :sb_client, :registration_form_file, :other_files, :current_user
+    attr_accessor :area_id, 
+                  :sb_tanto_id,
+                  :name,
+                  :daihyo_name,
+                  :zip_code,
+                  :prefecture_code,
+                  :address,
+                  :tel,
+                  :industry_id,
+                  :industry_optional,
+                  :established_in,
+                  :annual_sales,
+                  :capital,
+                  :registration_form_file,
+                  :other_files,
+                  :output_registration_form_file,
+                  :output_other_files,
+                  :current_user
 
     ## 定数 ##
     MAX_OTHER_FILES_COUNT = 5
 
     def initialize(attributes, sb_client)
       @sb_client = sb_client
+    
+      # formのattirbutesにクライアント情報を設定
+      @area_id = @sb_client.area_id
+      @sb_tanto_id = @sb_client.sb_tanto_id
+      @name = @sb_client.name
+      @daihyo_name = @sb_client.daihyo_name
+      @zip_code = @sb_client.zip_code
+      @prefecture_code = @sb_client.prefecture_code
+      @address = @sb_client.address
+      @tel = @sb_client.tel
+      @industry_id = @sb_client.industry_id
+      @industry_optional = @sb_client.industry_optional
+      @established_in = @sb_client.established_in
+      @annual_sales = @sb_client.annual_sales
+      @capital = @sb_client.capital
+
+      # 表示用申込書とファイルを設定
+      @output_registration_form_file = @sb_client.registration_form_file
+      @output_other_files = @sb_client.other_files
+
+      # sb_client_examが存在する場合、formのattributesに詰める
+      # updateの場合
       if attributes.present?
         super(attributes)
+        # to_sb_client
       end
     end
 
@@ -37,13 +77,11 @@ module Client
       end
 
       @sb_client.save!
-
     end
 
     def sb_client_validate?
-      to_sb_client
-      unless sb_client.valid?
-        sb_client.errors.each do |attr, error|
+      unless @sb_client.valid?
+        @sb_client.errors.each do |attr, error|
           errors.add(attr, error)
         end
       end
@@ -82,6 +120,5 @@ module Client
     def save!
       return true
     end
-
   end
 end

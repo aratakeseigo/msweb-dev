@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_17_130625) do
+ActiveRecord::Schema.define(version: 2021_06_21_104832) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2024,7 +2024,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_130625) do
     t.integer "prefecture_code", comment: "都道府県コード"
     t.string "address", comment: "住所"
     t.string "tel", comment: "電話番号"
-    t.string "industry_id", comment: "業種コード"
+    t.integer "industry_id", comment: "業種ID"
     t.string "industry_optional", comment: "業種(補足)"
     t.string "established_in", comment: "設立年月"
     t.bigint "annual_sales", comment: "年商"

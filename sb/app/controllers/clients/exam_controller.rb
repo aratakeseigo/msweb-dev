@@ -8,6 +8,7 @@ class Clients::ExamController < ApplicationController
     load_client
     @form = Client::ExamForm.new(client_params, @sb_client)
     @form.current_user = current_internal_user
+    @form.to_sb_client
 
     if @form.other_files_invalid?
       render :edit and return

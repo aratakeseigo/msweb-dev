@@ -75,5 +75,17 @@ FactoryBot.define do
       annual_sales { 33333333 }
       capital { 22222222 }
     end
+
+    trait :has_file do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+      registration_form_file { Rack::Test::UploadedFile.new("spec/factories/file/registration_form_file1.pdf", 'application/pdf') }
+      other_files { [ Rack::Test::UploadedFile.new("spec/factories/file/other_file1.pdf", 'application/pdf')] }
+    end
   end
 end

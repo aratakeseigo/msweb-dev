@@ -13,6 +13,7 @@
 
 <%= form_with url: clients_exam_update_path, method: "post", local: true do |f| %>
   <%= render :partial => "input_sb_client", :locals => { f: f } %>
+  <%= render :partial => "input_sb_client_exam", :locals => { f: f } %>
   
   <!-- ファイルアップロード -->
   <div class="row">
@@ -21,11 +22,11 @@
       <%= f.file_field :registration_form_file %><br>
     </div>
   </div>
-  <% if @form.sb_client.registration_form_file.attached? %>
+  <% if @form.output_registration_form_file.present? %>
     <div class="row">
       <div class="form-group col">
-        <%= link_to @form.sb_client.registration_form_file.filename, controller: "exam", action: "download", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name %>
-        <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: @form.sb_client.registration_form_file.id, type: @form.sb_client.registration_form_file.name}, method: "post", class: "m-5" %>
+        <%= link_to @form.output_registration_form_file.filename, controller: "exam", action: "download", file_id: @form.output_registration_form_file.id, type: @form.output_registration_form_file.name %>
+        <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: @form.output_registration_form_file.id, type: @form.output_registration_form_file.name}, method: "post", class: "m-5" %>
       </div>
     </div>
   <% end %>
@@ -35,8 +36,8 @@
       <%= f.file_field :other_files, multiple: true %><br>
     </div>
   </div>
-  <% if @form.sb_client.other_files.attached? %>
-    <% @form.sb_client.other_files.each do |file| %>
+  <% if @form.output_other_files.present? %>
+    <% @form.output_other_files.each do |file| %>
       <div class="row">
         <div class="form-group col">
           <%= link_to file.filename, clients_exam_download_path(file_id: file.id, type: file.name)  %>
