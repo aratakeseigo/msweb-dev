@@ -11,6 +11,7 @@ module Utils
     # （取引先名入力時の変換等に使用）
     # --------------------------------
     def self.to_zenkaku(s)
+      return s if s.blank?
       # 英数の全角化
       ret = s.tr("0-9a-zA-Z", "０-９ａ-ｚＡ-Ｚ")
       # 半角英数カナを全角に変換

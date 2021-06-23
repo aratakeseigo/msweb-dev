@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
     if e.present? and e.backtrace.present?
       logger.error e.backtrace.join("\\n").gsub("\t", "\\t")
       if Rails.env.development?
+        puts e.message
         puts e.backtrace.join("\\n")
       end
     end

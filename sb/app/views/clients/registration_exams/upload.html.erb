@@ -1,0 +1,42 @@
+<% provide :title, "保証審査登録-確認" %>
+<% provide :breadcrumb_items, "Home クライアント" %>
+
+<%= form_with url: clients_registration_create_path, method: "post", local: true do %>
+    <%= hidden_field_tag "registration_form_users", @form.exams.to_json %>
+
+    <div class="form-group text-right">
+        <a href="<%= clients_registration_index_path %>" class="btn btn-secondary" role="button" aria-pressed="true">キャンセル</a>
+        <%= submit_tag "送信", class: "btn btn-primary" %>
+    </div>
+<% end %>
+
+<div class="row">
+    <div class="col">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">クライアント</th>
+                    <th scope="col">保証元</th>
+                    <th scope="col">保証先</th>
+                    <th scope="col">取引区分</th>
+                    <th scope="col">希望保証額</th>
+                    <th scope="col">他社保証額</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @form.exams.each.with_index(1) do |exam, index| %>
+                <tr>
+                    <td><%= index %></td>
+                    <td><%= exam.sb_client.name %></td>
+                    <td><%= exam.sb_guarantee_client.company_name %></td>
+                    <td><%= exam.sb_guarantee_customer.company_name %></td>
+                    <td><%= exam.new_transaction ? "新規" : "既存" %></td>
+                    <td><%= exam.guarantee_amount_hope %></td>
+                    <td><%= exam.other_companies_ammount %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>
