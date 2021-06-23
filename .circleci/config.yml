@@ -71,6 +71,9 @@ jobs:
           no_output_timeout: 5m
           command: |
             docker-compose --file .circleci/docker-compose.yml exec sb bundle exec rspec --format progress --format RspecJunitFormatter -o /app/rspec/rspec.xml
+      - run:
+          name: copy test result
+          command: |
             mkdir ~/rspec
             docker cp `docker-compose --file .circleci/docker-compose.yml ps -q sb`:/app/rspec/rspec.xml ~/rspec/rspec.xml
           when: always
