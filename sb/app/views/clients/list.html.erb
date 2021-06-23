@@ -108,7 +108,7 @@
       <tbody>
         <% @clients.each do |client| %>
           <tr>
-            <td><%= radio_button_tag "radio_id", client.id, false, onclick: "setButtonStatus(#{client.status_id}, #{client.id});" %></td>
+            <td><%= radio_button_tag "radio_id", client.id, false, onclick: "setButtonStatus(#{client.status_id}, #{client.id}, '#{clients_list_path}');" %></td>
             <td><%= client.status&.name %></td>
             <td><%= client.area&.name %></td>
             <td><%= client.sb_tanto&.name %></td>

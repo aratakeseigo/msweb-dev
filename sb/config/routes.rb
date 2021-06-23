@@ -30,6 +30,8 @@ Rails.application.routes.draw do
   namespace :identify_company do
     get "/", action: "index"
     post "/update", action: "update"
+    get "/new_entity", action: "new_entity"
+    post "/create_entity", action: "create_entity"
   end
 
 end
