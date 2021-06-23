@@ -5,6 +5,7 @@ class SbGuaranteeCustomer < ApplicationRecord
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   has_many :sb_guarantee_exams
   belongs_to :entity, optional: true
+  accepts_nested_attributes_for :entity
 
   validates :company_name, presence: true, length: { maximum: 255 }
   validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
@@ -25,23 +26,50 @@ class SbGuaranteeCustomer < ApplicationRecord
         .where(prefecture_code: prefecture&.code)
     }
 
-  def self.specify_customer(user,
-                            company_name: nil, daihyo_name: nil,
-                            taxagency_corporate_number: nil,
-                            address: nil, prefecture: nil,
-                            tel: nil)
+  def company_name=(company_name)
+    if company_name.blank?
+      write_attribute(:company_name, company_name)
+      return
+    end
+    write_attribute(:company_name, Utils::CompanyNameUtils.to_zenkaku_name(company_name))
+  end
+
+  def daihyo_name=(daihyo_name)
+    if daihyo_name.blank?
+      write_attribute(:daihyo_name, daihyo_name)
+      return
+    end
+    write_attribute(:daihyo_name, Utils::StringUtils.to_zenkaku(daihyo_name))
+  end
+
+  def address=(address)
+    if address.blank?
+      write_attribute(:address, address)
+      return
+    end
+    write_attribute(:address, Utils::StringUtils.to_zenkaku(address))
+  end
+
+  def self.assign_customer(company_name: nil, daihyo_name: nil,
+                           taxagency_corporate_number: nil,
+                           address: nil, prefecture: nil,
+                           tel: nil)
     # 既存の保証先だった場合にはそれを返す
     ## 企業名と代表者名で特定できた場合
     sbg_clustomers = SbGuaranteeCustomer
       .select_company_name(company_name)
       .where(daihyo_name: daihyo_name)
+
+    #この条件で1件以上ヒットすることは通常ありえないので先頭を返す
     return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size == 1
 
     ## 法人番号と住所(町名まで)で特定できた場合
     sbg_clustomers = SbGuaranteeCustomer
       .select_adress_choumei(prefecture, address)
       .where(taxagency_corporate_number: taxagency_corporate_number)
-    return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size == 1
+
+    #この条件で1件以上ヒットすることは通常ありえないので先頭を返す
+    return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size >= 1
 
     # 既存でない場合は新規保証元を作成する
     sbg_clustomer = SbGuaranteeCustomer.new(
@@ -57,7 +85,6 @@ class SbGuaranteeCustomer < ApplicationRecord
                                             address: address, prefecture: prefecture, daihyo_tel: tel)
 
     sbg_clustomer.entity = entity if entity.present?
-    sbg_clustomer.created_user = user
     sbg_clustomer
   end
 end

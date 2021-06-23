@@ -10,7 +10,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       "cl_company_name" => "株式会社ヨントリー",
       "cl_daihyo_name" => "鳥居　太郎",
       "cl_taxagency_corporate_number" => "4445556667779",
-      "cl_address" => "神奈川県川崎市高津区下野毛５－６－７",
+      "cl_full_address" => "神奈川県川崎市高津区下野毛５－６－７",
       "cl_tel" => "0442679999",
     }
   }
@@ -19,7 +19,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       "company_name" => "有限会社千本桜酒店",
       "daihyo_name" => "千本　桜",
       "taxagency_corporate_number" => "1234657980123",
-      "address" => "神奈川県大和市福田４５００",
+      "full_address" => "神奈川県大和市福田４５００",
       "tel" => "0462679999",
     }
   }
@@ -39,6 +39,56 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       "guarantee_amount_hope" => 5000000, # 保証希望額
     }
   }
+  describe "保証元の特定" do
+    let(:internal_user) { create :internal_user }
+    let!(:entity) { create :entity }
+    let!(:sb_client) { create :sb_client, entity: entity }
+    let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
+    context "保証元情報が存在しない場合" do
+      let(:res) {
+        exam_form.specify_client({})
+      }
+      it "クライアントを保証元として設定する" do
+        expect(res.entity).to eq sb_client.entity
+      end
+    end
+
+    context "保証元情報が存在する場合" do
+      let(:res) {
+        exam_form.specify_client(
+          exam_form.adjust_to_client_attributes(client_hash)
+        )
+      }
+      it "保証元が取得できる" do
+        expect(res.company_name).to eq Utils::StringUtils.to_zenkaku client_hash["cl_company_name"]
+        expect(res.daihyo_name).to eq Utils::StringUtils.to_zenkaku client_hash["cl_daihyo_name"]
+        expect(res.taxagency_corporate_number).to eq client_hash["cl_taxagency_corporate_number"]
+        expect(res.prefecture.name + res.address).to eq Utils::StringUtils.to_zenkaku client_hash["cl_full_address"]
+        expect(res.tel).to eq client_hash["cl_tel"]
+      end
+    end
+  end
+  describe "保証先の特定" do
+    let(:internal_user) { create :internal_user }
+    let(:sb_client) { create :sb_client }
+    let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
+    context "既存の保証先と企業名と代表者名で一致した場合" do
+      let(:res) {
+        exam_form.specify_customer(
+          exam_form.adjust_to_customer_attributes(
+            customer_hash
+          )
+        )
+      }
+      it "保証先が取得できる" do
+        expect(res.company_name).to eq Utils::StringUtils.to_zenkaku customer_hash["company_name"]
+        expect(res.daihyo_name).to eq Utils::StringUtils.to_zenkaku customer_hash["daihyo_name"]
+        expect(res.taxagency_corporate_number).to eq customer_hash["taxagency_corporate_number"]
+        expect(res.prefecture.name + res.address).to eq Utils::StringUtils.to_zenkaku customer_hash["full_address"]
+        expect(res.tel).to eq customer_hash["tel"]
+      end
+    end
+  end
 
   describe "保証審査依頼追加" do
     context "add_examでclient_hashが空の{}の場合" do
@@ -258,10 +308,10 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
         it "保証先がファイルから正しく格納されている" do
           customer = form.exams.first.sb_guarantee_customer
-          expect(customer.company_name).to eq "株式会社PONY"
+          expect(customer.company_name).to eq Utils::CompanyNameUtils.to_zenkaku_name "株式会社PONY"
           expect(customer.daihyo_name).to eq "牧場　牛男"
           expect(customer.prefecture).to eq Prefecture.find_by_name("東京都")
-          expect(customer.address).to eq "新宿区西新宿３－６－８"
+          expect(customer.address).to eq Utils::StringUtils.to_zenkaku "新宿区西新宿３－６－８"
           expect(customer.tel).to eq "0399999999"
           expect(customer.taxagency_corporate_number).to eq "1234567890123"
         end
@@ -301,10 +351,10 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
         it "保証先がファイルから正しく格納されている" do
           customer = form.exams.first.sb_guarantee_customer
-          expect(customer.company_name).to eq "株式会社PONY"
+          expect(customer.company_name).to eq Utils::CompanyNameUtils.to_zenkaku_name "株式会社PONY"
           expect(customer.daihyo_name).to eq "牧場　牛男"
           expect(customer.prefecture).to eq Prefecture.find_by_name("東京都")
-          expect(customer.address).to eq "新宿区西新宿３－６－８"
+          expect(customer.address).to eq Utils::StringUtils.to_zenkaku "新宿区西新宿３－６－８"
           expect(customer.tel).to eq "0399999999"
           expect(customer.taxagency_corporate_number).to eq "1234567890123"
         end
@@ -313,7 +363,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(client.company_name).to eq "千急株式会社"
           expect(client.daihyo_name).to eq "田中　和夫"
           expect(client.prefecture).to eq Prefecture.find_by_name("東京都")
-          expect(client.address).to eq "新宿区西新宿３－６－１０"
+          expect(client.address).to eq Utils::StringUtils.to_zenkaku "新宿区西新宿３－６－１０"
           expect(client.tel).to eq "0399999900"
           expect(client.taxagency_corporate_number).to eq "1234567890999"
           expect(client.sb_client).to eq sb_client

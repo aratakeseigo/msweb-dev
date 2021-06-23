@@ -1,22 +1,17 @@
 <% provide :title, "保証審査登録-確認" %>
 <% provide :breadcrumb_items, "Home クライアント" %>
 
-<%= form_with url: clients_registration_create_path, method: "post", local: true do %>
-    <%= hidden_field_tag "registration_form_users", @form.exams.to_json %>
-
-    <div class="form-group text-right">
-        <a href="<%= clients_registration_index_path %>" class="btn btn-secondary" role="button" aria-pressed="true">キャンセル</a>
-        <%= submit_tag "送信", class: "btn btn-primary" %>
+<div class="row">
+    <div class="col">
+        <p class="h2">クライアント：<%= @form.client_name %></p>
     </div>
-<% end %>
-
+</div>
 <div class="row">
     <div class="col">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">クライアント</th>
                     <th scope="col">保証元</th>
                     <th scope="col">保証先</th>
                     <th scope="col">取引区分</th>
@@ -25,10 +20,22 @@
                 </tr>
             </thead>
             <tbody>
-                <% @form.exams.each.with_index(1) do |exam, index| %>
+                <% exam = @form.exams.first %>
                 <tr>
-                    <td><%= index %></td>
-                    <td><%= exam.sb_client.name %></td>
+                    <td>1</td>
+                    <td><%= exam.sb_guarantee_client.company_name %></td>
+                    <td><%= exam.sb_guarantee_customer.company_name %></td>
+                    <td><%= exam.new_transaction ? "新規" : "既存" %></td>
+                    <td><%= exam.guarantee_amount_hope %></td>
+                    <td><%= exam.other_companies_ammount %></td>
+                </tr>
+                <% if @form.exams.size != 1 %>
+                <% exam = @form.exams.last %>
+                <tr>
+                    <td colspan=7 class="text-center">:</td>
+                </tr>
+                <tr>
+                    <td><%= @form.exams.size %></td>
                     <td><%= exam.sb_guarantee_client.company_name %></td>
                     <td><%= exam.sb_guarantee_customer.company_name %></td>
                     <td><%= exam.new_transaction ? "新規" : "既存" %></td>
@@ -40,3 +47,18 @@
         </table>
     </div>
 </div>
+<div class="row">
+    <div class="col text-center">
+        <p><strong>全 <%= @form.exams.size %> 件</strong></p>
+    </div>
+</div>
+<%= form_with url: clients_registration_exams_create_path, method: "post", local: true do %>
+    <%= hidden_field_tag "sb_guarantee_exam_request_id", @form.sb_guarantee_exam_request.id %>
+    <div class="form-group text-center">
+        ファイル内容を確認して送信ボタンを押してください。
+    </div>
+    <div class="form-group text-center">
+        <a href="<%= clients_registration_exams_index_path %>" class="btn btn-secondary" role="button" aria-pressed="true">キャンセル</a>
+        <%= submit_tag "送信", class: "btn btn-primary" %>
+    </div>
+<% end %>

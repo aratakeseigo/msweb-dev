@@ -81,7 +81,6 @@ class Entity < ActiveRecord::Base
                              taxagency_corporate_number: taxagency_corporate_number,
                              address: address, daihyo_tel: daihyo_tel, established: established,
                              zip_code: zip_code, prefecture: prefecture)
-      entity.save!
       return entity
     end
     nil

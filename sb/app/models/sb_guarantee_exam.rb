@@ -13,6 +13,8 @@ class SbGuaranteeExam < ApplicationRecord
   belongs_to :payment_method, optional: true
   belongs_to :hp_type, optional: true
 
+  validates :accepted_at, presence: true
   validates :payment_method, allow_blank: true, inclusion: { in: PaymentMethod.all, message: :not_in_master }
-  validates :transaction_contents, presence: true, length: { maximum: 255 }
+  validates :transaction_contents, allow_blank: true, length: { maximum: 255 }
+  validates :other_guarantee_companies, allow_blank: true, length: { maximum: 255 }
 end

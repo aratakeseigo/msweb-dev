@@ -27,7 +27,7 @@ run:
 	docker compose -f ../docker-compose.sb.yml up sb
 .PHONY: stop
 stop:
-	docker compose -f ../docker-compose.sb.yml stop
+	docker compose -f ../docker-compose.sb.yml down
 
 .PHONY: recreate-db
 recreate-db:
