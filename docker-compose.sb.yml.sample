@@ -36,15 +36,15 @@ services:
     volumes:
       - ./db/mysql:/var/lib/mysql:delegated
   minio:
-   image: minio/minio:latest
-   ports:
-     - "9000:9000"
-   volumes:
-     - ./docker/volume/minio:/data
-   command: server /data
-   environment:
-     MINIO_ACCESS_KEY: minio_access
-     MINIO_SECRET_KEY: minio_secret
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./docker/volume/minio:/data
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: minio_access
+      MINIO_SECRET_KEY: minio_secret
 volumes:
   bundle_path:
   assets_path:
