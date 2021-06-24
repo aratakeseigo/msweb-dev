@@ -9,22 +9,34 @@ module Exam
 
     validate :exam_validate?
 
+    # 保証審査IDから初期化する（create時に使用）
     def self.initFromGuaranteeExamRequestId(sb_client, current_user, id)
-      sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.find(id)
-      Utils::ActivestrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
-        initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
+      begin
+        sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.find(id)
+
+        # 保証審査依頼からファイルを取得して読み込み処理を呼び出す
+        Utils::ActivestrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
+          initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
+        end
+      rescue ActiveRecord::RecordNotFound => e
+        # 保証審査依頼IDが見つからなかった場合
+        raise ArgumentError.new("不正な操作です。ファイルアップロードからやり直してください。" + "(CLIENT_ID:#{sb_client.id},REQUEST_ID:#{id})")
       end
     end
 
+    # 保証審査依頼ファイルから初期化する（upload時に使用）
     def self.initFromFile(sb_client, current_user, upload_file)
+      # 保証審査依頼を作成してファイルを添付する
       sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.create(
         created_user: current_user,
       )
       sb_guarantee_exam_request.save
       sb_guarantee_exam_request.guarantee_exam_request_file.attach upload_file
+      # ファイル読み込み処理を呼び出す
       initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, upload_file.tempfile)
     end
 
+    # 共通のファイル読み込み処理
     def self.initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
       column_mapping_client = {
         "法人名(保証元)" => "cl_company_name",
@@ -59,7 +71,7 @@ module Exam
                                                             worksheet_index: 0,
                                                             header_row_index: 1,
                                                             list_start_row_index: 3,
-                                                            list_end_row_index: 34, #30件まで
+                                                            list_end_row_index: 204, #200件まで
                                                             start_col_index: 0,
                                                             end_col_index: 30,
                                                             header_mapping: column_mapping)

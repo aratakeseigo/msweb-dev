@@ -28,8 +28,7 @@ run:
 
 .PHONY: stop
 stop:
-	docker compose -f ../docker-compose.sb.yml down
-
+	docker compose -f ../docker-compose.sb.yml stop
 .PHONY: down
 down:
 	docker compose -f ../docker-compose.sb.yml down

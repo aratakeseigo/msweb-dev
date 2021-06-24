@@ -20,29 +20,45 @@
                 </tr>
             </thead>
             <tbody>
-                <% exam = @form.exams.first %>
-                <tr>
-                    <td>1</td>
-                    <td><%= exam.sb_guarantee_client.company_name %></td>
-                    <td><%= exam.sb_guarantee_customer.company_name %></td>
-                    <td><%= exam.new_transaction ? "新規" : "既存" %></td>
-                    <td><%= exam.guarantee_amount_hope %></td>
-                    <td><%= exam.other_companies_ammount %></td>
-                </tr>
-                <% if @form.exams.size != 1 %>
-                <% exam = @form.exams.last %>
-                <tr>
-                    <td colspan=7 class="text-center">:</td>
-                </tr>
-                <tr>
-                    <td><%= @form.exams.size %></td>
-                    <td><%= exam.sb_guarantee_client.company_name %></td>
-                    <td><%= exam.sb_guarantee_customer.company_name %></td>
-                    <td><%= exam.new_transaction ? "新規" : "既存" %></td>
-                    <td><%= exam.guarantee_amount_hope %></td>
-                    <td><%= exam.other_companies_ammount %></td>
-                </tr>
+                <% # 10件以下なら全部 ここから# %>
+                <% if @form.exams.size <= 10 %>
+                    <% @form.exams.each.with_index(1) do |exam, index| %>
+                        <tr>
+                            <td><%= index %></td>
+                            <td><%= exam.sb_guarantee_client.company_name %></td>
+                            <td><%= exam.sb_guarantee_customer.company_name %></td>
+                            <td><%= exam.new_transaction ? "新規" : "既存" %></td>
+                            <td><%= exam.guarantee_amount_hope %></td>
+                            <td><%= exam.other_companies_ammount %></td>
+                        </tr>
+                    <% end %>
                 <% end %>
+                <% # 10件以下なら全部 ここまで# %>
+                <% # 11件以上なら最初の3件と最後の3件 ここから# %>
+                <% if @form.exams.size > 10 %>
+                    <% @form.exams.first(3).each.with_index(1) do |exam, index| %>
+                    <tr>
+                        <td><%= index %></td>
+                        <td><%= exam.sb_guarantee_client.company_name %></td>
+                        <td><%= exam.sb_guarantee_customer.company_name %></td>
+                        <td><%= exam.new_transaction ? "新規" : "既存" %></td>
+                        <td><%= exam.guarantee_amount_hope %></td>
+                        <td><%= exam.other_companies_ammount %></td>
+                    </tr>
+                    <% end %>
+                    <tr><td colspan=7 class="text-center">:</td></tr>
+                    <% @form.exams.last(3).each.with_index(@form.exams.size - 2) do |exam, index| %>
+                    <tr>
+                        <td><%= index %></td>
+                        <td><%= exam.sb_guarantee_client.company_name %></td>
+                        <td><%= exam.sb_guarantee_customer.company_name %></td>
+                        <td><%= exam.new_transaction ? "新規" : "既存" %></td>
+                        <td><%= exam.guarantee_amount_hope %></td>
+                        <td><%= exam.other_companies_ammount %></td>
+                    </tr>
+                    <% end %>
+                <% end %>
+                <% # 11件以上なら最初の3件と最後の3件 ここまで# %>
             </tbody>
         </table>
     </div>

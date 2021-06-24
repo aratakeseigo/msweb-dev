@@ -1,6 +1,21 @@
 require "rails_helper"
 
 RSpec.describe SbGuaranteeCustomer, type: :model do
+  context "バリデーション(必須)" do
+    context "会社名が空の場合" do
+      let(:sb_guarantee_customer) { build :sb_guarantee_customer, company_name: nil }
+      it "無効である" do
+        expect(sb_guarantee_customer).to be_invalid
+      end
+    end
+    context "代表者名が空の場合" do
+      let(:sb_guarantee_customer) { build :sb_guarantee_customer, daihyo_name: nil }
+      it "無効である" do
+        expect(sb_guarantee_customer).to be_invalid
+      end
+    end
+  end
+
   context "バリデーション(tel_validator)" do
     context "電話番号に数字以外が混ざっている場合" do
       let(:sb_guarantee_customer) { build :sb_guarantee_customer, tel: "1234S678901" }

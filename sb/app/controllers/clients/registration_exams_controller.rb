@@ -10,7 +10,8 @@ class Clients::RegistrationExamsController < ApplicationController
                                                   current_internal_user,
                                                   upload_params[:input_file])
       if @form.invalid?
-        render :index and return
+        render :index
+        return
       end
     rescue ArgumentError => e
       @form
@@ -23,15 +24,25 @@ class Clients::RegistrationExamsController < ApplicationController
   end
 
   def create
-    @form = Exam::RegistrationForm.initFromGuaranteeExamRequestId(@sb_client,
-                                                                  current_internal_user,
-                                                                  create_params[:guarantee_exam_request_id])
-    if @form.invalid?
-      render :index and return
+    begin
+      @form = Exam::RegistrationForm.initFromGuaranteeExamRequestId(@sb_client,
+                                                                    current_internal_user,
+                                                                    create_params[:guarantee_exam_request_id])
+      if @form.invalid?
+        render :index
+        return
+      end
+      @form.save_exams
+      flash[:success] = "保証審査の登録が完了しました。"
+      redirect_to exams_path
+    rescue ArgumentError => e
+      @form
+      @form = Exam::RegistrationForm.new(@sb_client,
+                                         current_internal_user,
+                                         nil)
+      @form.errors.add(:base, e.message)
+      render :index
     end
-    @form.save_exams
-    flash[:success] = "保証審査の登録が完了しました。"
-    redirect_to exams_path
   end
 
   private
