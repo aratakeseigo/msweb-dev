@@ -14,7 +14,6 @@ class Clients::RegistrationExamsController < ApplicationController
         return
       end
     rescue ArgumentError => e
-      @form
       @form = Exam::RegistrationForm.new(@sb_client,
                                          current_internal_user,
                                          nil)
@@ -36,7 +35,6 @@ class Clients::RegistrationExamsController < ApplicationController
       flash[:success] = "保証審査の登録が完了しました。"
       redirect_to exams_path
     rescue ArgumentError => e
-      @form
       @form = Exam::RegistrationForm.new(@sb_client,
                                          current_internal_user,
                                          nil)

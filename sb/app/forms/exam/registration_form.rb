@@ -18,9 +18,10 @@ module Exam
         Utils::ActivestrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
           initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
         end
-      rescue ActiveRecord::RecordNotFound => e
+      rescue ActiveRecord::RecordNotFound
         # 保証審査依頼IDが見つからなかった場合
-        raise ArgumentError.new("不正な操作です。ファイルアップロードからやり直してください。" + "(CLIENT_ID:#{sb_client.id},REQUEST_ID:#{id})")
+        raise ArgumentError.new("不正な操作です。ファイルアップロードからやり直してください。" +
+                                "(CLIENT_ID:#{sb_client.id},REQUEST_ID:#{id})")
       end
     end
 
