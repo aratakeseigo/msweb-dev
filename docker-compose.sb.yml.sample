@@ -17,6 +17,7 @@ services:
       - tmp_path:/app/tmp
     links:
       - db
+      - minio
     env_file:
       - ./securebox/sb/.env
   db:
@@ -34,7 +35,16 @@ services:
       TZ: "Asia/Tokyo"
     volumes:
       - ./db/mysql:/var/lib/mysql:delegated
-      # - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+  minio:
+   image: minio/minio:latest
+   ports:
+     - "9000:9000"
+   volumes:
+     - ./docker/volume/minio:/data
+   command: server /data
+   environment:
+     MINIO_ACCESS_KEY: minio_access
+     MINIO_SECRET_KEY: minio_secret
 volumes:
   bundle_path:
   assets_path:
