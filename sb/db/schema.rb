@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_21_104832) do
+ActiveRecord::Schema.define(version: 2021_06_24_041027) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2128,6 +2128,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_104832) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "sb_guarantee_exam_request_id", comment: "保証審査依頼ID"
+    t.integer "status_id", comment: "ステータスID"
   end
 
   create_table "sb_user_permissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

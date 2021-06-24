@@ -30,4 +30,8 @@ Rails.application.routes.draw do
       post "/:id/delete_file", action: "delete_file"
     end
   end
+  namespace :exams do
+    get "/", action: "list"
+    get "/list", action: "list"
+  end
 end

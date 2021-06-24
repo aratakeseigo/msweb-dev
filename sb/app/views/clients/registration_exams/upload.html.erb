@@ -53,7 +53,7 @@
     </div>
 </div>
 <%= form_with url: clients_registration_exams_create_path, method: "post", local: true do %>
-    <%= hidden_field_tag "sb_guarantee_exam_request_id", @form.sb_guarantee_exam_request.id %>
+    <%= hidden_field_tag "guarantee_exam_request_id", @form.sb_guarantee_exam_request.id %>
     <div class="form-group text-center">
         ファイル内容を確認して送信ボタンを押してください。
     </div>

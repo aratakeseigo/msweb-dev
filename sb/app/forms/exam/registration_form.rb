@@ -1,5 +1,7 @@
 module Exam
   class RegistrationForm < ApplicationForm
+    include ActiveStorage::Downloading
+
     TRANSACTION_TYPE_NEW = "新規" # "既存"
     UMU_YES = "有" # "無"
 
@@ -7,7 +9,23 @@ module Exam
 
     validate :exam_validate?
 
-    def self.initFromFile(sb_client, current_user, file)
+    def self.initFromGuaranteeExamRequestId(sb_client, current_user, id)
+      sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.find(id)
+      Utils::ActivestrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
+        initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
+      end
+    end
+
+    def self.initFromFile(sb_client, current_user, upload_file)
+      sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.create(
+        created_user: current_user,
+      )
+      sb_guarantee_exam_request.save
+      sb_guarantee_exam_request.guarantee_exam_request_file.attach upload_file
+      initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, upload_file.tempfile)
+    end
+
+    def self.initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
       column_mapping_client = {
         "法人名(保証元)" => "cl_company_name",
         "代表者名(保証元)" => "cl_daihyo_name",
@@ -46,7 +64,7 @@ module Exam
                                                             end_col_index: 30,
                                                             header_mapping: column_mapping)
 
-      form = Exam::RegistrationForm.new(sb_client, current_user)
+      form = Exam::RegistrationForm.new(sb_client, current_user, sb_guarantee_exam_request)
 
       exam_request_hash_list.each do |h|
         next if h.values.join.blank?
@@ -59,11 +77,10 @@ module Exam
       form
     end
 
-    def initialize(sb_client, current_user)
+    def initialize(sb_client, current_user, sb_guarantee_exam_request)
       @sb_client = sb_client
       @current_user = current_user
-      # @file = file
-      @sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.create(created_user: current_user)
+      @sb_guarantee_exam_request = sb_guarantee_exam_request
     end
 
     def client_name
@@ -77,15 +94,21 @@ module Exam
         sbg_client = specify_client(exam.sb_guarantee_client.attributes)
         sbg_clustomer = specify_customer(exam.sb_guarantee_customer.attributes)
 
-        # 保存済みでなければそれぞれ作成ユーザーを設定
-        sbg_client.created_user = @current_user if sbg_client.persisted?
-        sbg_clustomer.created_user = @current_user if sbg_clustomer.persisted?
+        # それぞれ既存（保存済み）でなければ作成ユーザーを設定
+        sbg_client.created_user = @current_user unless sbg_client.persisted?
+        sbg_clustomer.created_user = @current_user unless sbg_clustomer.persisted?
 
         exam.sb_guarantee_client = sbg_client
         exam.sb_guarantee_customer = sbg_clustomer
+        if sbg_client.entity.present? and sbg_clustomer.entity.present?
+          exam.status = Status::ExamStatus::READY_FOR_EXAM
+        else
+          exam.status = Status::ExamStatus::COMPANY_NOT_DETECTED
+        end
         exam.created_user = @current_user
         exam.save!
       end
+      exams
     end
 
     def exam_validate?
@@ -127,7 +150,6 @@ module Exam
           accepted_at: Time.zone.now,
         })
       )
-
       @exams << sbg_exam
       sbg_exam
     end

@@ -4,7 +4,8 @@ RSpec.describe Exam::RegistrationForm, type: :model do
   let(:internal_user) { create :internal_user }
   let(:entity) { create :entity }
   let(:sb_client) { create :sb_client, entity: entity }
-  let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
+  let(:sb_guarantee_exam_request) { create :sb_guarantee_exam_request }
+  let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user, sb_guarantee_exam_request) }
   let(:client_hash) {
     {
       "cl_company_name" => "株式会社ヨントリー",
@@ -39,11 +40,32 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       "guarantee_amount_hope" => 5000000, # 保証希望額
     }
   }
+
+  let(:client_hash_2) {
+    {
+      "cl_company_name" => "株式会社ユウヒ",
+      "cl_daihyo_name" => "朝日　太郎",
+      "cl_taxagency_corporate_number" => "0005556667779",
+      "cl_full_address" => "神奈川県川崎市高津区宮内５－６－７",
+      "cl_tel" => "0942679999",
+    }
+  }
+  let(:customer_hash_2) {
+    {
+      "company_name" => "有限会社代官",
+      "daihyo_name" => "役所　祐治",
+      "taxagency_corporate_number" => "0004657980123",
+      "full_address" => "神奈川県大和市代官４５００",
+      "tel" => "0962670999",
+    }
+  }
+
   describe "保証元の特定" do
     let(:internal_user) { create :internal_user }
     let!(:entity) { create :entity }
     let!(:sb_client) { create :sb_client, entity: entity }
-    let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
+    let(:sb_guarantee_exam_request) { create :sb_guarantee_exam_request }
+    let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user, sb_guarantee_exam_request) }
     context "保証元情報が存在しない場合" do
       let(:res) {
         exam_form.specify_client({})
@@ -71,7 +93,8 @@ RSpec.describe Exam::RegistrationForm, type: :model do
   describe "保証先の特定" do
     let(:internal_user) { create :internal_user }
     let(:sb_client) { create :sb_client }
-    let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user) }
+    let(:sb_guarantee_exam_request) { create :sb_guarantee_exam_request }
+    let(:exam_form) { Exam::RegistrationForm.new(sb_client, internal_user, sb_guarantee_exam_request) }
     context "既存の保証先と企業名と代表者名で一致した場合" do
       let(:res) {
         exam_form.specify_customer(
@@ -134,7 +157,115 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         expect(exam_form.exams.size).to eq 1
       end
     end
+    context "企業が特定できない場合" do
+      context "保証元の企業が特定できない場合" do
+        let(:client_hash_daihyo_only_hit) {
+          client_hash["cl_daihyo_name"] = entity.entity_profile.daihyo_name
+          client_hash
+        }
+        let!(:exam) { exam_form.add_exam(client_hash_daihyo_only_hit, customer_hash, exam_hash) }
+        it "保証元のentityがnil、ステータスが企業未特定になる" do
+          expect(exam.sb_guarantee_client.entity).to be_nil
+          expect(exam.sb_guarantee_customer.entity).to be_present
+        end
+      end
+      context "保証先の企業が特定できない場合" do
+        let(:customer_hash_daihyo_only_hit) {
+          customer_hash["daihyo_name"] = entity.entity_profile.daihyo_name
+          customer_hash
+        }
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash_daihyo_only_hit, exam_hash) }
+        it "保証先のentityがnil、ステータスが企業未特定になる" do
+          expect(exam.sb_guarantee_customer.entity).to be_nil
+          expect(exam.sb_guarantee_client.entity).to be_present
+        end
+      end
+    end
   end
+
+  describe "保証審査依頼保存" do
+    context "企業特定とステータス" do
+      context "企業特定が可能な保証審査依頼を1件追加して保存する" do
+        # 新規Entityを作成するパターンで企業特定が完了する
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:saved_exams) { exam_form.save_exams }
+        it "保証審査依頼が保存され、企業特定状態になる" do
+          target = saved_exams.first
+          expect(target.persisted?).to eq true
+          expect(target.sb_guarantee_client.persisted?).to eq true
+          expect(target.sb_guarantee_customer.persisted?).to eq true
+          expect(target.sb_guarantee_client.entity).to be_present
+          expect(target.sb_guarantee_customer.entity).to be_present
+          expect(target.status).to eq Status::ExamStatus::READY_FOR_EXAM
+        end
+      end
+      context "企業が特定できない場合" do
+        context "保証元の企業が特定できない場合" do
+          let(:client_hash_daihyo_only_hit) {
+            client_hash["cl_daihyo_name"] = entity.entity_profile.daihyo_name
+            client_hash
+          }
+          let!(:exam) { exam_form.add_exam(client_hash_daihyo_only_hit, customer_hash, exam_hash) }
+          let!(:saved_exams) { exam_form.save_exams }
+          it "保証審査依頼が保存され、保証元が特定できず企業未特定になる" do
+            target = saved_exams.first
+            expect(target.persisted?).to eq true
+            expect(target.sb_guarantee_client.persisted?).to eq true
+            expect(target.sb_guarantee_customer.persisted?).to eq true
+            expect(target.sb_guarantee_client.entity).to be_nil
+            expect(target.sb_guarantee_customer.entity).to be_present
+            expect(target.status).to eq Status::ExamStatus::COMPANY_NOT_DETECTED
+          end
+        end
+        context "保証先の企業が特定できない場合" do
+          let(:customer_hash_daihyo_only_hit) {
+            customer_hash["daihyo_name"] = entity.entity_profile.daihyo_name
+            customer_hash
+          }
+          let!(:exam) { exam_form.add_exam(client_hash, customer_hash_daihyo_only_hit, exam_hash) }
+          let!(:saved_exams) { exam_form.save_exams }
+          it "保証審査依頼が保存され、保証先が特定できず企業未特定になる" do
+            target = saved_exams.first
+            expect(target.persisted?).to eq true
+            expect(target.sb_guarantee_client.persisted?).to eq true
+            expect(target.sb_guarantee_customer.persisted?).to eq true
+            expect(target.sb_guarantee_client.entity).to be_present
+            expect(target.sb_guarantee_customer.entity).to be_nil
+            expect(target.status).to eq Status::ExamStatus::COMPANY_NOT_DETECTED
+          end
+        end
+      end
+    end
+    context "企業特定と再利用" do
+      context "同じ保証元に対して2件の保証先が存在する審査依頼を保存する" do
+        # 新規Entityを作成するパターンで企業特定が完了する
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash_2, exam_hash) }
+        let!(:saved_exams) { exam_form.save_exams }
+        it "1件目の保証元が2件目で再利用されていること" do
+          target = saved_exams.first
+          target2 = saved_exams[1]
+          expect(target.sb_guarantee_client.company_name).to eq client_hash["cl_company_name"]
+          expect(target.sb_guarantee_client).to eq target2.sb_guarantee_client
+          expect(target.sb_guarantee_customer).not_to eq target2.sb_guarantee_customer
+        end
+      end
+      context "異なる保証元からの同じ保証先に対する審査依頼を保存する" do
+        # 新規Entityを作成するパターンで企業特定が完了する
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam2) { exam_form.add_exam(client_hash_2, customer_hash, exam_hash) }
+        let!(:saved_exams) { exam_form.save_exams }
+        it "1件目の保証先が2件目で再利用されていること" do
+          target = saved_exams.first
+          target2 = saved_exams[1]
+          expect(target.sb_guarantee_customer.company_name).to eq customer_hash["company_name"]
+          expect(target.sb_guarantee_customer).to eq target2.sb_guarantee_customer
+          expect(target.sb_guarantee_client).not_to eq target2.sb_guarantee_client
+        end
+      end
+    end
+  end
+
   describe "バリデーション" do
     describe "審査依頼" do
       context "審査依頼が０件の場合" do
@@ -157,32 +288,22 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       end
     end
     context "保証元の情報にバリデーションエラーがある場合" do
-      let(:client_hash) {
-        {
-          "cl_company_name" => "株式会社ヨントリー",
-          "cl_daihyo_name" => "鳥居　太郎",
-          "cl_taxagency_corporate_number" => "AAA",
-          "cl_address" => "神奈川県川崎市高津区下野毛５－６－７",
-          "cl_tel" => "0442679999",
-        }
+      let(:client_hash_ng) {
+        client_hash["cl_taxagency_corporate_number"] = "AAA"
+        client_hash
       }
-      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      let!(:exam) { exam_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
       it "無効である" do
         expect(exam_form.valid?).to eq false
         expect(exam_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
       end
     end
     context "保証先の情報にバリデーションエラーがある場合" do
-      let(:customer_hash) {
-        {
-          "company_name" => "有限会社千本桜酒店",
-          "daihyo_name" => "千本　桜",
-          "taxagency_corporate_number" => "1234657980123",
-          "address" => "神奈川県大和市福田４５００",
-          "tel" => "神奈川県大和市福田４５００",
-        }
+      let(:customer_hash_ng) {
+        customer_hash["tel"] = "神奈川県大和市福田４５００"
+        customer_hash
       }
-      let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+      let!(:exam) { exam_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
       it "無効である" do
         expect(exam_form.valid?).to eq false
         expect(exam_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
@@ -190,18 +311,13 @@ RSpec.describe Exam::RegistrationForm, type: :model do
     end
     describe "複数行にバリデーションエラーがある場合、エラー業を特定できるか" do
       context "保証元の情報に複数のバリデーションエラーがある場合" do
-        let(:client_hash) {
-          {
-            "cl_company_name" => "株式会社ヨントリー",
-            "cl_daihyo_name" => "鳥居　太郎",
-            "cl_taxagency_corporate_number" => "AAA",
-            "cl_address" => "神奈川県川崎市高津区下野毛５－６－７",
-            "cl_tel" => "0442679999",
-          }
+        let(:client_hash_ng) {
+          client_hash["cl_taxagency_corporate_number"] = "AAA"
+          client_hash
         }
-        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
-        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
-        let!(:exam3) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+        let!(:exam) { exam_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
+        let!(:exam2) { exam_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
+        let!(:exam3) { exam_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
         it "行番号が指定されすべての行のエラーが表示される" do
           expect(exam_form.valid?).to eq false
           expect(exam_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
@@ -210,18 +326,14 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
       end
       context "保証先の情報に複数バリデーションエラーがある場合" do
-        let(:customer_hash) {
-          {
-            "company_name" => "有限会社千本桜酒店",
-            "daihyo_name" => "千本　桜",
-            "taxagency_corporate_number" => "1234657980123",
-            "address" => "神奈川県大和市福田４５００",
-            "tel" => "神奈川県大和市福田４５００",
-          }
+        let(:customer_hash_ng) {
+          customer_hash["tel"] = "神奈川県大和市福田４５００"
+          customer_hash
         }
-        let!(:exam) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
-        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
-        let!(:exam3) { exam_form.add_exam(client_hash, customer_hash, exam_hash) }
+
+        let!(:exam) { exam_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
+        let!(:exam2) { exam_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
+        let!(:exam3) { exam_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
         it "行番号が指定されすべての行のエラーが表示される" do
           expect(exam_form.valid?).to eq false
           expect(exam_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
@@ -250,15 +362,16 @@ RSpec.describe Exam::RegistrationForm, type: :model do
   describe "ファイル読み込み" do
     let(:current_user) { create :internal_user }
     let(:form) { Exam::RegistrationForm.initFromFile(sb_client, current_user, file) }
+    let(:file) { fixture_file_upload("files/exam_registration/ok.xls") }
     context "異常なファイルを読み込んだ場合" do
       context "空のExcel" do
-        let(:file) { file_fixture("exam_registration/empty.xlsx") }
+        let(:file) { fixture_file_upload("files/exam_registration/empty.xlsx") }
         it "初期化できるがバリデーションエラーになる" do
           expect(form).to be_invalid
         end
       end
       context "旧Excelの拡張子の場合" do
-        let(:file) { file_fixture("exam_registration/ok.xls") }
+        let(:file) { fixture_file_upload("files/exam_registration/ok.xls") }
         it "読み込みエラーになる" do
           expect {
             form
@@ -266,7 +379,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
       end
       context "画像ファイルの場合" do
-        let(:file) { file_fixture("exam_registration/logo.jpg") }
+        let(:file) { fixture_file_upload("files/exam_registration/logo.jpg") }
 
         it "読み込みエラーになる" do
           expect {
@@ -277,14 +390,14 @@ RSpec.describe Exam::RegistrationForm, type: :model do
     end
 
     context "内容がNGなファイルを読み込んだ場合" do
-      let(:file) { file_fixture("exam_registration/ng.xlsx") }
+      let(:file) { fixture_file_upload("files/exam_registration/ng.xlsx") }
       it "初期化できるがバリデーションエラーになる" do
         expect(form).to be_invalid
       end
     end
     context "正常なファイルを読み込んだ場合" do
       context "保証元＝クライアントのフォーマットの場合" do
-        let(:file) { file_fixture("exam_registration/ok_no_client.xlsx") }
+        let(:file) { fixture_file_upload("files/exam_registration/ok_no_client.xlsx") }
         it "初期化できる" do
           expect(form).to be_valid
         end
@@ -327,7 +440,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
       end
       context "保証元を指定したフォーマットの場合" do
-        let(:file) { file_fixture("exam_registration/ok_with_client.xlsx") }
+        let(:file) { fixture_file_upload("files/exam_registration/ok_with_client.xlsx") }
         it "初期化できる" do
           expect(form).to be_valid
         end
@@ -336,6 +449,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
         end
         it "審査がファイルから正しく格納されている" do
           exam = form.exams.first
+          expect(exam.accepted_at).to be_present
           expect(exam.transaction_contents).to eq "牛肉"
           expect(exam.payment_method_id).to eq PaymentMethod.find_by_name("末・末").id
           expect(exam.payment_method_optional).to eq "決済条件補足"
@@ -368,6 +482,37 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(client.taxagency_corporate_number).to eq "1234567890999"
           expect(client.sb_client).to eq sb_client
         end
+      end
+    end
+  end
+  describe "ActiveStrageからのファイル読み込み" do
+    let(:current_user) { create :internal_user }
+    let(:form) { Exam::RegistrationForm.initFromFile(sb_client, current_user, file) }
+    let(:file) { fixture_file_upload("files/exam_registration/ok_no_client.xlsx") }
+    let(:form_rev) { Exam::RegistrationForm.initFromGuaranteeExamRequestId(sb_client, current_user, form.sb_guarantee_exam_request.id) }
+    context "ファイルから読み込んだformと、ActiveStrageから復元したファイルから読み込んだformを比較する" do
+      it "初期化できる" do
+        expect(form_rev).to be_valid
+      end
+      it "審査が３行ある" do
+        expect(form_rev.exams.size).to eq 3
+      end
+      it "受付日以外の生成結果が同じである" do
+        exam_rev = form_rev.exams.first
+        exam = form_rev.exams.first
+        expect(exam_rev.accepted_at).to be_present
+        expect(exam_rev.transaction_contents).to eq exam.transaction_contents
+        expect(exam_rev.payment_method_id).to eq exam.payment_method_id
+        expect(exam_rev.payment_method_optional).to eq exam.payment_method_optional
+        expect(exam_rev.new_transaction).to eq exam.new_transaction
+        expect(exam_rev.transaction_years).to eq exam.transaction_years
+        expect(exam_rev.payment_delayed).to eq exam.payment_delayed
+        expect(exam_rev.payment_delayed_memo).to eq exam.payment_delayed_memo
+        expect(exam_rev.payment_method_changed).to eq exam.payment_method_changed
+        expect(exam_rev.payment_method_changed_memo).to eq exam.payment_method_changed_memo
+        expect(exam_rev.other_companies_ammount).to eq exam.other_companies_ammount
+        expect(exam_rev.other_guarantee_companies).to eq exam.other_guarantee_companies
+        expect(exam_rev.guarantee_amount_hope).to eq exam.guarantee_amount_hope
       end
     end
   end

@@ -8,7 +8,7 @@ class Clients::RegistrationExamsController < ApplicationController
     begin
       @form = Exam::RegistrationForm.initFromFile(@sb_client,
                                                   current_internal_user,
-                                                  upload_params[:input_file].tempfile)
+                                                  upload_params[:input_file])
       if @form.invalid?
         render :index and return
       end
@@ -23,15 +23,15 @@ class Clients::RegistrationExamsController < ApplicationController
   end
 
   def create
-    @form = Exam::RegistrationForm.initFromSavedFile(@sb_client,
-                                                     current_internal_user,
-                                                     upload_params[:input_file].tempfile)
+    @form = Exam::RegistrationForm.initFromGuaranteeExamRequestId(@sb_client,
+                                                                  current_internal_user,
+                                                                  create_params[:guarantee_exam_request_id])
     if @form.invalid?
       render :index and return
     end
     @form.save_exams
     flash[:success] = "保証審査の登録が完了しました。"
-    redirect_to exam_list_path
+    redirect_to exams_path
   end
 
   private
@@ -45,6 +45,6 @@ class Clients::RegistrationExamsController < ApplicationController
   end
 
   def create_params
-    params.permit(:registration_form, :registration_form_users)
+    params.permit(:guarantee_exam_request_id)
   end
 end

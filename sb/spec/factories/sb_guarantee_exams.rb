@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :sb_guarantee_exam do
+    status { Status::ExamStatus::READY_FOR_EXAM }
     accepted_at { Time.zone.now }
     transaction_contents { "取扱い商品" } # 取扱い商品
     payment_method_id { PaymentMethod.all.sample } # 決済条件
