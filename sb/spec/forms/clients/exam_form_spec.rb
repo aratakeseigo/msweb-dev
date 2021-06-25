@@ -95,6 +95,21 @@ RSpec.describe Client::ExamForm, type: :model do
       end
     end
 
+    context "by情報が存在する場合" do
+      let!(:by_info) { create :by_customer, entity_id: client_has_exam.entity.id }
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "by情報がありである" do
+        expect(form.by_info).to eq "あり"
+      end
+    end
+
+    context "by情報が存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "by情報がなしである" do
+        expect(form.by_info).to eq "なし"
+      end
+    end
+
     context "審査結果情報が存在する場合" do
       let!(:guarantee_client) { create :sb_guarantee_client }
       let!(:guarantee_customer) { create :sb_guarantee_customer, sb_guarantee_client_id: client_has_exam.id, entity_id: client_has_exam.entity.id }

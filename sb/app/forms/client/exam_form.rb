@@ -15,6 +15,7 @@ module Client
     attribute :capital, :integer
     attribute :ab_info, :string
     attribute :bl_info, :string
+    attribute :by_info, :string
     attribute :exam_info, :string
     attribute :guarantee_info, :string
     attribute :tsr_score, :string
@@ -46,6 +47,7 @@ module Client
                   :current_user,
                   :ab_info,
                   :bl_info,
+                  :by_info,
                   :exam_info,
                   :guarantee_info,
                   :tsr_score,
@@ -95,8 +97,6 @@ module Client
 
       # entityが存在する場合
       if @sb_client.entity.present?
-        exam_info = SbGuaranteeExam.eager_load(sb_guarantee_customer: :entity).where(entities:{house_company_code: @sb_client.entity.house_company_code})
-        @exam_info = exam_info.present? ? EXIST : NOT_EXIST
         search_infos(@sb_client.entity.house_company_code)
         # 保証テーブル作成後に実装
         #@guarantee_info
@@ -159,8 +159,13 @@ module Client
     def search_infos(house_company_code)
       ab_info = CustomerMaster.find_by(house_company_code: house_company_code)
       bl_info = AccsBlInfo.where(corporate_code: house_company_code)
+      exam_info = SbGuaranteeExam.eager_load(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code})
+      by_info = ByCustomer.eager_load(:entity).where(entities:{house_company_code: house_company_code})
+
       @ab_info = ab_info.present? ? EXIST : NOT_EXIST
       @bl_info = bl_info.present? ? EXIST : NOT_EXIST
+      @exam_info = exam_info.present? ? EXIST : NOT_EXIST
+      @by_info = by_info.present? ? EXIST : NOT_EXIST
     end
 
     ## 保存しないので常にtrue(rspec用)
