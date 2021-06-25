@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :sb_client, class: SbClient do
     transient do
-      entity { build :entity }
+      entity { create :entity }
       sb_agent { create :sb_agent }
-      internal_user { build :internal_user, name: "SB担当者１太郎", email: "sb_client_1@example.com" }
-      internal_user2 { build :internal_user, name: "SB担当者２次郎", email: "sb_client_2@example.com" }
-      internal_user3 { build :internal_user, name: "SB担当者３次郎", email: "sb_client_3@example.com" }
+      internal_user { create :internal_user, name: "SB担当者１太郎" }
+      internal_user2 { create :internal_user, name: "SB担当者２次郎" }
+      internal_user3 { create :internal_user, name: "SB担当者３次郎" }
     end
     entity_id { entity.id }
     status_id { 1 }
@@ -86,6 +86,38 @@ FactoryBot.define do
       capital { 22222222 }
       registration_form_file { Rack::Test::UploadedFile.new("spec/factories/file/registration_form_file1.pdf", 'application/pdf') }
       other_files { [ Rack::Test::UploadedFile.new("spec/factories/file/other_file1.pdf", 'application/pdf')] }
+    end
+
+    trait :has_exam do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam)
+      end      
+    end
+
+    trait :has_exam_available_flag_false do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :available_flag_false)
+      end      
+    end
+
+    trait :has_no_entity do
+      entity_id { nil }
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_21_104832) do
+ActiveRecord::Schema.define(version: 2021_06_24_135753) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -1991,6 +1991,7 @@ ActiveRecord::Schema.define(version: 2021_06_21_104832) do
     t.string "tsr_score", comment: "TSR点数"
     t.string "tdb_score", comment: "帝国点数"
     t.text "communicate_memo", comment: "社内連絡メモ"
+    t.boolean "available_flag", default: false, null: false, comment: "有効フラグ"
     t.integer "created_by", null: false, comment: "作成者"
     t.integer "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
