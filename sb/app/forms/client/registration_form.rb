@@ -34,18 +34,12 @@ module Client
     end
 
     def create_entity
-      entity.assign_house_company_code
-      entity.corporation_number = taxagency_corporate_number
-      entity.established = sprintf("%04d-%02d", established_in.year, established_in.mon) if established_in.present?
-      entity.enable
-
-      profile = entity.build_entity_profile
-      profile.corporation_name = company_name
-      profile.daihyo_name = Utils::StringUtils.to_zenkaku daihyo_name
-      profile.zip_code = zip_code
-      profile.prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
-      profile.address = address
-      profile.daihyo_tel = tel
+      entity_established = sprintf("%04d-%02d", established_in.year, established_in.mon) if established_in.present?
+      entity_prefecture = Prefecture.find_by_name prefecture_name if prefecture_name.present?
+      entity = Entity.create_entity(company_name: company_name, daihyo_name: daihyo_name,
+                                    taxagency_corporate_number: taxagency_corporate_number,
+                                    address: address, daihyo_tel: tel, established: entity_established,
+                                    zip_code: zip_code, prefecture: entity_prefecture)
       entity.save!
     end
 
