@@ -128,11 +128,11 @@ resource "aws_ecs_task_definition" "securebox" {
       },
       {
         "name": "AWS_ACCESSKEY",
-        "valueFrom": "/ecs/${var.stage}/AWS_ACCESSKEY"
+        "valueFrom": "/ecs/${var.stage}/securebox/AWS_ACCESSKEY"
       },
       {
         "name": "AWS_SECRET_KEY",
-        "valueFrom": "/ecs/${var.stage}/AWS_SECRET_KEY"
+        "valueFrom": "/ecs/${var.stage}/securebox/AWS_SECRET_KEY"
       },
       {
         "name": "RAILS_MASTER_KEY",
