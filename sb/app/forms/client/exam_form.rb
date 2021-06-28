@@ -13,6 +13,8 @@ module Client
     attribute :established_in, :string
     attribute :annual_sales, :integer
     attribute :capital, :integer
+    attribute :status_id, :integer
+    attribute :commit, :string
 
     validate :sb_client_validate?
 
@@ -55,16 +57,17 @@ module Client
       @established_in = @sb_client.established_in
       @annual_sales = @sb_client.annual_sales
       @capital = @sb_client.capital
+      @status_id = @sb_client.status_id
 
       # 表示用申込書とファイルを設定
       @output_registration_form_file = @sb_client.registration_form_file
       @output_other_files = @sb_client.other_files
-
+      @commit = "test"
       # sb_client_examが存在する場合、formのattributesに詰める
       # updateの場合
       if attributes.present?
         super(attributes)
-        # to_sb_client
+        # @status_id = Status::ClientStatus::READY_FOR_APPROVAL if @commit == "稟議申請"
       end
     end
 
@@ -114,6 +117,7 @@ module Client
       @sb_client.annual_sales = annual_sales
       @sb_client.capital = capital
       @sb_client.updated_user = @current_user
+      @sb_client.status_id = @status_id
     end
 
     ## 保存しないので常にtrue(rspec用)

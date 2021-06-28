@@ -48,7 +48,9 @@
   <% end %>
   <div class="row">
     <div class="form-group col">
-      <%= f.submit %>
+      <%= link_to "キャンセル", clients_list_path, { class: "btn btn-primary" } %>
+      <%= f.submit "保存", { class: "btn btn-primary" } %>
+      <%= f.submit "稟議申請",  { class: "btn btn-primary" } %>
     </div>
   </div>
 <% end %>
