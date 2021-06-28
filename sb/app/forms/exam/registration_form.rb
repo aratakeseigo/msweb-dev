@@ -15,7 +15,7 @@ module Exam
         sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.find(id)
 
         # 保証審査依頼からファイルを取得して読み込み処理を呼び出す
-        Utils::ActiveStrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
+        Utils::ActiveStorageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
           initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
         end
       rescue ActiveRecord::RecordNotFound

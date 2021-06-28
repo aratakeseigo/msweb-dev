@@ -1,4 +1,4 @@
-class Utils::ActiveStrageFileOpener
+class Utils::ActiveStorageFileOpener
   include ActiveStorage::Downloading
 
   def initialize(file)

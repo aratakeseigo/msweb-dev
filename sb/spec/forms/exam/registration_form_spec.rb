@@ -485,12 +485,12 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       end
     end
   end
-  describe "ActiveStrageからのファイル読み込み" do
+  describe "ActiveStorageからのファイル読み込み" do
     let(:current_user) { create :internal_user }
     let(:form) { Exam::RegistrationForm.initFromFile(sb_client, current_user, file) }
     let(:file) { fixture_file_upload("files/exam_registration/ok_no_client.xlsx") }
     let(:form_rev) { Exam::RegistrationForm.initFromGuaranteeExamRequestId(sb_client, current_user, form.sb_guarantee_exam_request.id) }
-    context "ファイルから読み込んだformと、ActiveStrageから復元したファイルから読み込んだformを比較する" do
+    context "ファイルから読み込んだformと、ActiveStorageから復元したファイルから読み込んだformを比較する" do
       it "初期化できる" do
         expect(form_rev).to be_valid
       end
