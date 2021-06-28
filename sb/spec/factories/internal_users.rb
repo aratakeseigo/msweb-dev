@@ -8,7 +8,8 @@ FactoryBot.define do
   factory :internal_user do
     sequence(:login_id) { |n| "test#{n}" }
     name { "吉田　一雄" }
-    email { "test@example.com" }
+    sequence(:email) { |n| "test#{n}@example.com" }
+    # email { "test@example.com" }
     password { "password" }
 
     after(:create) do |user|
