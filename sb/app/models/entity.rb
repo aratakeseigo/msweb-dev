@@ -74,14 +74,13 @@ class Entity < ActiveRecord::Base
 
     return entity if entity.present?
 
-    ## 候補がない場合はExtityを作成する
+    ## 候補がない場合はEntityを作成する
     unless recommend_entity_exists?(company_name: company_name, daihyo_name: daihyo_name,
                                     taxagency_corporate_number: taxagency_corporate_number)
       entity = create_entity(company_name: company_name, daihyo_name: daihyo_name,
                              taxagency_corporate_number: taxagency_corporate_number,
                              address: address, daihyo_tel: daihyo_tel, established: established,
                              zip_code: zip_code, prefecture: prefecture)
-      entity.save!
       return entity
     end
     nil
@@ -107,7 +106,7 @@ class Entity < ActiveRecord::Base
     entity
   end
 
-  # 法人番号と会社名と代表者でどれか一致するExtityがあるか
+  # 法人番号と会社名と代表者でどれか一致するEntityがあるか
   def self.recommend_entity_exists?(company_name: nil, daihyo_name: nil, taxagency_corporate_number: nil)
     recommend_entities = select_by_company_name_or_daihyo_name_or_company_no(taxagency_corporate_number: taxagency_corporate_number, company_name: company_name, daihyo_name: daihyo_name)
     recommend_entities.present?

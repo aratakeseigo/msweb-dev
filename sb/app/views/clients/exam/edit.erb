@@ -1,0 +1,54 @@
+<% provide :title, "クライアント情報登録" %>
+<%= @test %>
+<% if @form&.errors.present? %>
+  <div class="alert alert-danger" role="alert">
+    <strong>エラー内容を修正してください。</strong>
+    <ul>
+      <% @form.errors.full_messages.each do |message| %>
+        <li><%= message %>
+      <% end %>
+    <ul>
+  </div>
+<% end %>
+
+<%= form_with url: clients_exam_update_path, method: "post", local: true do |f| %>
+  <%= render :partial => "input_sb_client", :locals => { f: f } %>
+  <%= render :partial => "input_sb_client_exam", :locals => { f: f } %>
+  
+  <!-- ファイルアップロード -->
+  <div class="row">
+    <div class="form-group col">
+      <%= f.label :registration_form_file, "申込書", class: "col-form-label col-form-label-sm" %>
+      <%= f.file_field :registration_form_file %><br>
+    </div>
+  </div>
+  <% if @form.output_registration_form_file.attached? %>
+    <div class="row">
+      <div class="form-group col">
+        <%= link_to @form.output_registration_form_file.filename, controller: "exam", action: "download", file_id: @form.output_registration_form_file.id, type: @form.output_registration_form_file.name %>
+        <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: @form.output_registration_form_file.id, type: @form.output_registration_form_file.name}, method: "post", class: "m-5" %>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="form-group col">
+      <%= f.label :other_files, "ファイル", class: "col-form-label col-form-label-sm" %>
+      <%= f.file_field :other_files, multiple: true %><br>
+    </div>
+  </div>
+  <% if @form.output_other_files.present? %>
+    <% @form.output_other_files.each do |file| %>
+      <div class="row">
+        <div class="form-group col">
+          <%= link_to file.filename, clients_exam_download_path(file_id: file.id, type: file.name)  %>
+          <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: file.id, type: file.name}, method: "post", class: "m-5" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <div class="row">
+    <div class="form-group col">
+      <%= f.submit %>
+    </div>
+  </div>
+<% end %>

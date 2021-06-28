@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :sb_client, class: SbClient do
     transient do
-      entity { build :entity }
+      entity { create :entity }
       sb_agent { create :sb_agent }
       internal_user { create :internal_user }
     end
@@ -76,6 +76,60 @@ FactoryBot.define do
         sb_client_3.sb_client_users = []
         sb_client_3.sb_client_users << build(:sb_client_user, name: "徳川　家康", contact_tel: "55555555555")
       end
+    end
+
+    trait :client_exam_form do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+    end
+
+    trait :has_file do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+      registration_form_file { Rack::Test::UploadedFile.new("spec/factories/file/registration_form_file1.pdf", "application/pdf") }
+      other_files { [Rack::Test::UploadedFile.new("spec/factories/file/other_file1.pdf", "application/pdf")] }
+    end
+
+    trait :has_exam do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam)
+      end
+    end
+
+    trait :has_exam_available_flag_false do
+      zip_code { "1234567" }
+      address { "横浜市港北区稲葉町3-2-4" }
+      industry_id { 1 }
+      industry_optional { "日用品" }
+      established_in { "202010" }
+      annual_sales { 33333333 }
+      capital { 22222222 }
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :available_flag_false)
+      end
+    end
+
+    trait :has_no_entity do
+      entity_id { nil }
     end
   end
 end
