@@ -64,7 +64,9 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.communicate_memo).to eq "社内連絡メモ"
       end
     end
+  end
 
+  describe "各情報有無設定" do
     context "ab情報が存在する場合" do
       let!(:customer) { create :customer_master, house_company_code: client_has_exam.entity.house_company_code }
       let(:form) { Client::ExamForm.new(nil, client_has_exam) }
@@ -135,7 +137,9 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.bl_info).to eq nil
       end
     end
+  end
 
+  describe "データ更新" do
     context "バリデーションエラーがない更新時" do
       let(:params) {{area_id: "2",
                       sb_tanto_id: "2",
@@ -193,6 +197,40 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(new_sb_client.capital).to eq 10000000
         expect(form.current_user).to eq user
         expect(new_sb_client.updated_user).to eq user
+      end
+    end
+
+    context "稟議申請ボタン押下時" do
+      let(:params) {{ commit: "稟議申請" }}
+      let(:form) {Client::ExamForm.new(params, client)}
+      before {
+        form.current_user = user
+        form.to_sb_client
+        form.other_files_invalid?
+        form.invalid?
+        form.save_client
+      }
+
+      it "status_idが3(決裁待ち)に更新される" do
+        new_sb_client = SbClient.find(client.id)
+        expect(new_sb_client.status_id).to eq 3
+      end
+    end
+
+    context "保存ボタン押下時" do
+      let(:params) {{ commit: "保存" }}
+      let(:form) {Client::ExamForm.new(params, client)}
+      before {
+        form.current_user = user
+        form.to_sb_client
+        form.other_files_invalid?
+        form.invalid?
+        form.save_client
+      }
+
+      it "status_idが更新されない" do
+        new_sb_client = SbClient.find(client.id)
+        expect(new_sb_client.status_id).to eq 1
       end
     end
   end

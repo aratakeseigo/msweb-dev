@@ -13,7 +13,6 @@ module Client
     attribute :established_in, :string
     attribute :annual_sales, :integer
     attribute :capital, :integer
-    attribute :status_id, :integer
     attribute :ab_info, :string
     attribute :bl_info, :string
     attribute :by_info, :string
@@ -81,7 +80,6 @@ module Client
       @established_in = @sb_client.established_in
       @annual_sales = @sb_client.annual_sales
       @capital = @sb_client.capital
-      @status_id = @sb_client.status_id
 
       # 表示用申込書とファイルを設定
       @output_registration_form_file = @sb_client.registration_form_file
@@ -106,7 +104,6 @@ module Client
       # updateの場合
       if attributes.present?
         super(attributes)
-        # @status_id = Status::ClientStatus::READY_FOR_APPROVAL if @commit == "稟議申請"
       end
     end
 
@@ -156,19 +153,20 @@ module Client
       @sb_client.annual_sales = annual_sales
       @sb_client.capital = capital
       @sb_client.updated_user = @current_user
-      @sb_client.status_id = @status_id
+      @sb_client.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id] if commit == "稟議申請"
+
     end
 
     def search_infos(house_company_code)
-      ab_info = CustomerMaster.where(house_company_code: house_company_code).exists?
-      bl_info = AccsBlInfo.where(corporate_code: house_company_code).exists?
-      exam_info = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code}).exists?
-      by_info = ByCustomer.joins(:entity).where(entities:{house_company_code: house_company_code}).exists?
+      ab_info_exists = CustomerMaster.where(house_company_code: house_company_code).exists?
+      bl_info_exists = AccsBlInfo.where(corporate_code: house_company_code).exists?
+      exam_info_exists = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code}).exists?
+      by_info_exists = ByCustomer.joins(:entity).where(entities:{house_company_code: house_company_code}).exists?
 
-      @ab_info = ab_info.present? ? EXIST : NOT_EXIST
-      @bl_info = bl_info.present? ? EXIST : NOT_EXIST
-      @exam_info = exam_info.present? ? EXIST : NOT_EXIST
-      @by_info = by_info.present? ? EXIST : NOT_EXIST
+      @ab_info = ab_info_exists ? EXIST : NOT_EXIST
+      @bl_info = bl_info_exists ? EXIST : NOT_EXIST
+      @exam_info = exam_info_exists ? EXIST : NOT_EXIST
+      @by_info = by_info_exists ? EXIST : NOT_EXIST
       # 保証テーブル作成後に実装
       #@guarantee_info
     end
