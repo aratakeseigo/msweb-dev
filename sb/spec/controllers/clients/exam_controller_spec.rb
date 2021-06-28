@@ -81,6 +81,30 @@ RSpec.describe Clients::ExamController, type: :controller do
       end
     end
 
+    context "稟議申請ボタンが押下された場合" do
+      before { post :update, params: {id: client.id, commit: "稟議申請"}}
+      it "クライアント一覧画面へ遷移する" do
+        expect(response).to redirect_to clients_list_path
+      end
+
+      it "status_idが3(決裁待ち)に更新されている" do
+        updated_sb_client = SbClient.find(client.id)
+        expect(updated_sb_client.status_id).to eq 3
+      end
+    end
+
+    context "保存ボタンが押下された場合" do
+      before { post :update, params: {id: client.id, commit: "保存"}}
+      it "クライアント一覧画面へ遷移する" do
+        expect(response).to redirect_to clients_list_path
+      end
+
+      it "status_idが更新されない" do
+        updated_sb_client = SbClient.find(client.id)
+        expect(updated_sb_client.status_id).to eq 1
+      end
+    end
+
     context "ファイルが6件以上の場合" do
       before { post :update, params: {id: client.id,
                                       other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
