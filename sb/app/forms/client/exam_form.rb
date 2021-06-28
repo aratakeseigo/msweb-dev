@@ -98,8 +98,6 @@ module Client
       # entityが存在する場合
       if @sb_client.entity.present?
         search_infos(@sb_client.entity.house_company_code)
-        # 保証テーブル作成後に実装
-        #@guarantee_info
       end
 
       # updateの場合
@@ -157,15 +155,17 @@ module Client
     end
 
     def search_infos(house_company_code)
-      ab_info = CustomerMaster.find_by(house_company_code: house_company_code)
-      bl_info = AccsBlInfo.where(corporate_code: house_company_code)
-      exam_info = SbGuaranteeExam.eager_load(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code})
-      by_info = ByCustomer.eager_load(:entity).where(entities:{house_company_code: house_company_code})
+      ab_info = CustomerMaster.where(house_company_code: house_company_code).exists?
+      bl_info = AccsBlInfo.where(corporate_code: house_company_code).exists?
+      exam_info = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code}).exists?
+      by_info = ByCustomer.joins(:entity).where(entities:{house_company_code: house_company_code}).exists?
 
       @ab_info = ab_info.present? ? EXIST : NOT_EXIST
       @bl_info = bl_info.present? ? EXIST : NOT_EXIST
       @exam_info = exam_info.present? ? EXIST : NOT_EXIST
       @by_info = by_info.present? ? EXIST : NOT_EXIST
+      # 保証テーブル作成後に実装
+      #@guarantee_info
     end
 
     ## 保存しないので常にtrue(rspec用)
