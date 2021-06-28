@@ -79,7 +79,7 @@ class SbGuaranteeClient < ApplicationRecord
       prefecture: prefecture, address: address, tel: tel,
     )
     ## 新規保証先を作成した場合、
-    ## 対象が絞れた場合にはExtityをアサインする
+    ## 対象が絞れた場合にはEntityをアサインする
     entity = Entity.assign_or_create_entity(company_name: company_name, daihyo_name: daihyo_name,
                                             taxagency_corporate_number: taxagency_corporate_number,
                                             address: address,

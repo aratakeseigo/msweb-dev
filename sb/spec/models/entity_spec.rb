@@ -411,7 +411,7 @@ RSpec.describe Entity, type: :model do
     end
   end
 
-  context "法人番号と会社名と代表者でどれか一致するExtityがあるか検索で" do
+  context "法人番号と会社名と代表者でどれか一致するEntityがあるか検索で" do
     let(:entity) { create :entity }
 
     context "一致するレコードがある場合" do

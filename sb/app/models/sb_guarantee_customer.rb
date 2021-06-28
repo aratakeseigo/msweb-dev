@@ -56,35 +56,35 @@ class SbGuaranteeCustomer < ApplicationRecord
                            tel: nil)
     # 既存の保証先だった場合にはそれを返す
     ## 企業名と代表者名で特定できた場合
-    sbg_clustomers = SbGuaranteeCustomer
+    sbg_customers = SbGuaranteeCustomer
       .select_company_name(company_name)
       .where(daihyo_name: daihyo_name)
 
     #この条件で1件以上ヒットすることは通常ありえないので先頭を返す
-    return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size == 1
+    return sbg_customers.first if sbg_customers.present? and sbg_customers.size == 1
 
     ## 法人番号と住所(町名まで)で特定できた場合
-    sbg_clustomers = SbGuaranteeCustomer
+    sbg_customers = SbGuaranteeCustomer
       .select_adress_choumei(prefecture, address)
       .where(taxagency_corporate_number: taxagency_corporate_number)
 
     #この条件で1件以上ヒットすることは通常ありえないので先頭を返す
-    return sbg_clustomers.first if sbg_clustomers.present? and sbg_clustomers.size >= 1
+    return sbg_customers.first if sbg_customers.present? and sbg_customers.size >= 1
 
     # 既存でない場合は新規保証元を作成する
-    sbg_clustomer = SbGuaranteeCustomer.new(
+    sbg_customer = SbGuaranteeCustomer.new(
       company_name: company_name, daihyo_name: daihyo_name,
       taxagency_corporate_number: taxagency_corporate_number,
       prefecture: prefecture, address: address, tel: tel,
     )
 
     ## 新規保証先を作成した場合、
-    ## 対象が絞れた場合にはExtityをアサインする
+    ## 対象が絞れた場合にはEntityをアサインする
     entity = Entity.assign_or_create_entity(company_name: company_name, daihyo_name: daihyo_name,
                                             taxagency_corporate_number: taxagency_corporate_number,
                                             address: address, prefecture: prefecture, daihyo_tel: tel)
 
-    sbg_clustomer.entity = entity if entity.present?
-    sbg_clustomer
+    sbg_customer.entity = entity if entity.present?
+    sbg_customer
   end
 end

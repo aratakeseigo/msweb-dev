@@ -123,7 +123,7 @@ RSpec.describe SbGuaranteeCustomer, type: :model do
       it "既存の保証先が返却される" do
         expect(res).to eq customer
       end
-      it "extityは増えない" do
+      it "entityは増えない" do
         expect { res.save }.to change { Entity.count }.by(0)
       end
       it "SbGuaranteeCustomerが増えない" do
@@ -146,7 +146,7 @@ RSpec.describe SbGuaranteeCustomer, type: :model do
       it "既存の保証先が返却される" do
         expect(res).to eq customer
       end
-      it "extityは増えない" do
+      it "entityは増えない" do
         expect { res.save }.to change { Entity.count }.by(0)
       end
       it "SbGuaranteeCustomerが増えない" do
@@ -172,7 +172,7 @@ RSpec.describe SbGuaranteeCustomer, type: :model do
           expect(res.company_name).to eq entity.entity_profile.corporation_name
           expect(res.daihyo_name).to eq entity.entity_profile.daihyo_name
         end
-        it "extityは増えない" do
+        it "entityは増えない" do
           expect {
             res.created_user = internal_user
             res.save
@@ -201,7 +201,7 @@ RSpec.describe SbGuaranteeCustomer, type: :model do
           expect(res.daihyo_name).to eq other_customer.daihyo_name
           expect(res.entity).to be_present
         end
-        it "extityが増える" do
+        it "entityが増える" do
           expect {
             res.created_user = internal_user
             res.save
@@ -231,7 +231,7 @@ RSpec.describe SbGuaranteeCustomer, type: :model do
           expect(res.daihyo_name).to eq "柿谷　曜一朗"
           expect(res.entity_id).to be_nil
         end
-        it "extityが増ない" do
+        it "entityが増ない" do
           expect {
             res.created_user = internal_user
             res.save

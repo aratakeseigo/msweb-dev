@@ -15,7 +15,7 @@ module Exam
         sb_guarantee_exam_request = sb_client.sb_guarantee_exam_requests.find(id)
 
         # 保証審査依頼からファイルを取得して読み込み処理を呼び出す
-        Utils::ActivestrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
+        Utils::ActiveStrageFileOpener.new(sb_guarantee_exam_request.guarantee_exam_request_file).open do |file|
           initFromGuaranteeExamRequest(sb_client, current_user, sb_guarantee_exam_request, file)
         end
       rescue ActiveRecord::RecordNotFound
@@ -105,15 +105,15 @@ module Exam
         # 再度特定する
         # 同じファイルに同じ保証元、保証先がいた場合に再利用するため
         sbg_client = specify_client(exam.sb_guarantee_client.attributes)
-        sbg_clustomer = specify_customer(exam.sb_guarantee_customer.attributes)
+        sbg_customer = specify_customer(exam.sb_guarantee_customer.attributes)
 
         # それぞれ既存（保存済み）でなければ作成ユーザーを設定
         sbg_client.created_user = @current_user unless sbg_client.persisted?
-        sbg_clustomer.created_user = @current_user unless sbg_clustomer.persisted?
+        sbg_customer.created_user = @current_user unless sbg_customer.persisted?
 
         exam.sb_guarantee_client = sbg_client
-        exam.sb_guarantee_customer = sbg_clustomer
-        if sbg_client.entity.present? and sbg_clustomer.entity.present?
+        exam.sb_guarantee_customer = sbg_customer
+        if sbg_client.entity.present? and sbg_customer.entity.present?
           exam.status = Status::ExamStatus::READY_FOR_EXAM
         else
           exam.status = Status::ExamStatus::COMPANY_NOT_DETECTED
@@ -153,12 +153,12 @@ module Exam
       # clientを特定する（なければ新規作成）
       sbg_client = specify_client(adjust_to_client_attributes(client_hash))
       # customerを特定する（なければ新規作成）
-      sbg_clustomer = specify_customer(adjust_to_customer_attributes(customer_hash))
+      sbg_customer = specify_customer(adjust_to_customer_attributes(customer_hash))
       # examを作成する
       sbg_exam = sbg_client.sb_guarantee_exams.build(
         adjust_to_exam_attributes(exam_hash).merge({
           sb_client: @sb_client,
-          sb_guarantee_customer: sbg_clustomer,
+          sb_guarantee_customer: sbg_customer,
           sb_guarantee_exam_request: @sb_guarantee_exam_request,
           accepted_at: Time.zone.now,
         })
