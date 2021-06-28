@@ -4,6 +4,9 @@ RSpec.describe Client::ExamForm, type: :model do
   let(:client) { create :sb_client, :client_exam_form }
   let(:client_has_file) { create :sb_client, :has_file }
   let(:user) { create :internal_user }
+  let(:client_has_exam) { create :sb_client, :has_exam }
+  let(:client_has_exam_available_flag_false) { create :sb_client, :has_exam_available_flag_false }
+  let(:client_has_no_entity) { create :sb_client, :has_no_entity }
 
   describe "初期化" do
     context "初期表示" do
@@ -25,23 +28,130 @@ RSpec.describe Client::ExamForm, type: :model do
       end
     end
 
+    context "初期表示時にsb_client_examが存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client) }
+      it "sb_client_examの項目がnilである" do
+        expect(form.reject_reason).to eq nil
+        expect(form.anti_social).to eq nil
+        expect(form.anti_social_memo).to eq nil
+        expect(form.tsr_score).to eq nil
+        expect(form.tdb_score).to eq nil
+        expect(form.communicate_memo).to eq nil
+      end
+    end
+
+    context "初期表示時に有効フラグがtrueのsb_client_examが存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam_available_flag_false) }
+      it "sb_client_examの項目がnilである" do
+        expect(form.reject_reason).to eq nil
+        expect(form.anti_social).to eq nil
+        expect(form.anti_social_memo).to eq nil
+        expect(form.tsr_score).to eq nil
+        expect(form.tdb_score).to eq nil
+        expect(form.communicate_memo).to eq nil
+      end
+    end
+
+    context "初期表示時に有効フラグがtrueのsb_client_examが存在する場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "sb_client_examの項目がnilである" do
+        expect(form.reject_reason).to eq "否決理理由"
+        expect(form.anti_social).to eq true
+        expect(form.anti_social_memo).to eq "反社メモ"
+        expect(form.tsr_score).to eq "55"
+        expect(form.tdb_score).to eq "66"
+        expect(form.communicate_memo).to eq "社内連絡メモ"
+      end
+    end
+
+    context "ab情報が存在する場合" do
+      let!(:customer) { create :customer_master, house_company_code: client_has_exam.entity.house_company_code }
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "ab情報がありである" do
+        expect(form.ab_info).to eq "あり"
+      end
+    end
+
+    context "ab情報が存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "ab情報がなしである" do
+        expect(form.ab_info).to eq "なし"
+      end
+    end
+
+    context "bl情報が存在する場合" do
+      let!(:bl_info) { create :accs_bl_info, corporate_code: client_has_exam.entity.house_company_code }
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "bl情報がありである" do
+        expect(form.bl_info).to eq "あり"
+      end
+    end
+
+    context "bl情報が存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "bl情報がなしである" do
+        expect(form.bl_info).to eq "なし"
+      end
+    end
+
+    context "by情報が存在する場合" do
+      let!(:by_info) { create :by_customer, entity_id: client_has_exam.entity.id }
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "by情報がありである" do
+        expect(form.by_info).to eq "あり"
+      end
+    end
+
+    context "by情報が存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "by情報がなしである" do
+        expect(form.by_info).to eq "なし"
+      end
+    end
+
+    context "審査結果情報が存在する場合" do
+      let!(:guarantee_client) { create :sb_guarantee_client }
+      let!(:guarantee_customer) { create :sb_guarantee_customer, entity_id: client_has_exam.entity.id }
+      let!(:guarantee_exam) { create :sb_guarantee_exam, sb_guarantee_client_id: guarantee_client.id, sb_guarantee_customer_id: guarantee_customer.id }
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "審査結果情報がありである" do
+        expect(form.exam_info).to eq "あり"
+      end
+    end
+
+    context "審査結果情報が存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "審査結果情報がなしである" do
+        expect(form.bl_info).to eq "なし"
+      end
+    end
+
+    context "entity情報が存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_no_entity) }
+      it "各情報が設定されない" do
+        expect(form.exam_info).to eq nil
+        expect(form.ab_info).to eq nil
+        expect(form.bl_info).to eq nil
+      end
+    end
+
     context "バリデーションエラーがない更新時" do
       let(:params) {
         { area_id: "2",
-         sb_tanto_id: "2",
-         name: "西東京株式会社",
-         daihyo_name: "武田　太郎",
-         zip_code: "9012102",
-         prefecture_code: "14",
-         address: "川崎市高津区北見方9-9-9",
-         tel: "12345678901",
-         industry_id: "2",
-         industry_optional: "ブランド品",
-         established_in: "202106",
-         annual_sales: "33000000",
-         capital: "10000000",
-         registration_form_file: nil,
-         other_files: nil }
+          sb_tanto_id: "2",
+          name: "西東京株式会社",
+          daihyo_name: "武田　太郎",
+          zip_code: "9012102",
+          prefecture_code: "14",
+          address: "川崎市高津区北見方9-9-9",
+          tel: "12345678901",
+          industry_id: "2",
+          industry_optional: "ブランド品",
+          established_in: "202106",
+          annual_sales: "33000000",
+          capital: "10000000",
+          registration_form_file: nil,
+          other_files: nil }
       }
       let(:form) { Client::ExamForm.new(params, client) }
       before {

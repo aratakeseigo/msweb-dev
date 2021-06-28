@@ -12,6 +12,7 @@ class SbGuaranteeExam < ApplicationRecord
   belongs_to :sb_guarantee_client
   belongs_to :sb_guarantee_customer
   belongs_to :sb_approval, optional: true, class_name: "SbApproval::GuaranteeExam"
+  belongs_to :hp_type, optional: true
 
   belongs_to_active_hash :payment_method, optional: true
   belongs_to_active_hash :hp_type, optional: true

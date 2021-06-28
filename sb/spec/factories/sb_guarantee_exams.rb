@@ -1,5 +1,8 @@
 FactoryBot.define do
   factory :sb_guarantee_exam do
+    transient do
+      internal_user { create :internal_user }
+    end
     status { Status::ExamStatus::READY_FOR_EXAM }
     accepted_at { Time.zone.now }
     transaction_contents { "取扱い商品" } # 取扱い商品
@@ -18,5 +21,7 @@ FactoryBot.define do
     sb_guarantee_customer
     sb_guarantee_exam_request
     sb_client
+    created_user { internal_user }
+    updated_user { internal_user }
   end
 end

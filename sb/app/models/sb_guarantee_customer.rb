@@ -5,6 +5,7 @@ class SbGuaranteeCustomer < ApplicationRecord
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   has_many :sb_guarantee_exams
   belongs_to :entity, optional: true
+
   accepts_nested_attributes_for :entity
 
   validates :company_name, presence: true, length: { maximum: 255 }
