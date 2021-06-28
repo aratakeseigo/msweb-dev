@@ -1,0 +1,4 @@
+<%  if @status == 'fail' %>
+    $("#error_explanation").html("<%= j(render 'error', { identify_company: @identify_company }) %>")
+<% end %>
+$("#entity-modal").modal("show");

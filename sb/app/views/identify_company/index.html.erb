@@ -4,7 +4,7 @@
 <div class="row">
   <div class="col">
     <div class="text-right">
-      <%= link_to '新規', identify_company_new_entity_path( params: { id: @identify_company.id, classification: 1}), remote: true, class: "btn btn-primary" %>
+      <%= link_to '新規', identify_company_new_entity_path( params: { id: @identify_company.id, classification: @identify_company.classification, path: @identify_company.path}), remote: true, class: "btn btn-primary" %>
     </div>
   </div>
 </div>
@@ -28,15 +28,14 @@
     </tr>
   </tbody>
 </table>
-<div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
-<!-- -->
+<div id="entity-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
 <%= form_with url: identify_company_update_path, local: true do |f| %>
 <div class="row">
   <div class="col">
     <div class="text-right">
       <span><%= link_to "一覧に戻る", @identify_company.path , :class => "btn btn-primary" %>
       <%= f.submit "更新" ,:id => "update", :class => "btn btn-primary", :disabled => "true" %>
-      <%= f.hidden_field :classification, value: @identify_company.classfication %>
+      <%= f.hidden_field :classification, value: @identify_company.classification %>
       <%= f.hidden_field :id, value: @identify_company.id %>
       <%= f.hidden_field :path, value: @identify_company.path %>
     </div>

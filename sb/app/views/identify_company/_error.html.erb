@@ -1,0 +1,9 @@
+<% if @identify_company.errors.any? %>
+  <div class="error_message alert alert-warning">
+    <ul>
+      <% @identify_company.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

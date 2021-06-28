@@ -7,56 +7,57 @@ RSpec.describe IdentifyCompanyController do
         before do
             sign_in internal_user
         end
-        context "起動元がクライアント一覧：法人番号が一致した場合" do
+        context "法人番号が一致した場合" do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client1)
                 FactoryBot.create(:identify_company_entity1)
+                get :index, params: {id:  @sb_client.id, classification: '1', path: clients_list_path}
             end
             it "リストに法人番号が一致する企業が１件ヒットする" do
-                get :index, params: {id:  @sb_client.id, classification: '1'}
                 expect(assigns(:entities).size).to eq 1
                 expect(assigns(:entities).first.corporation_number).to eq @sb_client.taxagency_corporate_number
             end
         end
 
-        context "起動元がクライアント一覧：企業名が一致した場合" do
+        context "企業名が一致した場合" do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client2)
                 FactoryBot.create(:identify_company_entity2)
+                get :index, params: {id: @sb_client.id, classification: '1', path: clients_list_path}
             end
             it "リストに企業名が一致する企業が１件ヒットする" do
-                get :index, params: {id: @sb_client.id, classification: '1'}
                 expect(assigns(:entities).size).to eq 1
                 expect(assigns(:entities).first.entity_profile.corporation_name).to eq @sb_client.name
             end
         end
 
-        context "起動元がクライアント一覧：代表者名が一致した場合" do
+        context "代表者名が一致した場合" do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client3)
                 FactoryBot.create(:identify_company_entity3)
+                get :index, params: {id: @sb_client.id, classification: '1', path: clients_list_path}
             end
             it "リストに代表者名が一致する企業が１件ヒットする" do
-                get :index, params: {id: @sb_client.id, classification: '1'}
                 expect(assigns(:entities).size).to eq 1
                 expect(assigns(:entities).first.entity_profile.daihyo_name).to eq @sb_client.daihyo_name
             end
         end
 
-        context "起動元がクライアント一覧：企業特定画面で企業を特定する" do
+        context "企業特定画面で企業を特定する" do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client4)
                 @entity = FactoryBot.create(:identify_company_entity4)
-                post :update, params: {id: @sb_client.id, classification: '1', entity_id: @entity.id }
+                post :update, params: {id: @sb_client.id, classification: '1', entity_id: @entity.id, path: clients_list_path }
+                @updated_sb_client = SbClient.find(@sb_client.id)
             end
             it "SBクライアントのエンティティIDに登録される" do
-                expect(assigns(:sb_client).entity_id).to eq @entity.id
+                expect(@updated_sb_client.entity_id).to eq @entity.id
             end
             it "SBクライアントのステータスが2に更新される" do
-                expect(assigns(:sb_client).status_id).to eq 2
+                expect(@updated_sb_client.status_id).to eq Status::ClientStatus::READY_FOR_EXAM.id
             end
-            it "クライアント一覧画面へリダイレクトされる" do
-                expect(response).to redirect_to "/clients/list"
+            it "パラーメータパスで指定された画面へリダイレクトされる" do
+                expect(response).to redirect_to clients_list_path
             end
         end
     end    
