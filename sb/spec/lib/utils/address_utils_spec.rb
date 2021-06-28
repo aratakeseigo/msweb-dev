@@ -32,25 +32,25 @@ describe Utils::AddressUtils do
   end
   describe "split_prefecture_and_other" do
     it "addressが空文字の場合、prefectureはnil、addressは空文字が返却される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other("")).to eq ({ prefecture: nil, address: "" })
+      expect(Utils::AddressUtils.split_prefecture_and_other("")).to eq({ prefecture: nil, address: "" })
     end
     it "addressがnilの場合、prefectureはnil、addressは空文字が返却される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other(nil)).to eq ({ prefecture: nil, address: "" })
+      expect(Utils::AddressUtils.split_prefecture_and_other(nil)).to eq({ prefecture: nil, address: "" })
     end
     it "addressに都道府県名が含まれない場合、prefectureはnil、addressは引数がそのまま返却される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other("横浜市港北区日吉５丁目")).to eq ({ prefecture: nil, address: "横浜市港北区日吉５丁目" })
+      expect(Utils::AddressUtils.split_prefecture_and_other("横浜市港北区日吉５丁目")).to eq({ prefecture: nil, address: "横浜市港北区日吉５丁目" })
     end
     it "addressに都道府県名が含まれる場合、prefectureはPrefectureの定数、adressは都道府県以外の部分が返却される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other("神奈川県横浜市港北区日吉５丁目")).to eq ({ prefecture: Prefecture.find_by_name("神奈川県"), address: "横浜市港北区日吉５丁目" })
+      expect(Utils::AddressUtils.split_prefecture_and_other("神奈川県横浜市港北区日吉５丁目")).to eq({ prefecture: Prefecture.find_by_name("神奈川県"), address: "横浜市港北区日吉５丁目" })
     end
     it "addressの中間に都道府県名が含まれる場合、prefectureはPrefectureの定数、adressは都道府県以外の部分が返却される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other("東神奈川県横浜市港北区日吉５丁目")).to eq ({ prefecture: nil, address: "東神奈川県横浜市港北区日吉５丁目" })
+      expect(Utils::AddressUtils.split_prefecture_and_other("東神奈川県横浜市港北区日吉５丁目")).to eq({ prefecture: nil, address: "東神奈川県横浜市港北区日吉５丁目" })
     end
     it "addressが都道府県名だけの場合、prefectureはPrefectureの定数、adressは空文字が返却される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other("沖縄県")).to eq ({ prefecture: Prefecture.find_by_name("沖縄県"), address: "" })
+      expect(Utils::AddressUtils.split_prefecture_and_other("沖縄県")).to eq({ prefecture: Prefecture.find_by_name("沖縄県"), address: "" })
     end
     it "addressが都道府県名が複数含まれる場合、最初の都道府県だけが採用される" do
-      expect(Utils::AddressUtils.split_prefecture_and_other("沖縄県神奈川県東京都府６－７－８")).to eq ({ prefecture: Prefecture.find_by_name("沖縄県"), address: "神奈川県東京都府６－７－８" })
+      expect(Utils::AddressUtils.split_prefecture_and_other("沖縄県神奈川県東京都府６－７－８")).to eq({ prefecture: Prefecture.find_by_name("沖縄県"), address: "神奈川県東京都府６－７－８" })
     end
   end
 end
