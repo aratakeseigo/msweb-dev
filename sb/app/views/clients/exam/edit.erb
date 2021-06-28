@@ -22,7 +22,7 @@
       <%= f.file_field :registration_form_file %><br>
     </div>
   </div>
-  <% if @form.output_registration_form_file.present? %>
+  <% if @form.output_registration_form_file.attached? %>
     <div class="row">
       <div class="form-group col">
         <%= link_to @form.output_registration_form_file.filename, controller: "exam", action: "download", file_id: @form.output_registration_form_file.id, type: @form.output_registration_form_file.name %>
