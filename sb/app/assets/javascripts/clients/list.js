@@ -1,17 +1,17 @@
 
 
-function setButtonStatus(statusId, clientId, redirectPath){
+function setButtonStatus(statusId, clientId){
     // いったんリンクを非活性にする
     document.getElementsByName('btn-ready_for').forEach(function(btn){
         btn.className = 'btn btn-primary btn-sm disabled';
     });
     // クライアントステータスに応じて、リンクボタンの非活性→活性に変更しhref設定
-    (function(statusId, clientId, redirectPath){
+    (function(statusId, clientId){
         let btnId, url;
         switch(statusId){
             case 1:{
                 btnId = 'btn-company_not_detected';
-                url = '/identify_company?id=' + clientId + '&classification=1&path=' + redirectPath;
+                url = '/identify_company?id=' + clientId + '&classification=1';
                 break;
             }
             case 2:{ 
@@ -40,5 +40,5 @@ function setButtonStatus(statusId, clientId, redirectPath){
         }
         document.getElementById(btnId).className = 'btn btn-primary btn-sm';
         document.getElementById(btnId).href = url;
-    })(statusId, clientId, redirectPath);
+    })(statusId, clientId);
 }

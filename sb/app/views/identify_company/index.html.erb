@@ -4,7 +4,7 @@
 <div class="row">
   <div class="col">
     <div class="text-right">
-      <%= link_to '新規', identify_company_new_entity_path( params: { id: @identify_company.id, classification: @identify_company.classification, path: @identify_company.path}), remote: true, class: "btn btn-primary" %>
+      <%= link_to '新規', identify_company_new_entity_path( params: { id: @identify_company.id, classification: @identify_company.classification}), remote: true, class: "btn btn-primary" %>
     </div>
   </div>
 </div>
@@ -37,7 +37,6 @@
       <%= f.submit "更新" ,:id => "update", :class => "btn btn-primary", :disabled => "true" %>
       <%= f.hidden_field :classification, value: @identify_company.classification %>
       <%= f.hidden_field :id, value: @identify_company.id %>
-      <%= f.hidden_field :path, value: @identify_company.path %>
     </div>
   </div>
 </div>

@@ -3,7 +3,6 @@
     <%= form_with url:identify_company_create_entity_path, remote: true do |f| %>
     <%= f.hidden_field :classification, value: @identify_company.classification %>
     <%= f.hidden_field :id, value: @identify_company.id %>
-    <%= f.hidden_field :path, value: @identify_company.path %>
     <div id="error_explanation">
      <% if @identify_company.errors.any? %>
         <ul>
