@@ -1,6 +1,10 @@
 <% provide :title, "保証審査登録" %>
 <% provide :breadcrumb_items, "Home クライアント" %>
-
+<div class="row">
+    <div class="col">
+        <p class="h2">クライアント：<%= @sb_client.name %></p>
+    </div>
+</div>
 <div class="mx-auto mt-5" style="width: 500px;">
     <div class="mb-3">
         <% if @form&.errors.present? %>

@@ -20,10 +20,14 @@ Rails.application.routes.draw do
       post "/upload", action: "upload"
       post "/create", action: "create"
     end
-    namespace :registration_exams do
-      get "/:id/", action: "index", as: "index"
-      post "/:id/upload", action: "upload", as: "upload"
-      post "/:id/create", action: "create", as: "create"
+    get "/:id/registration_exams", controller: "registration_exams", action: "index", as: "registration_exams_index"
+    post "/:id/registration_exams/upload", controller: "registration_exams", action: "upload", as: "registration_exams_upload"
+    post "/:id/registration_exams/create", controller: "registration_exams", action: "create", as: "registration_exams_create"
+    namespace :exam do
+      get "/:id", action: "edit", as: "edit"
+      post "/:id/update", action: "update", as: "update"
+      get "/:id/download", action: "download", as: "download"
+      post "/:id/delete_file", action: "delete_file"
     end
   end
 
@@ -34,4 +38,8 @@ Rails.application.routes.draw do
     post "/create_entity", action: "create_entity"
   end
 
+  namespace :exams do
+    get "/", action: "list"
+    get "/list", action: "list"
+  end
 end

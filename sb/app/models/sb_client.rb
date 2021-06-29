@@ -2,6 +2,8 @@ class SbClient < ApplicationRecord
   extend ActiveHash::Associations::ActiveRecordExtensions
   include Concerns::Userstamp
 
+  after_initialize :set_default_values
+
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   belongs_to_active_hash :area
   belongs_to_active_hash :industry
@@ -19,6 +21,9 @@ class SbClient < ApplicationRecord
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
 
+  has_one_attached :registration_form_file, dependent: :destroy
+  has_many_attached :other_files, dependent: :destroy
+
   validates :name, presence: true, length: { maximum: 255 }
   validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
   validates :zip_code, allow_blank: true, zip_code: true
@@ -35,4 +40,8 @@ class SbClient < ApplicationRecord
   validates :channel, allow_blank: true, inclusion: { in: Channel.all, message: :not_in_master }
   validates :sb_agent, allow_blank: true, inclusion: { in: Proc.new { SbAgent.all }, message: :not_in_master }
   validates :area, allow_blank: true, inclusion: { in: Area.all, message: :not_in_master }
+
+  def set_default_values
+    self.status ||= Status::ClientStatus::COMPANY_NOT_DETECTED
+  end
 end

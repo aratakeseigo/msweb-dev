@@ -67,3 +67,6 @@ gem "kaminari"
 
 # decorator
 gem "draper"
+
+# aws-sdk-s3
+gem "aws-sdk-s3", require: false

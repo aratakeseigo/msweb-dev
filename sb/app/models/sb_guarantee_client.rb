@@ -4,8 +4,10 @@ class SbGuaranteeClient < ApplicationRecord
 
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   belongs_to :sb_client
-  has_many :sb_guarantee_exams
   belongs_to :entity, optional: true
+  has_many :sb_guarantee_exams
+
+  accepts_nested_attributes_for :entity
 
   validates :company_name, presence: true, length: { maximum: 255 }
   validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
@@ -26,8 +28,31 @@ class SbGuaranteeClient < ApplicationRecord
         .where(prefecture_code: prefecture&.code)
     }
 
+  def company_name=(company_name)
+    if company_name.blank?
+      write_attribute(:company_name, company_name)
+      return
+    end
+    write_attribute(:company_name, Utils::CompanyNameUtils.to_zenkaku_name(company_name))
+  end
+
+  def daihyo_name=(daihyo_name)
+    if daihyo_name.blank?
+      write_attribute(:daihyo_name, daihyo_name)
+      return
+    end
+    write_attribute(:daihyo_name, Utils::StringUtils.to_zenkaku(daihyo_name))
+  end
+
+  def address=(address)
+    if address.blank?
+      write_attribute(:address, address)
+      return
+    end
+    write_attribute(:address, Utils::StringUtils.to_zenkaku(address))
+  end
+
   def self.assign_client(sb_client,
-                         user,
                          company_name: nil, daihyo_name: nil,
                          taxagency_corporate_number: nil,
                          prefecture: nil, address: nil, tel: nil)
@@ -36,13 +61,17 @@ class SbGuaranteeClient < ApplicationRecord
     sbg_clients = sb_client.sb_guarantee_clients
       .select_company_name(company_name)
       .where(daihyo_name: daihyo_name)
-    return sbg_clients.first if sbg_clients.present? and sbg_clients.size == 1
+
+    #この条件で1件以上ヒットすることは通常ありえないので先頭を返す
+    return sbg_clients.first if sbg_clients.present? and sbg_clients.size >= 1
 
     ## 法人番号と住所(町名まで)で特定できた場合
     sbg_clients = sb_client.sb_guarantee_clients
       .select_adress_choumei(prefecture, address)
       .where(taxagency_corporate_number: taxagency_corporate_number)
-    return sbg_clients.first if sbg_clients.present? and sbg_clients.size == 1
+
+    #この条件で1件以上ヒットすることは通常ありえないので先頭を返す
+    return sbg_clients.first if sbg_clients.present? and sbg_clients.size >= 1
 
     # 既存でない場合は新規保証元を作成する
     sbg_client = sb_client.sb_guarantee_clients.build(
@@ -51,7 +80,7 @@ class SbGuaranteeClient < ApplicationRecord
       prefecture: prefecture, address: address, tel: tel,
     )
     ## 新規保証先を作成した場合、
-    ## 対象が絞れた場合にはExtityをアサインする
+    ## 対象が絞れた場合にはEntityをアサインする
     entity = Entity.assign_or_create_entity(company_name: company_name, daihyo_name: daihyo_name,
                                             taxagency_corporate_number: taxagency_corporate_number,
                                             address: address,
@@ -59,11 +88,10 @@ class SbGuaranteeClient < ApplicationRecord
     if entity.present?
       sbg_client.entity = entity
     end
-    sbg_client.created_user = user
-    sbg_client #企業未特定のまま返却
+    sbg_client
   end
 
-  def self.assign_client_myself(sb_client, user)
+  def self.assign_client_myself(sb_client)
     # 自身のクライアントを自身のEntityIDで検索して存在した場合自身が登録済みなのでそれを返す
     my_clients_myself = sb_client.sb_guarantee_clients.where(entity_id: sb_client.entity_id)
     return my_clients_myself.first unless my_clients_myself.empty?
@@ -77,7 +105,6 @@ class SbGuaranteeClient < ApplicationRecord
     sb_guarantee_client.tel = sb_client.tel
     sb_guarantee_client.taxagency_corporate_number = sb_client.taxagency_corporate_number
     sb_guarantee_client.entity_id = sb_client.entity_id
-    sb_guarantee_client.created_user = user
     sb_guarantee_client
   end
 end

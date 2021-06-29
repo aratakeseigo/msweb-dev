@@ -13,6 +13,14 @@ locals{
   }
 }
 
+resource "aws_s3_bucket" "securebox-bucket" {
+  bucket = "securebox-${ var.stage }"
+  versioning {
+    enabled = true
+  }
+}
+
+
 # クラスター
 resource "aws_ecs_cluster" "securebox" {
   name = "${local.securebox.ecs_cluster_name}"
@@ -91,6 +99,10 @@ resource "aws_ecs_task_definition" "securebox" {
       {
         "name": "RAILS_SERVE_STATIC_FILES",
         "value": "true"
+      },
+      {
+        "name": "AWS_S3_BUCKET",
+        "value": "securebox-${var.stage}"
       }
     ],
     "secrets": [
@@ -113,6 +125,14 @@ resource "aws_ecs_task_definition" "securebox" {
       {
         "name": "DATABASE_USERNAME",
         "valueFrom": "/ecs/${var.stage}/DATABASE_USERNAME"
+      },
+      {
+        "name": "AWS_ACCESSKEY",
+        "valueFrom": "/ecs/${var.stage}/securebox/AWS_ACCESSKEY"
+      },
+      {
+        "name": "AWS_SECRET_KEY",
+        "valueFrom": "/ecs/${var.stage}/securebox/AWS_SECRET_KEY"
       },
       {
         "name": "RAILS_MASTER_KEY",

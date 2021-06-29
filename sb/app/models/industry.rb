@@ -38,8 +38,4 @@ class Industry < ActiveHash::Base
     { id: 603, category_id: 6, order: 603, category: "建設業", name: "設備工事業" },
     { id: 9901, category_id: 99, order: 9901, category: "その他", name: "その他" },
   ]
-
-  def find_by_name(name)
-    find_by(name: name)
-  end
 end
