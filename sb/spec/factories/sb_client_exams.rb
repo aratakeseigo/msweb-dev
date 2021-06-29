@@ -15,7 +15,25 @@ FactoryBot.define do
     created_user { internal_user }
     updated_user { internal_user }
   end
+
   trait :available_flag_false do
     available_flag { false }
   end
+  
+  trait :has_approval_apply do
+    
+  end
+
+  trait :has_approval_approved do
+    
+  end
+
+  trait :has_approval_withdrawed do
+    
+  end
+
+  trait :has_approval_remand do
+    
+  end
+
 end

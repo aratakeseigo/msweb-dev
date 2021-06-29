@@ -82,7 +82,7 @@ RSpec.describe Clients::ExamController, type: :controller do
     end
 
     context "稟議申請ボタンが押下された場合" do
-      before { post :update, params: {id: client.id, commit: "稟議申請"}}
+      before { post :apply, params: {id: client.id}}
       it "クライアント一覧画面へ遷移する" do
         expect(response).to redirect_to clients_list_path
       end
@@ -94,7 +94,7 @@ RSpec.describe Clients::ExamController, type: :controller do
     end
 
     context "保存ボタンが押下された場合" do
-      before { post :update, params: {id: client.id, commit: "保存"}}
+      before { post :update, params: {id: client.id}}
       it "クライアント一覧画面へ遷移する" do
         expect(response).to redirect_to clients_list_path
       end

@@ -2053,15 +2053,25 @@ ActiveRecord::Schema.define(version: 2021_06_24_135753) do
     t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "prefecture_code", comment: "都道府県"
   end
 
   create_table "sb_guarantee_customers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証先", force: :cascade do |t|
-    t.bigint "sb_guarantee_client_id", null: false, comment: "SB保証元ID"
     t.string "company_name", null: false, comment: "法人名"
     t.bigint "entity_id", comment: "法人ID"
     t.string "address", comment: "住所"
     t.string "tel", comment: "電話"
     t.string "daihyo_name", comment: "代表者名"
+    t.bigint "created_by", null: false, comment: "作成者"
+    t.bigint "updated_by", null: false, comment: "更新者"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "prefecture_code", comment: "都道府県"
+    t.string "taxagency_corporate_number", comment: "保証元法人番号"
+  end
+
+  create_table "sb_guarantee_exam_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "保証審査依頼", force: :cascade do |t|
+    t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
     t.bigint "created_by", null: false, comment: "作成者"
     t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
@@ -2118,6 +2128,8 @@ ActiveRecord::Schema.define(version: 2021_06_24_135753) do
     t.bigint "updated_by", null: false, comment: "更新者"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "sb_guarantee_exam_request_id", comment: "保証審査依頼ID"
+    t.integer "status_id", comment: "ステータスID"
   end
 
   create_table "sb_user_permissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

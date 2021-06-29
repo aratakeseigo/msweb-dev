@@ -11,7 +11,7 @@
   </div>
 <% end %>
 
-<%= form_with url: clients_exam_update_path, method: "post", local: true do |f| %>
+<%= form_with url: clients_exam_update_path, method: "post", local: true, id: "client_exam_form" do |f| %>
   <%= render :partial => "input_sb_client", :locals => { f: f } %>
   <%= render :partial => "input_sb_client_exam", :locals => { f: f } %>
   
@@ -50,7 +50,18 @@
     <div class="form-group col">
       <%= link_to "キャンセル", clients_list_path, { class: "btn btn-primary" } %>
       <%= f.submit "保存", { class: "btn btn-primary" } %>
-      <%= f.submit "稟議申請",  { class: "btn btn-primary" } %>
+      <!--<%= f.submit "稟議申請",  { class: "btn btn-primary" } %>-->
+      <input type="button" class="btn btn-primary apply" value="稟議申請" <%= "disabled" if @form.approval_check_flag %> >
     </div>
   </div>
 <% end %>
+
+<script>
+$(".apply").click(function() {
+  var form = document.getElementById("client_exam_form");
+  applyUrl = form.action.replace("update", "apply")
+  
+  $(this).parents("form").attr("action", applyUrl);
+  $(this).parents("form").submit();
+});
+</script>

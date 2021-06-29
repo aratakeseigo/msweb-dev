@@ -1,5 +1,6 @@
 module Client
   class ExamForm < ApplicationForm
+    attribute :status_id, :integer
     attribute :area_id, :integer
     attribute :sb_tanto_id, :integer
     attribute :name, :string
@@ -24,7 +25,7 @@ module Client
     attribute :anti_social_memo, :string
     attribute :reject_reason, :string
     attribute :communicate_memo, :string
-    attribute :commit, :string
+    attribute :approval_check_flag, :boolean
 
     validate :sb_client_validate?
 
@@ -56,7 +57,8 @@ module Client
                   :anti_social,
                   :anti_social_memo,
                   :reject_reason,
-                  :communicate_memo
+                  :communicate_memo,
+                  :approval_check_flag
 
     ## 定数 ##
     MAX_OTHER_FILES_COUNT = 5
@@ -67,6 +69,7 @@ module Client
       @sb_client = sb_client
     
       # formのattirbutesにクライアント情報を設定
+      @status_id = @sb_client.status_id
       @area_id = @sb_client.area_id
       @sb_tanto_id = @sb_client.sb_tanto_id
       @name = @sb_client.name
@@ -94,6 +97,16 @@ module Client
         @anti_social_memo = @sb_client_exam.anti_social_memo
         @reject_reason = @sb_client_exam.reject_reason
         @communicate_memo = @sb_client_exam.communicate_memo
+        # 初期表示時、稟議申請ボタンの非活性判別用にapproval_check_flagを設定
+        if attributes.nil? && @sb_client_exam.sb_approval.present?
+          if @sb_client_exam.sb_approval.status == Status::SbApproval::APLYING || @sb_client_exam.sb_approval.status == Status::SbApproval::APPROVED
+            @approval_check_flag = true
+          else
+            @approval_check_flag = false
+          end
+        else
+          @approval_check_flag = false
+        end
       end
 
       # entityが存在する場合
@@ -116,6 +129,11 @@ module Client
       end
 
       @sb_client.save!
+    end
+
+    def sb_client_exam_apply
+      # 稟議申請の場合、決裁テーブルを作成する
+      @sb_client_exam.apply(@current_user)
     end
 
     def sb_client_validate?
@@ -153,7 +171,7 @@ module Client
       @sb_client.annual_sales = annual_sales
       @sb_client.capital = capital
       @sb_client.updated_user = @current_user
-      @sb_client.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id] if commit == "稟議申請"
+      @sb_client.status_id = status_id
 
     end
 

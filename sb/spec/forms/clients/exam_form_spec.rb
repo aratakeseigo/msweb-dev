@@ -66,6 +66,10 @@ RSpec.describe Client::ExamForm, type: :model do
     end
   end
 
+  describe "approval_check_flagの設定" do
+    
+  end
+
   describe "各情報有無設定" do
     context "ab情報が存在する場合" do
       let!(:customer) { create :customer_master, house_company_code: client_has_exam.entity.house_company_code }
@@ -198,39 +202,78 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.current_user).to eq user
         expect(new_sb_client.updated_user).to eq user
       end
-    end
 
-    context "稟議申請ボタン押下時" do
-      let(:params) {{ commit: "稟議申請" }}
-      let(:form) {Client::ExamForm.new(params, client)}
-      before {
-        form.current_user = user
-        form.to_sb_client
-        form.other_files_invalid?
-        form.invalid?
-        form.save_client
-      }
-
-      it "status_idが3(決裁待ち)に更新される" do
-        new_sb_client = SbClient.find(client.id)
-        expect(new_sb_client.status_id).to eq 3
+      it "status_idの変更がされていない" do
+        expect(form.area_id).to eq "1"
+        expect(new_sb_client.area_id).to eq 1
       end
     end
 
-    context "保存ボタン押下時" do
-      let(:params) {{ commit: "保存" }}
+    context "稟議申請ボタン押下時" do
+      let(:params) {{area_id: "2",
+                      sb_tanto_id: "2",
+                      name: "西東京株式会社",
+                      daihyo_name: "武田　太郎",
+                      zip_code: "9012102",
+                      prefecture_code: "14",
+                      address: "川崎市高津区北見方9-9-9",
+                      tel: "12345678901",
+                      industry_id: "2",
+                      industry_optional: "ブランド品",
+                      established_in: "202106",
+                      annual_sales: "33000000",
+                      capital: "10000000",
+                      registration_form_file: nil,
+                      other_files: nil
+      }}
       let(:form) {Client::ExamForm.new(params, client)}
       before {
         form.current_user = user
+        form.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id]
         form.to_sb_client
         form.other_files_invalid?
         form.invalid?
         form.save_client
+        form.sb_client_exam_apply
       }
 
-      it "status_idが更新されない" do
+      it "対象データが更新される" do
+        # 更新されているか確認の為client.idでsb_clientを検索
         new_sb_client = SbClient.find(client.id)
-        expect(new_sb_client.status_id).to eq 1
+        expect(form.invalid?).to eq false
+        expect(form.area_id).to eq "2"
+        expect(new_sb_client.area_id).to eq 2
+        expect(form.sb_tanto_id).to eq "2"
+        expect(new_sb_client.sb_tanto_id).to eq 2
+        expect(form.name).to eq "西東京株式会社"
+        expect(new_sb_client.name).to eq "西東京株式会社"
+        expect(form.daihyo_name).to eq "武田　太郎"
+        expect(new_sb_client.daihyo_name).to eq "武田　太郎"
+        expect(form.zip_code).to eq "9012102"
+        expect(new_sb_client.zip_code).to eq "9012102"
+        expect(form.prefecture_code).to eq "14"
+        expect(new_sb_client.prefecture_code).to eq 14
+        expect(form.address).to eq "川崎市高津区北見方9-9-9"
+        expect(new_sb_client.address).to eq "川崎市高津区北見方9-9-9"
+        expect(form.tel).to eq "12345678901"
+        expect(new_sb_client.tel).to eq "12345678901"
+        expect(form.industry_id).to eq "2"
+        expect(new_sb_client.industry_id).to eq 2
+        expect(form.industry_optional).to eq "ブランド品"
+        expect(new_sb_client.industry_optional).to eq "ブランド品"
+        expect(form.established_in).to eq "202106"
+        expect(new_sb_client.established_in).to eq "202106"
+        expect(form.annual_sales).to eq "33000000"
+        expect(new_sb_client.annual_sales).to eq 33000000
+        expect(form.capital).to eq "10000000"
+        expect(new_sb_client.capital).to eq 10000000
+        expect(form.current_user).to eq user
+        expect(new_sb_client.updated_user).to eq user
+      end
+      
+      it "status_idが3(決裁待ち)に更新される" do
+        expect(form.area_id).to eq "3"
+        expect(new_sb_client.area_id).to eq 3
       end
     end
   end

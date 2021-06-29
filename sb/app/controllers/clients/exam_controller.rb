@@ -23,6 +23,28 @@ class Clients::ExamController < ApplicationController
     redirect_to clients_list_path
   end
 
+  def apply
+    load_client
+    @form = Client::ExamForm.new(client_params, @sb_client)
+    @form.current_user = current_internal_user
+    @form.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id]
+    @form.to_sb_client
+
+    if @form.other_files_invalid?
+      render :edit and return
+    end
+
+    if @form.invalid?
+      render :edit and return
+    end
+
+    @form.save_client
+    # 決裁テーブル作成
+    @form.sb_client_exam_apply
+    flash[:success] = "編集が完了しました。"
+    redirect_to clients_list_path
+  end
+
   def download
     file = find_file
 
