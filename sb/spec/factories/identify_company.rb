@@ -76,28 +76,19 @@ FactoryBot.define do
     updated_user { internal_user }
   end
 
-  factory :identify_company_sb_client5, class: SbClient do
-    transient do
-      sb_agent { create :sb_agent }
-      internal_user { create :internal_user, name: "SB担当者１太郎", email: "sb_client_1@example.com" }
-    end
-
-    id { 5 }
-    entity_id { nil }
-    status_id { 1 }
-    name { "未特定企業５"}
-    daihyo_name { "企業未特定　太郎１" }
-    taxagency_corporate_number { 1111111111111 }
-    zip_code { "1234567"}
-    address { "東京都新宿区１－１－１"}
-    tel { "0311112222"}
-    established_in { "200001"}
-    created_at { "2021/06/01 12:00:00" }
-    updated_at { "2021/06/01 12:00:00" }
-    created_user { internal_user }
-    updated_user { internal_user }
-
+  factory :identify_company , class: "IdentifyCompanyForm" do
+    classification { "1" }
+    id {"1"}
+    company_name {"未特定企業５"}
+    daihyo_name { "企業未特定　太郎５" }
+    zip_code {"1112222"}
+    prefecture_code {"13"}
+    address { "東京都新宿区１－１－１" }
+    tel { "11111111111" }
+    established { "200004" }
+    taxagency_corporate_number { 4444444444444 }
   end
+
   factory :identify_company_entity1, class: Entity do
     id { 1111}
     corporation_number { 1111111111111 }
