@@ -30,6 +30,14 @@ Rails.application.routes.draw do
       post "/:id/delete_file", action: "delete_file"
     end
   end
+
+  namespace :identify_company do
+    get "/", action: "index"
+    post "/update", action: "update"
+    get "/new_entity", action: "new_entity"
+    post "/create_entity", action: "create_entity"
+  end
+
   namespace :exams do
     get "/", action: "list"
     get "/list", action: "list"
