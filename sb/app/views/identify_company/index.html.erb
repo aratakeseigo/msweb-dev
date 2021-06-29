@@ -33,7 +33,7 @@
 <div class="row">
   <div class="col">
     <div class="text-right">
-      <span><%= link_to "一覧に戻る", @identify_company.path , :class => "btn btn-primary" %>
+      <span><%= link_to "一覧に戻る", @identify_company.redirect_path , :class => "btn btn-primary" %>
       <%= f.submit "更新" ,:id => "update", :class => "btn btn-primary", :disabled => "true" %>
       <%= f.hidden_field :classification, value: @identify_company.classification %>
       <%= f.hidden_field :id, value: @identify_company.id %>

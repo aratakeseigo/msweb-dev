@@ -41,10 +41,6 @@ class IdentifyCompanyForm < ApplicationForm
 	  raise StandardError.new("サブクラスで実装してください")
 	end
   
-	def path #画面に合わせるためで本来は不要
-	  redirect_path
-	end
-  
 	def assign_default_values
 	  raise StandardError.new("サブクラスで実装してください")
 	end
