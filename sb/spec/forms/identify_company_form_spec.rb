@@ -54,6 +54,12 @@ RSpec.describe IdentifyCompanyForm, type: :model do
 
   describe "データ登録確認" do
       context "企業新規登録" do
+      before {
+        identify_company
+        EntityProfile.delete_all
+        Entity.delete_all
+      }
+
       subject { -> {identify_company.create_entity} }
       it "Entityテーブルのレコードが１件が登録される" do
         is_expected.to change { Entity.all.size }.from(0).to(1)
