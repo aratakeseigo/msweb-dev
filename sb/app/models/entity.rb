@@ -155,19 +155,4 @@ class Entity < ActiveRecord::Base
     end
     entities.uniq
   end
-
-  # 法人番号と会社名と代表者でOR検索
-  def self.select_by_company_no_or_company_name_or_daihyo_name_or(taxagency_corporate_number: nil, company_name: nil, daihyo_name: nil)
-    entities = []
-    if taxagency_corporate_number.present?
-      entities = Entity.joins(:entity_profile).where(corporation_number: taxagency_corporate_number)
-    end
-    if company_name.present?
-      entities = entities + Entity.joins(:entity_profile).select_company_name_short(company_name)
-    end
-    if daihyo_name.present?
-      entities = entities + Entity.joins(:entity_profile).where(entity_profiles: { daihyo_name: daihyo_name })
-    end
-    entities.uniq
-  end
 end

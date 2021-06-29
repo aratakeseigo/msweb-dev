@@ -65,7 +65,7 @@ class IdentifyCompanyForm < ApplicationForm
 	end
   
 	def recommend_entities
-	  Entity.select_by_company_no_or_company_name_or_daihyo_name_or(
+	  Entity.select_by_company_name_or_daihyo_name_or_company_no(
 		company_name: self.company_name,
 		daihyo_name: self.daihyo_name,
 		taxagency_corporate_number: self.taxagency_corporate_number,
