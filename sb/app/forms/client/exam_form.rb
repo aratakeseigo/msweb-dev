@@ -25,7 +25,7 @@ module Client
     attribute :anti_social_memo, :string
     attribute :reject_reason, :string
     attribute :communicate_memo, :string
-    attribute :approval_check_flag, :boolean
+    attribute :can_apply, :boolean
 
     validate :sb_client_validate?
 
@@ -58,7 +58,7 @@ module Client
                   :anti_social_memo,
                   :reject_reason,
                   :communicate_memo,
-                  :approval_check_flag
+                  :can_apply
 
     ## 定数 ##
     MAX_OTHER_FILES_COUNT = 5
@@ -97,16 +97,8 @@ module Client
         @anti_social_memo = @sb_client_exam.anti_social_memo
         @reject_reason = @sb_client_exam.reject_reason
         @communicate_memo = @sb_client_exam.communicate_memo
-        # 初期表示時、稟議申請ボタンの非活性判別用にapproval_check_flagを設定
-        if attributes.nil? && @sb_client_exam.sb_approval.present?
-          if @sb_client_exam.sb_approval.status == Status::SbApproval::APLYING || @sb_client_exam.sb_approval.status == Status::SbApproval::APPROVED
-            @approval_check_flag = true
-          else
-            @approval_check_flag = false
-          end
-        else
-          @approval_check_flag = false
-        end
+        # 初期表示時、稟議申請ボタンの非活性判別用にcan_applyを設定
+        @can_apply = @sb_client_exam.can_apply
       end
 
       # entityが存在する場合

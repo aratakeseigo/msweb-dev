@@ -19,7 +19,7 @@ class SbApproval < ApplicationRecord
     self.apply_comment = comment
     self.created_user = user
     self.updated_user = user
-    self.status = Status::SbApproval::APLYING
+    self.status = Status::SbApproval::APPLYING
     self
   end
 
@@ -42,7 +42,7 @@ class SbApproval < ApplicationRecord
   def withdraw(user, comment = "")
     # 申請中でない場合は取り下げできない
     # 申請者しか取り下げできない
-    raise ApproveError.new "申請中ではありません" unless status == Status::SbApproval::APLYING
+    raise ApproveError.new "申請中ではありません" unless status == Status::SbApproval::APPLYING
     raise ApproveError.new "申請者しか取り下げできません" unless applied_user == user
     self.approve_comment = comment
     self.approved_at = Time.zone.now
@@ -54,7 +54,7 @@ class SbApproval < ApplicationRecord
   def approve(user, comment = "")
     # 申請中でない場合は承認できない
     # 申請者は承認できない
-    raise ApproveError.new "申請中ではありません" unless status == Status::SbApproval::APLYING
+    raise ApproveError.new "申請中ではありません" unless status == Status::SbApproval::APPLYING
     raise ApproveError.new "申請者は承認できません" unless applied_user != user
     raise ApproveError.new "権限がありません" unless has_approvable_permission?(user)
     self.approved_user = user
@@ -68,7 +68,7 @@ class SbApproval < ApplicationRecord
   def remand(user, comment = "")
     # 申請中でない場合は承認できない
     # 申請者は承認できない
-    raise ApproveError.new "申請中ではありません" unless status == Status::SbApproval::APLYING
+    raise ApproveError.new "申請中ではありません" unless status == Status::SbApproval::APPLYING
     raise ApproveError.new "申請者は差し戻しできません" unless applied_user != user
 
     self.approved_user = user

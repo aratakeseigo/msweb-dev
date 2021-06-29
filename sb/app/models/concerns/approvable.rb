@@ -38,5 +38,16 @@ module Approvable
     sb_approval_clazz.where(relation_id: id).order(:created_at)
   end
 
+  def can_apply(target = self)
+    sb_approval = target.sb_approval
+    if sb_approval.nil?
+      return true
+    elsif sb_approval.status == Status::SbApproval::WITHDRAWED || sb_approval.status == Status::SbApproval::REMAND
+      return true
+    else
+      return false
+    end
+  end
+
   class ApproveError < StandardError; end
 end
