@@ -2,18 +2,8 @@ require "rails_helper"
 
 RSpec.describe Clients::ExamController, type: :controller do
   let(:current_user) { create(:internal_user, :manager) }
-  # let(:client) { create :sb_client, :has_exam }
-  # let(:client_has_approval_apply) { create :sb_client, :has_approval_apply }
-  # let(:client_has_approval_approved) { create :sb_client, :has_approval_approved }
-  # let(:client_has_approval_withdrawed) { create :sb_client, :has_approval_withdrawed }
-  # let(:client_has_approval_remand) { create :sb_client, :has_approval_remand }
   before do
     sign_in current_user
-    # client
-    # client_has_approval_apply
-    # client_has_approval_approved
-    # client_has_approval_withdrawed
-    # client_has_approval_remand
   end
 
   describe "GET #edit" do
@@ -277,19 +267,19 @@ RSpec.describe Clients::ExamController, type: :controller do
     end
 
     context "保存ボタンが押下された場合" do
-      before { post :update, params: {id: client.id}}
+      before { post :apply, params: {id: client.id}}
       it "クライアント一覧画面へ遷移する" do
         expect(response).to redirect_to clients_list_path
       end
 
-      it "status_idが更新されない" do
+      it "status_idが3（決裁待ち）に変更される" do
         updated_sb_client = SbClient.find(client.id)
-        expect(updated_sb_client.status_id).to eq 1
+        expect(updated_sb_client.status_id).to eq 3
       end
     end
 
     context "ファイルが6件以上の場合" do
-      before { post :update, params: {id: client.id,
+      before { post :apply, params: {id: client.id,
                                       other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
                                                     fixture_file_upload("files/client_exam/test2.pdf"),
                                                     fixture_file_upload("files/client_exam/test3.pdf"),
@@ -308,7 +298,7 @@ RSpec.describe Clients::ExamController, type: :controller do
     end
 
     context "バリデーションNGの項目でアップデートした場合" do
-      before { post :update, params: { id: client.id,tel: "123456789" } }
+      before { post :apply, params: { id: client.id,tel: "123456789" } }
       it "クライアント編集画面のまま遷移しない" do
         expect(response).to render_template :edit
       end
