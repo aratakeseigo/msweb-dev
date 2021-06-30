@@ -107,7 +107,7 @@ end
 class SbApproval::Guarantee < SbApproval
   belongs_to :sb_guarantee, class_name: "SbGuarantee", foreign_key: "relation_id"
 
-  def has_approvable_permission?(user)
+  def has_approvable_permission?(_user)
     # 特にない予定
     true
   end
