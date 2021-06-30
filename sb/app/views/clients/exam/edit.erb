@@ -59,7 +59,7 @@
 <script>
 $(".apply").click(function() {
   var form = document.getElementById("client_exam_form");
-  applyUrl = <%=clients_exam_apply_path%>
+  applyUrl = "<%=clients_exam_apply_path%>"
   
   $(this).parents("form").attr("action", applyUrl);
   $(this).parents("form").submit();

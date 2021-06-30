@@ -58,7 +58,8 @@ module Client
                   :anti_social_memo,
                   :reject_reason,
                   :communicate_memo,
-                  :can_apply
+                  :can_apply,
+                  :status_id
 
     ## 定数 ##
     MAX_OTHER_FILES_COUNT = 5

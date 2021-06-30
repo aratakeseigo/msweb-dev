@@ -75,7 +75,6 @@ class Clients::ExamController < ApplicationController
                   :industry_optional,
                   :established_in,
                   :annual_sales, :capital,
-                  :commit,
                   :registration_form_file,
                   other_files: [])
   end

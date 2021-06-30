@@ -99,7 +99,7 @@ FactoryBot.define do
       after(:build) do |sb_client|
         sb_client.sb_client_exams = []
         sb_client.sb_client_exams << build(:sb_client_exam)
-      end      
+      end
     end
 
     trait :has_exam_available_flag_false do
@@ -113,11 +113,39 @@ FactoryBot.define do
       after(:build) do |sb_client|
         sb_client.sb_client_exams = []
         sb_client.sb_client_exams << build(:sb_client_exam, :available_flag_false)
-      end      
+      end
     end
 
     trait :has_no_entity do
       entity_id { nil }
+    end
+
+    trait :has_approval_apply do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_apply)
+      end
+    end
+
+    trait :has_approval_approved do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_approved)
+      end
+    end
+
+    trait :has_approval_withdrawed do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_withdrawed)
+      end
+    end
+
+    trait :has_approval_remand do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_remand)
+      end
     end
   end
 end

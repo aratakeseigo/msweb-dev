@@ -66,8 +66,45 @@ RSpec.describe Client::ExamForm, type: :model do
     end
   end
 
-  describe "approval_check_flagの設定" do
-    
+  describe "can_applyの設定" do
+    context "sb_approvalのstatusが0（申請中）の場合" do
+      let!(:client_has_approval_apply) { create :sb_client, :has_approval_apply }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_apply) }
+      it "can_applyがfalseに設定される" do
+        expect(form.can_apply).to eq false
+      end
+    end
+
+    context "sb_approvalのstatusが1（承認）の場合" do
+      let!(:client_has_approval_approved) { create :sb_client, :has_approval_approved }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_approved) }
+      it "can_applyがfalseに設定される" do
+        expect(form.can_apply).to eq false
+      end
+    end
+
+    context "sb_approvalのstatusが8（取り下げ）の場合" do
+      let!(:client_has_approval_withdrawed) { create :sb_client, :has_approval_withdrawed }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_withdrawed) }
+      it "can_applyがtrueに設定される" do
+        expect(form.can_apply).to eq true
+      end
+    end
+
+    context "sb_approvalのstatusが9（差し戻し）の場合" do
+      let!(:client_has_approval_remand) { create :sb_client, :has_approval_remand }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_remand) }
+      it "can_applyがtrueに設定される" do
+        expect(form.can_apply).to eq true
+      end
+    end
+
+    context "sb_approvalが存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "can_applyがtrueに設定される" do
+        expect(form.can_apply).to eq true
+      end
+    end
   end
 
   describe "各情報有無設定" do
@@ -161,7 +198,7 @@ RSpec.describe Client::ExamForm, type: :model do
                       registration_form_file: nil,
                       other_files: nil
       }}
-      let(:form) {Client::ExamForm.new(params, client)}
+      let(:form) {Client::ExamForm.new(params, client_has_exam)}
       before {
         form.current_user = user
         form.to_sb_client
@@ -171,7 +208,7 @@ RSpec.describe Client::ExamForm, type: :model do
       }
       it "対象データが更新される" do
         # 更新されているか確認の為client.idでsb_clientを検索
-        new_sb_client = SbClient.find(client.id)
+        new_sb_client = SbClient.find(client_has_exam.id)
         expect(form.invalid?).to eq false
         expect(form.area_id).to eq "2"
         expect(new_sb_client.area_id).to eq 2
@@ -204,8 +241,9 @@ RSpec.describe Client::ExamForm, type: :model do
       end
 
       it "status_idの変更がされていない" do
-        expect(form.area_id).to eq "1"
-        expect(new_sb_client.area_id).to eq 1
+        new_sb_client = SbClient.find(client.id)
+        expect(form.status_id).to eq 1
+        expect(new_sb_client.status_id).to eq 1
       end
     end
 
@@ -226,7 +264,7 @@ RSpec.describe Client::ExamForm, type: :model do
                       registration_form_file: nil,
                       other_files: nil
       }}
-      let(:form) {Client::ExamForm.new(params, client)}
+      let(:form) {Client::ExamForm.new(params, client_has_exam)}
       before {
         form.current_user = user
         form.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id]
@@ -239,7 +277,7 @@ RSpec.describe Client::ExamForm, type: :model do
 
       it "対象データが更新される" do
         # 更新されているか確認の為client.idでsb_clientを検索
-        new_sb_client = SbClient.find(client.id)
+        new_sb_client = SbClient.find(client_has_exam.id)
         expect(form.invalid?).to eq false
         expect(form.area_id).to eq "2"
         expect(new_sb_client.area_id).to eq 2
@@ -272,8 +310,9 @@ RSpec.describe Client::ExamForm, type: :model do
       end
       
       it "status_idが3(決裁待ち)に更新される" do
-        expect(form.area_id).to eq "3"
-        expect(new_sb_client.area_id).to eq 3
+        new_sb_client = SbClient.find(client_has_exam.id)
+        expect(form.status_id).to eq 3
+        expect(new_sb_client.status_id).to eq 3
       end
     end
   end
