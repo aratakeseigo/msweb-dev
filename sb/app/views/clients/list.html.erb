@@ -158,7 +158,7 @@ function setButtonStatus(statusId, clientId){
         if(statusId == <%= Status::ClientStatus::READY_FOR_EXAM.id %>){
           //CL審査
           btnId = 'btn-ready_for_cl_exam';
-          url = '#';
+          url = '/clients/exam/' + clientId;
           setButtonEnable(btnId,url)
         }
         if(statusId == <%= Status::ClientStatus::READY_FOR_APPROVAL.id %>){
