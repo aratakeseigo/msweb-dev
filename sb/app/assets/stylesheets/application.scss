@@ -29,17 +29,17 @@
     background-color: #999;
 }
 
-     
+
 /*　スクロールバーの実装 */
-.table_sticky {
+.table-sticky {
     display: block;
     overflow-y: scroll;
     height: calc(100vh/2);
     border-collapse: collapse;
 }
 
-  
-.table_sticky thead th {
+
+.table-sticky thead th {
     position: sticky;
     top: 0;
     z-index: 1;

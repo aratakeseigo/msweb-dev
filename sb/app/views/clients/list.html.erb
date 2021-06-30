@@ -69,26 +69,26 @@
   </div>
   <div class="form-group row text-center">
     <div class="col">
-      <%= f.submit :class => "btn btn-primary" %>
+      <%= f.submit :class => "btn btn-secondary" %>
     </div>
   </div>
 <% end %>
 <!-- -->
-<div class="row">
+<div class="row mb-3">
   <div class="col">
     <div class="text-right">
-      <span><%= link_to "企業特定", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-company_not_detected" %>
-      <span><%= link_to "審査登録をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_exam" %>
-      <span><%= link_to "保証登録をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_aguarantee" %>
-      <span><%= link_to "CL審査をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_cl_exam" %>
-      <span><%= link_to "CL決裁をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready_for", id: "btn-ready_for_cl_approval" %>
+      <span><%= link_to "企業特定", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready-for", id: "btn-company-not-detected" %>
+      <span><%= link_to "審査登録をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready-for", id: "btn-ready-for-exam" %>
+      <span><%= link_to "保証登録をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready-for", id: "btn-ready-for-aguarantee" %>
+      <span><%= link_to "CL審査をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready-for", id: "btn-ready-for-cl-exam" %>
+      <span><%= link_to "CL決裁をする", "dummy", :class => "btn btn-primary btn-sm disabled", name: "btn-ready-for", id: "btn-ready-for-cl-approval" %>
     </div>
   </div>
 </div>
 <!-- -->
 <div class="row">
   <div class="col">
-    <table class="table table-hover table-striped table_sticky">
+    <table class="table table-hover table-striped table-sticky">
       <thead>
         <tr>
           <th>-</th>
@@ -133,37 +133,37 @@
 <script>
 function setButtonStatus(statusId, clientId){
     // いったんリンクを非活性にする
-    document.getElementsByName('btn-ready_for').forEach(function(btn){
+    document.getElementsByName('btn-ready-for').forEach(function(btn){
         btn.className = 'btn btn-primary btn-sm disabled';
     });
     // クライアントステータスに応じて、リンクボタンの非活性→活性に変更しhref設定
     (function(statusId, clientId){
         let btnId, url;
         if(statusId == <%= Status::ClientStatus::COMPANY_NOT_DETECTED.id %>){
-          btnId = 'btn-company_not_detected';
+          btnId = 'btn-company-not-detected';
           url = '/identify_company?id=' + clientId + '&classification=1';
           setButtonEnable(btnId,url)
         }
         //TODO 本来は契約済みだけだが、テストのため、ノーチェック
         // if(statusId == <%= Status::ClientStatus::CONTRACTED.id %>){
           // 審査登録
-          btnId = 'btn-ready_for_exam';
+          btnId = 'btn-ready-for-exam';
           url = '/clients/'+clientId+'/registration_exams';
           setButtonEnable(btnId,url)
           // 保証登録
-          btnId = 'btn-ready_for_aguarantee';
+          btnId = 'btn-ready-for-aguarantee';
           url = '#';
           setButtonEnable(btnId,url)
         // }
         if(statusId == <%= Status::ClientStatus::READY_FOR_EXAM.id %>){
           //CL審査
-          btnId = 'btn-ready_for_cl_exam';
+          btnId = 'btn-ready-for-cl-exam';
           url = '/clients/exam/' + clientId;
           setButtonEnable(btnId,url)
         }
         if(statusId == <%= Status::ClientStatus::READY_FOR_APPROVAL.id %>){
           //CL決裁
-          btnId = 'btn-ready_for_cl_approval';
+          btnId = 'btn-ready-for-cl-approval';
           url = '#';
           setButtonEnable(btnId,url)
         }
