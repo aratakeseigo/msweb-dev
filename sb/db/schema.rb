@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_135753) do
+ActiveRecord::Schema.define(version: 2021_06_29_233857) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -1200,6 +1200,7 @@ ActiveRecord::Schema.define(version: 2021_06_24_135753) do
     t.index ["corporation_name_compare"], name: "IDX_EP_CORPORATION_NAME_COMPARE"
     t.index ["corporation_name_short"], name: "FIDX_EP_NAME", type: :fulltext
     t.index ["corporation_name_short"], name: "IDX_EP_NAME_SHORT"
+    t.index ["daihyo_name"], name: "IDX_EP_DAIHYO_NAME"
     t.index ["entity_id", "updated_at"], name: "IDX_EF_EI_UPDATED_AT"
     t.index ["entity_id"], name: "IDX_ENTITY_ID"
     t.index ["prefecture_code", "address"], name: "IDX_EP_ADDRESS"
