@@ -16,4 +16,5 @@
 //= require jquery3
 //= require popper
 //= require bootstrap-sprockets
-//= require_tree .
+//= require_tree ./adminlte
+//= require_tree ./bs-custom-file-input
