@@ -1,14 +1,25 @@
 FactoryBot.define do
-  factory :sb_guarantee_client, class: SbGuaranteeClient do
+  factory :sb_guarantee_client do
     transient do
-      client { create :sb_client }
-      entity { create :entity }
-      internal_user { build :internal_user, name: "SB担当者１太郎", email: "sb_guarantee_client_1@example.com" }
+      user { create :internal_user }
     end
-    sb_client_id { client.id }
-    sequence(:company_name) { |n| Utils::CompanyNameUtils.to_zenkaku_name "エンティティ#{n}株式会社" }
-    entity_id { entity.id }
-    created_user { internal_user }
-    updated_user { internal_user }
+    company_name { "アラームボックス株式会社" }
+    daihyo_name { "山田　太郎" }
+    tel { "11111111111" }
+    prefecture { Prefecture.all.sample }
+    address { "中央区日本橋小伝馬町５－３－５" }
+    taxagency_corporate_number { "1112223334445" }
+    created_user { user }
+    updated_user { user }
+    sb_client
+    entity
+
+    trait :other_client do
+      company_name { "セキュアボックス株式会社" }
+      daihyo_name { "鈴木　一郎" }
+      tel { "22222222222" }
+      address { "川崎市高津区北見方５－３－５" }
+      taxagency_corporate_number { "4445556667778" }
+    end
   end
 end

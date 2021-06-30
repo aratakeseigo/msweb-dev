@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       post "/upload", action: "upload"
       post "/create", action: "create"
     end
+    get "/:id/registration_exams", controller: "registration_exams", action: "index", as: "registration_exams_index"
+    post "/:id/registration_exams/upload", controller: "registration_exams", action: "upload", as: "registration_exams_upload"
+    post "/:id/registration_exams/create", controller: "registration_exams", action: "create", as: "registration_exams_create"
     namespace :exam do
       get "/:id", action: "edit", as: "edit"
       post "/:id/update", action: "update", as: "update"
@@ -27,5 +30,17 @@ Rails.application.routes.draw do
       get "/:id/download", action: "download", as: "download"
       post "/:id/delete_file", action: "delete_file"
     end
+  end
+
+  namespace :identify_company do
+    get "/", action: "index"
+    post "/update", action: "update"
+    get "/new_entity", action: "new_entity"
+    post "/create_entity", action: "create_entity"
+  end
+
+  namespace :exams do
+    get "/", action: "list"
+    get "/list", action: "list"
   end
 end

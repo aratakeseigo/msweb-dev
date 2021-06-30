@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Client::ExamForm, type: :model do
   let(:client) { create :sb_client, :client_exam_form }
   let(:client_has_file) { create :sb_client, :has_file }
-  let(:user) {create :internal_user}
+  let(:user) { create :internal_user }
   let(:client_has_exam) { create :sb_client, :has_exam }
   let(:client_has_exam_available_flag_false) { create :sb_client, :has_exam_available_flag_false }
   let(:client_has_no_entity) { create :sb_client, :has_no_entity }
@@ -25,7 +25,6 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.established_in).to eq client.established_in
         expect(form.annual_sales).to eq client.annual_sales
         expect(form.capital).to eq client.capital
-      
       end
     end
 
@@ -155,7 +154,7 @@ RSpec.describe Client::ExamForm, type: :model do
 
     context "審査結果情報が存在する場合" do
       let!(:guarantee_client) { create :sb_guarantee_client }
-      let!(:guarantee_customer) { create :sb_guarantee_customer, sb_guarantee_client_id: client_has_exam.id, entity_id: client_has_exam.entity.id }
+      let!(:guarantee_customer) { create :sb_guarantee_customer, entity_id: client_has_exam.entity.id }
       let!(:guarantee_exam) { create :sb_guarantee_exam, sb_guarantee_client_id: guarantee_client.id, sb_guarantee_customer_id: guarantee_customer.id }
       let(:form) { Client::ExamForm.new(nil, client_has_exam) }
       it "審査結果情報がありである" do
@@ -182,23 +181,24 @@ RSpec.describe Client::ExamForm, type: :model do
 
   describe "データ更新" do
     context "バリデーションエラーがない更新時" do
-      let(:params) {{area_id: "2",
-                      sb_tanto_id: "2",
-                      name: "西東京株式会社",
-                      daihyo_name: "武田　太郎",
-                      zip_code: "9012102",
-                      prefecture_code: "14",
-                      address: "川崎市高津区北見方9-9-9",
-                      tel: "12345678901",
-                      industry_id: "2",
-                      industry_optional: "ブランド品",
-                      established_in: "202106",
-                      annual_sales: "33000000",
-                      capital: "10000000",
-                      registration_form_file: nil,
-                      other_files: nil
-      }}
-      let(:form) {Client::ExamForm.new(params, client_has_exam)}
+      let(:params) {
+        { area_id: "2",
+          sb_tanto_id: "2",
+          name: "西東京株式会社",
+          daihyo_name: "武田　太郎",
+          zip_code: "9012102",
+          prefecture_code: "14",
+          address: "川崎市高津区北見方9-9-9",
+          tel: "12345678901",
+          industry_id: "2",
+          industry_optional: "ブランド品",
+          established_in: "202106",
+          annual_sales: "33000000",
+          capital: "10000000",
+          registration_form_file: nil,
+          other_files: nil }
+      }
+      let(:form) { Client::ExamForm.new(params, client) }
       before {
         form.current_user = user
         form.to_sb_client
@@ -208,7 +208,7 @@ RSpec.describe Client::ExamForm, type: :model do
       }
       it "対象データが更新される" do
         # 更新されているか確認の為client.idでsb_clientを検索
-        new_sb_client = SbClient.find(client_has_exam.id)
+        new_sb_client = SbClient.find(client.id)
         expect(form.invalid?).to eq false
         expect(form.area_id).to eq "2"
         expect(new_sb_client.area_id).to eq 2
@@ -319,8 +319,8 @@ RSpec.describe Client::ExamForm, type: :model do
 
   describe "バリデーション" do
     context "sb_clientのバリデーションチェックに違反してる場合" do
-      let(:params) {{ zip_code: "901210" }}
-      let(:form) {Client::ExamForm.new(params, client)}
+      let(:params) { { zip_code: "901210" } }
+      let(:form) { Client::ExamForm.new(params, client) }
       before {
         form.current_user = user
         form.to_sb_client
@@ -334,8 +334,8 @@ RSpec.describe Client::ExamForm, type: :model do
 
   describe "アップロード" do
     context "申込書が保存されておらず、申込書がアップロードされた場合" do
-      let(:params) {{registration_form_file:fixture_file_upload("files/client_exam/registration_form_file1.pdf")}}
-      let(:form) { Client::ExamForm.new(params, client)}
+      let(:params) { { registration_form_file: fixture_file_upload("files/client_exam/registration_form_file1.pdf") } }
+      let(:form) { Client::ExamForm.new(params, client) }
       before {
         form.save_client
       }
@@ -346,8 +346,8 @@ RSpec.describe Client::ExamForm, type: :model do
     end
 
     context "申込書が保存されており、申込書がアップロードされた場合" do
-      let(:params) {{registration_form_file:fixture_file_upload("files/client_exam/registration_form_file2.pdf")}}
-      let(:form) { Client::ExamForm.new(params, client_has_file)}
+      let(:params) { { registration_form_file: fixture_file_upload("files/client_exam/registration_form_file2.pdf") } }
+      let(:form) { Client::ExamForm.new(params, client_has_file) }
       before {
         form.save_client
       }
@@ -358,67 +358,70 @@ RSpec.describe Client::ExamForm, type: :model do
     end
 
     context "ファイル保存されておらず、5個以下がアップロードされた場合" do
-      let(:params) {{ other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
-                                    fixture_file_upload("files/client_exam/test2.pdf"),
-                                    fixture_file_upload("files/client_exam/test3.pdf"),
-                                    fixture_file_upload("files/client_exam/test4.pdf"),
-                                    fixture_file_upload("files/client_exam/test5.pdf")]
-      }}
-      let(:form) { Client::ExamForm.new(params, client)}
+      let(:params) {
+        { other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
+                       fixture_file_upload("files/client_exam/test2.pdf"),
+                       fixture_file_upload("files/client_exam/test3.pdf"),
+                       fixture_file_upload("files/client_exam/test4.pdf"),
+                       fixture_file_upload("files/client_exam/test5.pdf")] }
+      }
+      let(:form) { Client::ExamForm.new(params, client) }
 
       context "ファイル件数のバリデーションをチェックした場合" do
-        it "エラーにならない" do 
+        it "エラーにならない" do
           expect(form.other_files_invalid?).to eq false
           expect(form.errors[:other_files]).to eq []
         end
       end
 
       context "sb_clientが保存された場合" do
-        before { 
+        before {
           form.save_client
         }
         it "ファイルが保存される" do
           sb_client = SbClient.find(client.id)
           expect(sb_client.other_files.size).to eq 5
-        end          
+        end
       end
     end
 
     context "ファイル保存されており、保存されているファイルとアップロードされたファイルの合計が5個以下の場合" do
-      let(:params) {{ other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
-                                    fixture_file_upload("files/client_exam/test2.pdf"),
-                                    fixture_file_upload("files/client_exam/test3.pdf"),
-                                    fixture_file_upload("files/client_exam/test4.pdf")]
-      }}
-      let(:form) { Client::ExamForm.new(params, client_has_file)}
+      let(:params) {
+        { other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
+                       fixture_file_upload("files/client_exam/test2.pdf"),
+                       fixture_file_upload("files/client_exam/test3.pdf"),
+                       fixture_file_upload("files/client_exam/test4.pdf")] }
+      }
+      let(:form) { Client::ExamForm.new(params, client_has_file) }
 
       context "ファイル件数のバリデーションをチェックした場合" do
-        it "エラーにならない" do 
+        it "エラーにならない" do
           expect(form.other_files_invalid?).to eq false
           expect(form.errors[:other_files]).to eq []
         end
       end
 
       context "sb_clientが保存された場合" do
-        before { 
+        before {
           form.save_client
         }
         it "ファイルが保存される" do
           sb_client = SbClient.find(client_has_file.id)
           expect(sb_client.other_files.size).to eq 5
-        end          
+        end
       end
     end
 
     context "ファイル保存されておらず、6個以上アップロードされた場合" do
-      let(:params) {{ other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
-                                    fixture_file_upload("files/client_exam/test2.pdf"),
-                                    fixture_file_upload("files/client_exam/test3.pdf"),
-                                    fixture_file_upload("files/client_exam/test4.pdf"),
-                                    fixture_file_upload("files/client_exam/test5.pdf"),
-                                    fixture_file_upload("files/client_exam/test6.pdf")]
-      }}
-      let(:form) { Client::ExamForm.new(params, client)}
+      let(:params) {
+        { other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
+                       fixture_file_upload("files/client_exam/test2.pdf"),
+                       fixture_file_upload("files/client_exam/test3.pdf"),
+                       fixture_file_upload("files/client_exam/test4.pdf"),
+                       fixture_file_upload("files/client_exam/test5.pdf"),
+                       fixture_file_upload("files/client_exam/test6.pdf")] }
+      }
+      let(:form) { Client::ExamForm.new(params, client) }
       it "ファイル件数のバリデーションでエラーになる" do
         expect(form.other_files_invalid?).to eq true
         expect(form.errors[:other_files]).to eq ["は5件までしか保存できません"]
@@ -426,17 +429,18 @@ RSpec.describe Client::ExamForm, type: :model do
     end
 
     context "ファイル保存されており、保存されているファイルとアップロードされたファイルの合計が6個以上の場合" do
-      let(:params) {{ other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
-                                    fixture_file_upload("files/client_exam/test2.pdf"),
-                                    fixture_file_upload("files/client_exam/test3.pdf"),
-                                    fixture_file_upload("files/client_exam/test4.pdf"),
-                                    fixture_file_upload("files/client_exam/test5.pdf")]
-      }}
-      let(:form) { Client::ExamForm.new(params, client_has_file)}
+      let(:params) {
+        { other_files: [fixture_file_upload("files/client_exam/test1.pdf"),
+                       fixture_file_upload("files/client_exam/test2.pdf"),
+                       fixture_file_upload("files/client_exam/test3.pdf"),
+                       fixture_file_upload("files/client_exam/test4.pdf"),
+                       fixture_file_upload("files/client_exam/test5.pdf")] }
+      }
+      let(:form) { Client::ExamForm.new(params, client_has_file) }
       it "ファイル件数のバリデーションでエラーになる" do
         expect(form.other_files_invalid?).to eq true
         expect(form.errors[:other_files]).to eq ["は5件までしか保存できません"]
       end
-    end    
+    end
   end
 end

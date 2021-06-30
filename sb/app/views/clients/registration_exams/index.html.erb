@@ -1,0 +1,31 @@
+<% provide :title, "保証審査登録" %>
+<% provide :breadcrumb_items, "Home クライアント" %>
+<div class="row">
+    <div class="col">
+        <p class="h2">クライアント：<%= @sb_client.name %></p>
+    </div>
+</div>
+<div class="mx-auto mt-5" style="width: 500px;">
+    <div class="mb-3">
+        <% if @form&.errors.present? %>
+            <div class="alert alert-danger" role="alert">
+                <strong>エラー内容を修正して再度アップロードしてください。</strong>
+                <ul>
+                    <% @form.errors.full_messages.each do |message| %>
+                        <li><%= message %>
+                    <% end %>
+                <ul>
+            </div>
+        <% else %>
+            保証審査登録Excelを選択してください
+        <% end %>
+    </div>
+    <%= form_with url: clients_registration_exams_upload_path, method: "post", local: true, multipart: true do %>
+        <div class="form-group">
+            <%= render partial: "shared/file_upload", locals: { name: "input_file" } %>
+        </div>
+        <div class="form-group text-right">
+            <%= submit_tag "送信", class: "btn btn-primary" %>
+        </div>
+    <% end %>
+</div>

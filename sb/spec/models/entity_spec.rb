@@ -32,12 +32,14 @@ RSpec.describe Entity, type: :model do
         expect(
           Entity.select_by_company_no_and_address(
             taxagency_corporate_number: entity.corporation_number,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
           ).count
         ).to eq 1
         expect(
           Entity.select_by_company_no_and_address(
             taxagency_corporate_number: entity.corporation_number,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
           ).first.house_company_code
         ).to eq entity.house_company_code
@@ -69,6 +71,7 @@ RSpec.describe Entity, type: :model do
         expect(
           Entity.select_by_company_no_and_address(
             taxagency_corporate_number: entity_other.corporation_number,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei("川崎市高津区９９－９９－９９"),
           ).count
         ).to eq 0
@@ -79,6 +82,7 @@ RSpec.describe Entity, type: :model do
         expect(
           Entity.select_by_company_no_and_address(
             taxagency_corporate_number: entity.corporation_number,
+            prefecture: entity.entity_profile.prefecture,
             address: nil,
           ).count
         ).to eq 0
@@ -228,6 +232,7 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity.corporation_number,
             company_name: entity.entity_profile.corporation_name,
             daihyo_name: entity.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
           ).count
         ).to eq 1
@@ -236,6 +241,7 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity.corporation_number,
             company_name: entity.entity_profile.corporation_name,
             daihyo_name: entity.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
           ).first.house_company_code
         ).to eq entity.house_company_code
@@ -249,6 +255,7 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity.corporation_number,
             company_name: entity_other.entity_profile.corporation_name,
             daihyo_name: entity_other.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei("大和市福田９９－９９－９９"),
           ).count
         ).to eq 0
@@ -262,6 +269,7 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity_other.corporation_number,
             company_name: entity.entity_profile.corporation_name,
             daihyo_name: entity_other.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei("大和市福田９９－９９－９９"),
           ).count
         ).to eq 0
@@ -275,6 +283,7 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity_other.corporation_number,
             company_name: entity_other.entity_profile.corporation_name,
             daihyo_name: entity.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei("大和市福田９９－９９－９９"),
           ).count
         ).to eq 0
@@ -288,6 +297,7 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity_other.corporation_number,
             company_name: entity_other.entity_profile.corporation_name,
             daihyo_name: entity_other.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address),
           ).count
         ).to eq 0
@@ -302,6 +312,7 @@ RSpec.describe Entity, type: :model do
       en = create :entity, corporation_number: entity.corporation_number
       prof = en.entity_profile
       prof.corporation_name = entity.entity_profile.corporation_name
+      prof.prefecture = entity.entity_profile.prefecture
       prof.address = entity.entity_profile.address
       prof.daihyo_name = entity.entity_profile.daihyo_name
       en.save!
@@ -316,6 +327,7 @@ RSpec.describe Entity, type: :model do
               taxagency_corporate_number: entity.corporation_number,
               company_name: entity.entity_profile.corporation_name,
               daihyo_name: entity.entity_profile.daihyo_name,
+              prefecture: entity.entity_profile.prefecture,
               address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
             ).house_company_code
           ).to eq entity.house_company_code
@@ -330,6 +342,7 @@ RSpec.describe Entity, type: :model do
               taxagency_corporate_number: entity.corporation_number,
               company_name: entity.entity_profile.corporation_name,
               daihyo_name: entity.entity_profile.daihyo_name,
+              prefecture: entity.entity_profile.prefecture,
               address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
             )
           ).to be_nil
@@ -344,6 +357,7 @@ RSpec.describe Entity, type: :model do
               taxagency_corporate_number: entity.corporation_number,
               company_name: "フロンターレ協会",
               daihyo_name: "三苫　薫",
+              prefecture: entity.entity_profile.prefecture,
               address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
             ).house_company_code
           ).to eq entity.house_company_code
@@ -358,6 +372,7 @@ RSpec.describe Entity, type: :model do
               taxagency_corporate_number: entity.corporation_number,
               company_name: "フロンターレ協会",
               daihyo_name: "三苫　薫",
+              prefecture: entity.entity_profile.prefecture,
               address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
             )
           ).to be_nil
@@ -372,6 +387,7 @@ RSpec.describe Entity, type: :model do
               taxagency_corporate_number: "9999999999888",
               company_name: entity.entity_profile.corporation_name,
               daihyo_name: entity.entity_profile.daihyo_name,
+              prefecture: entity.entity_profile.prefecture,
               address: Utils::AddressUtils.substr_before_choumei("横浜市港北区日吉９９－９９－９９"),
             ).house_company_code
           ).to eq entity.house_company_code
@@ -386,6 +402,7 @@ RSpec.describe Entity, type: :model do
               taxagency_corporate_number: "9999999999888",
               company_name: entity.entity_profile.corporation_name,
               daihyo_name: entity.entity_profile.daihyo_name,
+              prefecture: entity.entity_profile.prefecture,
               address: Utils::AddressUtils.substr_before_choumei("横浜市港北区日吉９９－９９－９９"),
             )
           ).to be_nil
@@ -394,7 +411,7 @@ RSpec.describe Entity, type: :model do
     end
   end
 
-  context "法人番号と会社名と代表者でどれか一致するExtityがあるか検索で" do
+  context "法人番号と会社名と代表者でどれか一致するEntityがあるか検索で" do
     let(:entity) { create :entity }
 
     context "一致するレコードがある場合" do

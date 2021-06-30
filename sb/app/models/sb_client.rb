@@ -1,5 +1,9 @@
 class SbClient < ApplicationRecord
   extend ActiveHash::Associations::ActiveRecordExtensions
+  include Concerns::Userstamp
+
+  after_initialize :set_default_values
+
   belongs_to_active_hash :prefecture, primary_key: "code", foreign_key: "prefecture_code"
   belongs_to_active_hash :area
   belongs_to_active_hash :industry
@@ -7,13 +11,12 @@ class SbClient < ApplicationRecord
   belongs_to_active_hash :status, class_name: "Status::ClientStatus"
 
   belongs_to :sb_tanto, optional: true, class_name: "InternalUser", foreign_key: "sb_tanto_id"
-  belongs_to :created_user, optional: true, class_name: "InternalUser", foreign_key: "created_by"
-  belongs_to :updated_user, optional: true, class_name: "InternalUser", foreign_key: "updated_by"
 
   has_many :sb_client_users
   has_many :sb_client_exams
   has_many :sb_guarantee_clients
   has_many :sb_guarantee_exams
+  has_many :sb_guarantee_exam_requests
 
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
@@ -37,4 +40,8 @@ class SbClient < ApplicationRecord
   validates :channel, allow_blank: true, inclusion: { in: Channel.all, message: :not_in_master }
   validates :sb_agent, allow_blank: true, inclusion: { in: Proc.new { SbAgent.all }, message: :not_in_master }
   validates :area, allow_blank: true, inclusion: { in: Area.all, message: :not_in_master }
+
+  def set_default_values
+    self.status ||= Status::ClientStatus::COMPANY_NOT_DETECTED
+  end
 end

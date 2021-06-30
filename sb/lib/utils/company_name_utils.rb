@@ -90,6 +90,8 @@ module Utils
     #   全角変換、特殊記号除去、全角マイナス
     #
     def self.to_compare_name(corporation_name)
+      return corporation_name if corporation_name.blank?
+
       ret = to_zenkaku_name(corporation_name)
       REMOVE_CHARS_FOR_COMPARE.chars.each do |c|
         ret.gsub!(c, "") # 全角マイナスをハイフンに置換
