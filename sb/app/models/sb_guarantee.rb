@@ -20,4 +20,36 @@ class SbGuarantee < ApplicationRecord
   def set_default_values
     self.status ||= Status::GuaranteeStatus::EXAM_NOT_DETECTED
   end
+
+  def company_name=(company_name)
+    if company_name.blank?
+      write_attribute(:company_name, company_name)
+      return
+    end
+    write_attribute(:company_name, Utils::CompanyNameUtils.to_zenkaku_name(company_name))
+  end
+
+  def daihyo_name=(daihyo_name)
+    if daihyo_name.blank?
+      write_attribute(:daihyo_name, daihyo_name)
+      return
+    end
+    write_attribute(:daihyo_name, Utils::StringUtils.to_zenkaku(daihyo_name))
+  end
+
+  def client_company_name=(client_company_name)
+    if client_company_name.blank?
+      write_attribute(:client_company_name, client_company_name)
+      return
+    end
+    write_attribute(:client_company_name, Utils::CompanyNameUtils.to_zenkaku_name(client_company_name))
+  end
+
+  def client_daihyo_name=(client_daihyo_name)
+    if client_daihyo_name.blank?
+      write_attribute(:client_daihyo_name, client_daihyo_name)
+      return
+    end
+    write_attribute(:client_daihyo_name, Utils::StringUtils.to_zenkaku(client_daihyo_name))
+  end
 end

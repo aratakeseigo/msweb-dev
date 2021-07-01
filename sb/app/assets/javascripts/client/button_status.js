@@ -19,7 +19,7 @@ function setButtonStatus(statusId, clientId){
           setButtonEnable(btnId,url)
           // 保証登録
           btnId = 'btn-ready-for-aguarantee';
-          url = '#';
+          url = '/clients/'+clientId+'/registration_guarantees';
           setButtonEnable(btnId,url)
         // }
         if(statusId == 2 ){
