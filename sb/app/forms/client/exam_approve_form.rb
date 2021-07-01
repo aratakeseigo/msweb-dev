@@ -101,9 +101,9 @@ module Client
       end
 
       # 決裁、差戻しの場合
-      # if attributes.present?
-      #   super(attributes)
-      # end
+      if attributes.present?
+        super(attributes)
+      end
     end
 
     def search_infos(house_company_code)
