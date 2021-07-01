@@ -1,7 +1,5 @@
 module Exam
   class RegistrationForm < ApplicationForm
-    include ActiveStorage::Downloading
-
     TRANSACTION_TYPE_NEW = "新規" # "既存"
     UMU_YES = "有" # "無"
 
@@ -66,6 +64,7 @@ module Exam
         "保証会社名" => "other_guarantee_companies",
         "保証額" => "other_companies_ammount",
         "保証希望額" => "guarantee_amount_hope",
+        "顧客管理番号" => "exam_search_key",
       }
       column_mapping = (column_mapping_client.merge column_mapping_customer).merge column_mapping_exam
       exam_request_hash_list = Utils::ExcelUtils.excel_to_h(file,
