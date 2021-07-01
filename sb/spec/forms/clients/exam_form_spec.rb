@@ -10,21 +10,23 @@ RSpec.describe Client::ExamForm, type: :model do
 
   describe "初期化" do
     context "初期表示" do
-      let(:form) { Client::ExamForm.new(nil, client) }
+      let(:form) { Client::ExamForm.new(nil, client_has_file) }
       it "一覧画面で選択されたデータのsb_clientが表示される" do
-        expect(form.area_id).to eq client.area_id
-        expect(form.sb_tanto_id).to eq client.sb_tanto_id
-        expect(form.name).to eq client.name
-        expect(form.daihyo_name).to eq client.daihyo_name
-        expect(form.zip_code).to eq client.zip_code
-        expect(form.prefecture_code).to eq client.prefecture_code
-        expect(form.address).to eq client.address
-        expect(form.tel).to eq client.tel
-        expect(form.industry_id).to eq client.industry_id
-        expect(form.industry_optional).to eq client.industry_optional
-        expect(form.established_in).to eq client.established_in
-        expect(form.annual_sales).to eq client.annual_sales
-        expect(form.capital).to eq client.capital
+        expect(form.area_id).to eq client_has_file.area_id
+        expect(form.sb_tanto_id).to eq client_has_file.sb_tanto_id
+        expect(form.name).to eq client_has_file.name
+        expect(form.daihyo_name).to eq client_has_file.daihyo_name
+        expect(form.zip_code).to eq client_has_file.zip_code
+        expect(form.prefecture_code).to eq client_has_file.prefecture_code
+        expect(form.address).to eq client_has_file.address
+        expect(form.tel).to eq client_has_file.tel
+        expect(form.industry_id).to eq client_has_file.industry_id
+        expect(form.industry_optional).to eq client_has_file.industry_optional
+        expect(form.established_in).to eq client_has_file.established_in
+        expect(form.annual_sales).to eq client_has_file.annual_sales
+        expect(form.capital).to eq client_has_file.capital
+        expect(form.output_registration_form_file.filename).to eq "registration_form_file1.pdf"
+        expect(form.output_other_files.first.filename).to eq "other_file1.pdf"
       end
     end
 
@@ -134,7 +136,9 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.bl_info).to eq nil
       end
     end
+  end
 
+  describe "更新" do
     context "バリデーションエラーがない更新時" do
       let(:params) {
         { area_id: "2",

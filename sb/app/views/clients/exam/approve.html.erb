@@ -1,4 +1,4 @@
-<% provide :title, "クライアント情報登録" %>
+<% provide :title, "クライアント決裁" %>
 <%= @test %>
 <% if @form&.errors.present? %>
   <div class="alert alert-danger" role="alert">
@@ -12,8 +12,8 @@
 <% end %>
 
 <%= form_with url: clients_exam_update_path, method: "post", local: true do |f| %>
-  <%= render :partial => "input_sb_client", :locals => { f: f } %>
-  <%= render :partial => "input_sb_client_exam", :locals => { f: f } %>
+  <%= render :partial => "clients/exam/approve_partials/input_sb_client", :locals => { f: f } %>
+  <%= render :partial => "clients/exam/approve_partials/input_sb_client_exam", :locals => { f: f } %>
   
   <!-- ファイルアップロード -->
   <div class="row">
@@ -48,7 +48,7 @@
   <% end %>
   <div class="row">
     <div class="form-group col">
-      <%= f.submit %>
+      <%= link_to "キャンセル", clients_list_path, { class: "btn btn-primary" } %>
     </div>
   </div>
 <% end %>

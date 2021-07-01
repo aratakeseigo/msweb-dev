@@ -98,6 +98,10 @@ FactoryBot.define do
       capital { 22222222 }
       registration_form_file { Rack::Test::UploadedFile.new("spec/factories/file/registration_form_file1.pdf", "application/pdf") }
       other_files { [Rack::Test::UploadedFile.new("spec/factories/file/other_file1.pdf", "application/pdf")] }
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam)
+      end
     end
 
     trait :has_exam do
