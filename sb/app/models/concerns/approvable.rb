@@ -38,7 +38,7 @@ module Approvable
     sb_approval_clazz.where(relation_id: id).order(:created_at)
   end
 
-  def can_apply(target = self)
+  def can_apply?(target = self)
     sb_approval = target.sb_approval
     if sb_approval.nil?
       return true

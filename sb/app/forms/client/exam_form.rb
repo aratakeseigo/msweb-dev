@@ -99,7 +99,7 @@ module Client
         @reject_reason = @sb_client_exam.reject_reason
         @communicate_memo = @sb_client_exam.communicate_memo
         # 初期表示時、稟議申請ボタンの非活性判別用にcan_applyを設定
-        @can_apply = @sb_client_exam.can_apply
+        @can_apply = @sb_client_exam.can_apply?
       end
 
       # entityが存在する場合
@@ -122,11 +122,17 @@ module Client
       end
 
       @sb_client.save!
+      
+      if @sb_client_exam.present?
+        @sb_client_exam.save
+      end
     end
 
     def sb_client_exam_apply
       # 稟議申請の場合、決裁テーブルを作成する
       @sb_client_exam.apply(@current_user)
+      # ステータスの変更
+      @sb_client.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id]
     end
 
     def sb_client_validate?
@@ -166,6 +172,14 @@ module Client
       @sb_client.updated_user = @current_user
       @sb_client.status_id = status_id
 
+      if @sb_client_exam.present?
+        @sb_client_exam.tsr_score = tsr_score
+        @sb_client_exam.tdb_score = tdb_score
+        @sb_client_exam.anti_social = anti_social
+        @sb_client_exam.anti_social_memo = anti_social_memo
+        @sb_client_exam.reject_reason = reject_reason
+        @sb_client_exam.communicate_memo = communicate_memo
+      end
     end
 
     def search_infos(house_company_code)

@@ -20,8 +20,6 @@ FactoryBot.define do
 
     trait :has_no_agent do
       transient do
-        entity { build :entity }
-        sb_agent { create :sb_agent }
         internal_user { create :internal_user, name: "SB担当者１太郎", email: "sb_client_1@example.com" }
       end
       daihyo_name { "武田　浩和" }

@@ -104,6 +104,13 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.can_apply).to eq true
       end
     end
+
+    context "sb_client_examが存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client) }
+      it "can_applyがnilに設定される" do
+        expect(form.can_apply).to eq nil
+      end
+    end
   end
 
   describe "各情報有無設定" do
@@ -195,10 +202,16 @@ RSpec.describe Client::ExamForm, type: :model do
           established_in: "202106",
           annual_sales: "33000000",
           capital: "10000000",
+          tsr_score: "77" ,
+          tdb_score: "88",
+          anti_social: "false",
+          anti_social_memo: "反社メモ変更",
+          reject_reason: "否決理理由変更",
+          communicate_memo: "社内連絡メモ変更",
           registration_form_file: nil,
           other_files: nil }
       }
-      let(:form) { Client::ExamForm.new(params, client) }
+      let(:form) { Client::ExamForm.new(params, client_has_exam) }
       before {
         form.current_user = user
         form.to_sb_client
@@ -208,7 +221,7 @@ RSpec.describe Client::ExamForm, type: :model do
       }
       it "対象データが更新される" do
         # 更新されているか確認の為client.idでsb_clientを検索
-        new_sb_client = SbClient.find(client.id)
+        new_sb_client = SbClient.find(client_has_exam.id)
         expect(form.invalid?).to eq false
         expect(form.area_id).to eq "2"
         expect(new_sb_client.area_id).to eq 2
@@ -238,6 +251,19 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(new_sb_client.capital).to eq 10000000
         expect(form.current_user).to eq user
         expect(new_sb_client.updated_user).to eq user
+        # sb_client_exam
+        expect(form.tsr_score).to eq "77"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tsr_score).to eq "77"
+        expect(form.tdb_score).to eq "88"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tdb_score).to eq "88"
+        expect(form.anti_social).to eq "false"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social).to eq false
+        expect(form.anti_social_memo).to eq "反社メモ変更"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social_memo).to eq "反社メモ変更"
+        expect(form.reject_reason).to eq "否決理理由変更"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).reject_reason).to eq "否決理理由変更"
+        expect(form.communicate_memo).to eq "社内連絡メモ変更"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).communicate_memo).to eq "社内連絡メモ変更"
       end
 
       it "status_idの変更がされていない" do
@@ -261,18 +287,23 @@ RSpec.describe Client::ExamForm, type: :model do
                       established_in: "202106",
                       annual_sales: "33000000",
                       capital: "10000000",
+                      tsr_score: "77" ,
+                      tdb_score: "88",
+                      anti_social: "false",
+                      anti_social_memo: "反社メモ変更",
+                      reject_reason: "否決理理由変更",
+                      communicate_memo: "社内連絡メモ変更",            
                       registration_form_file: nil,
                       other_files: nil
       }}
       let(:form) {Client::ExamForm.new(params, client_has_exam)}
       before {
         form.current_user = user
-        form.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id]
         form.to_sb_client
         form.other_files_invalid?
         form.invalid?
-        form.save_client
         form.sb_client_exam_apply
+        form.save_client
       }
 
       it "対象データが更新される" do
@@ -307,11 +338,24 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(new_sb_client.capital).to eq 10000000
         expect(form.current_user).to eq user
         expect(new_sb_client.updated_user).to eq user
+        # sb_client_exam
+        expect(form.tsr_score).to eq "77"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tsr_score).to eq "77"
+        expect(form.tdb_score).to eq "88"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tdb_score).to eq "88"
+        expect(form.anti_social).to eq "false"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social).to eq false
+        expect(form.anti_social_memo).to eq "反社メモ変更"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social_memo).to eq "反社メモ変更"
+        expect(form.reject_reason).to eq "否決理理由変更"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).reject_reason).to eq "否決理理由変更"
+        expect(form.communicate_memo).to eq "社内連絡メモ変更"
+        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).communicate_memo).to eq "社内連絡メモ変更"
+
       end
       
       it "status_idが3(決裁待ち)に更新される" do
         new_sb_client = SbClient.find(client_has_exam.id)
-        expect(form.status_id).to eq 3
         expect(new_sb_client.status_id).to eq 3
       end
     end
