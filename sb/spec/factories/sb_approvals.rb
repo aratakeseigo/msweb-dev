@@ -17,7 +17,7 @@ FactoryBot.define do
       internal_user_apply { create :internal_user }
       sb_guarantee_exam { create :sb_guarantee_exam }
     end
-    status { Status::SbApproval::APLYING } # "結果id(申請中:0 差し戻し:9 承認:1)"
+    status { Status::SbApproval::APPLYING } # "結果id(申請中:0 差し戻し:9 承認:1)"
     applied_user { internal_user_apply } # "申請者"
     applied_at { Time.zone.now } # "申請日時"
     apply_comment { "おねがいします" } # "申請時コメント"
