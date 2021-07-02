@@ -267,7 +267,7 @@ RSpec.describe Clients::ExamController, type: :controller do
       end
 
       it "クライアント編集画面が更新される" do
-        expect(response).to redirect_to clients_exam_edit_path
+        expect(response).to redirect_to clients_edit_path
       end
     end
 
@@ -289,7 +289,7 @@ RSpec.describe Clients::ExamController, type: :controller do
       end
 
       it "クライアント編集画面が更新される" do
-        expect(response).to redirect_to clients_exam_edit_path
+        expect(response).to redirect_to clients_edit_path
       end
     end
   end
