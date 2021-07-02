@@ -22,6 +22,7 @@ module Guarantee
 
     # 保証審査依頼ファイルから初期化する（upload時に使用）
     def self.initFromFile(sb_client, current_user, upload_file)
+
       # 保証審査依頼を作成してファイルを添付する
       sb_guarantee_request = sb_client.sb_guarantee_requests.create(
         created_user: current_user,
@@ -97,7 +98,7 @@ module Guarantee
 
     def guarantees_validate?
       if guarantees.nil? || guarantees.empty?
-        guarantees.add(:guarantees, :not_empty)
+        errors.add(:guarantees, :not_empty)
         return
       end
       guarantees.each.with_index(1) do |guarantee, num|
@@ -138,8 +139,15 @@ module Guarantee
           accepted_at: Time.zone.now,
         })
       )
+      set_guarantee_amount(sbg_guarantee)
       @guarantees << sbg_guarantee
       sbg_guarantee
+    end
+
+    def set_guarantee_amount(sbg_guarantee)
+      # TODO 同じ審査に紐づく現在の保証を検索して受け入れ可能額を決定する
+      # とりあえずそのまま設定している
+      sbg_guarantee.guarantee_amount = sbg_guarantee.guarantee_amount_hope
     end
 
     ## 保存しないので常にtrue(rspec用)

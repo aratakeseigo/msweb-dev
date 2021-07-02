@@ -96,6 +96,10 @@ ja:
         guarantee_end_at: "保証終了日"
         guarantee_amount_hope: "保証依頼額"
         guarantee_amount: "保証額"
+        sb_client_id: "クライアントID"
+        sb_guarantee_client_id: "SB保証元ID"
+        sb_guarantee_customer_id: "SB保証先ID"
+        sb_guarantee_exam_id: "SB保証審査ID"
   activemodel:
     attributes:
       exam/registration_form:

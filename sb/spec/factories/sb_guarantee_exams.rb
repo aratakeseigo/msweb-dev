@@ -24,5 +24,13 @@ FactoryBot.define do
     sb_client
     created_user { internal_user }
     updated_user { internal_user }
+
+    trait :approved do
+      # transient do
+      #   sb_approval { create :sb_approval_guarantee_exam }
+      # end
+      status { Status::ExamStatus::APPROVED }
+      sb_approval { create :sb_approval_guarantee_exam }
+    end
   end
 end

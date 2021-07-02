@@ -14,8 +14,15 @@ class SbGuarantee < ApplicationRecord
   belongs_to_active_hash :status, class_name: "Status::GuaranteeStatus"
 
   validates :company_name, presence: true, length: { maximum: 255 }
-  validates :daihyo_name, presence: true, length: { maximum: 255 }
+  validates :daihyo_name, presence: true, length: { maximum: 255 }, user_name: true
+  validates :client_company_name, allow_blank: true, length: { maximum: 255 }
+  validates :client_daihyo_name, allow_blank: true, length: { maximum: 255 }, user_name: true
   validates :exam_search_key, presence: true, length: { maximum: 255 }
+
+  validates :guarantee_start_at, presence: true
+  validates :guarantee_end_at, presence: true
+  validates :guarantee_amount_hope, presence: true
+  validates :guarantee_amount, presence: true
 
   def set_default_values
     self.status ||= Status::GuaranteeStatus::EXAM_NOT_DETECTED
