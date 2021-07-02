@@ -44,4 +44,8 @@ class SbClient < ApplicationRecord
   def set_default_values
     self.status ||= Status::ClientStatus::COMPANY_NOT_DETECTED
   end
+
+  def sb_client_exam
+    sb_client_exams.available&.first
+  end
 end
