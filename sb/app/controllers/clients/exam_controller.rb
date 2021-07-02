@@ -4,6 +4,11 @@ class Clients::ExamController < ApplicationController
     @form = Client::ExamForm.new(nil, @sb_client)
   end
 
+  def edit_approve
+    load_client
+    @form = Client::ExamApproveForm.new(nil, @sb_client)
+  end
+
   def update
     load_client
     @form = Client::ExamForm.new(client_params, @sb_client)

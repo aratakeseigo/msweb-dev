@@ -1,0 +1,67 @@
+<div class="row">
+  <div class="form-group form-inline col">
+    <%= f.label :ab_info, "AB情報", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :ab_info, value: @form.ab_info, class: "form-control form-control-sm w-25" %>
+    <input type="button" value="確認" >
+  </div>
+
+  <div class="form-group form-inline col">
+    <%= f.label :bl_info, "BL情報", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :bl_info, value: @form.bl_info, class: "form-control form-control-sm w-25" %>
+    <input type="button" value="確認" >
+  </div>
+
+  <div class="form-group form-inline col">
+    <%= f.label :by_info, "BY情報", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :bl_info, value: @form.by_info, class: "form-control form-control-sm w-25" %>
+    <input type="button" value="確認" >
+  </div>
+
+  <div class="form-group form-inline col">
+    <%= f.label :exam_info, "審査結果情報", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :exam_info, value: @form.exam_info, class: "form-control form-control-sm w-25" %>
+    <input type="button" value="確認" >
+  </div>
+
+  <div class="form-group form-inline col">
+    <%= f.label :guarantee_info, "保証開始情報", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :guarantee_info, value: @form.guarantee_info, class: "form-control form-control-sm w-25" %>
+    <input type="button" value="確認" >
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-group form-inline col">
+    <%= f.label :tsr_score, "TSR点数", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :tsr_score, value: @sb_client.sb_client_exam.tsr_score, class: "form-control form-control-sm", disabled: true %>
+  </div>
+
+  <div class="form-group form-inline col">
+    <%= f.label :tdb_score, "帝国点数", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :tdb_score, value: @sb_client.sb_client_exam.tdb_score, class: "form-control form-control-sm", disabled: true %>
+  </div>
+
+  <div class="form-group form-inline col" >
+    <%= f.label :anti_social, "反社情報", class: "col-form-label col-form-label-sm" %>
+    <%= f.radio_button :anti_social, true, checked: @sb_client.sb_client_exam.anti_social, disabled: true %>
+    <%= f.label :anti_social, "あり", class: "col-form-label col-form-label-sm" %>
+    <%= f.radio_button :anti_social, false, checked: @sb_client.sb_client_exam.anti_social == false, disabled: true %>
+    <%= f.label :anti_social, "なし", class: "col-form-label col-form-label-sm" %>
+  </div>
+
+  <div class="form-group col">
+    <%= f.label :anti_social_memo, "反社メモ", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :anti_social_memo, value: @sb_client.sb_client_exam.anti_social_memo, class: "form-control form-control-sm", disabled: true %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="form-group col">
+    <%= f.label :reject_reason, "否決理由", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :reject_reason, value: @form.reject_reason, class: "form-control form-control-sm" %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :communicate_memo, "社内連絡メモ", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :communicate_memo, value: @form.communicate_memo, class: "form-control form-control-sm" %>
+  </div>
+</div>

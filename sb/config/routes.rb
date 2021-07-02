@@ -23,13 +23,12 @@ Rails.application.routes.draw do
     get "/:id/registration_exams", controller: "registration_exams", action: "index", as: "registration_exams_index"
     post "/:id/registration_exams/upload", controller: "registration_exams", action: "upload", as: "registration_exams_upload"
     post "/:id/registration_exams/create", controller: "registration_exams", action: "create", as: "registration_exams_create"
-    namespace :exam do
-      get "/:id", action: "edit", as: "edit"
-      post "/:id/update", action: "update", as: "update"
-      post "/:id/apply", action: "apply", as: "apply"
-      get "/:id/download", action: "download", as: "download"
-      post "/:id/delete_file", action: "delete_file"
-    end
+    get "/:id/exam", controller: "exam", action: "edit", as: "exam_edit"
+    get "/:id/exam/approve", controller: "exam", action: "edit_approve", as: "exam_edit_approve"
+    post "/:id/exam/update", controller: "exam", action: "update", as: "exam_update"
+    post "/:id/exam/apply", controller: "exam", action: "apply", as: "exam_apply"
+    get "/:id/exam/download", controller: "exam", action: "download", as: "exam_download"
+    post "/:id/exam/delete_file", controller: "exam", action: "delete_file", as: "exam_delete_file"
   end
 
   namespace :identify_company do
