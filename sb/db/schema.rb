@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_135753) do
+ActiveRecord::Schema.define(version: 2021_06_30_080438) do
 
   create_table "ab_alarm_mail_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラームメール受信設定テーブル", force: :cascade do |t|
     t.integer "user_id", null: false, comment: "ユーザーID"
@@ -2130,6 +2130,38 @@ ActiveRecord::Schema.define(version: 2021_06_24_135753) do
     t.datetime "updated_at", null: false
     t.bigint "sb_guarantee_exam_request_id", comment: "保証審査依頼ID"
     t.integer "status_id", comment: "ステータスID"
+    t.string "exam_search_key", comment: "審査検索キー"
+    t.index ["exam_search_key"], name: "index_sb_guarantee_exams_on_exam_search_key"
+  end
+
+  create_table "sb_guarantee_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証依頼", force: :cascade do |t|
+    t.bigint "sb_client_id", null: false, comment: "SBクライアントID"
+    t.bigint "created_by", null: false, comment: "作成者"
+    t.bigint "updated_by", null: false, comment: "更新者"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sb_guarantees", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "SB保証", force: :cascade do |t|
+    t.datetime "accepted_at", null: false, comment: "受付日"
+    t.string "exam_search_key", null: false, comment: "審査検索キー"
+    t.string "company_name", null: false, comment: "法人名"
+    t.string "daihyo_name", null: false, comment: "代表者名"
+    t.datetime "guarantee_start_at", null: false, comment: "保証開始日"
+    t.datetime "guarantee_end_at", null: false, comment: "保証終了日"
+    t.bigint "guarantee_amount_hope", null: false, comment: "保証依頼額"
+    t.bigint "guarantee_amount", null: false, comment: "保証額"
+    t.bigint "sb_guarantee_exam_id", null: false, comment: "保証審査ID"
+    t.bigint "sb_client_id", null: false, comment: "クライアントID"
+    t.bigint "sb_guarantee_client_id", null: false, comment: "保証元ID"
+    t.bigint "sb_guarantee_customer_id", null: false, comment: "保証先ID"
+    t.integer "status_id", null: false, comment: "ステータスID"
+    t.bigint "sb_guarantee_request_id", null: false, comment: "保証依頼ID"
+    t.bigint "sb_approval_id", comment: "決裁ID"
+    t.bigint "created_by", null: false, comment: "作成者ID"
+    t.bigint "updated_by", null: false, comment: "更新者ID"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sb_user_permissions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
