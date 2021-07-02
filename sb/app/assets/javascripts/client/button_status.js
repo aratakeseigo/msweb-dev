@@ -25,13 +25,13 @@ function setButtonStatus(statusId, clientId){
         if(statusId == 2 ){
           //CL審査
           btnId = 'btn-ready-for-cl-exam';
-          url = '/clients/exam/' + clientId;
+          url = '/clients/' + clientId + '/exam';
           setButtonEnable(btnId,url)
         }
         if(statusId == 3 ){
           //CL決裁
           btnId = 'btn-ready-for-cl-approval';
-          url = '#';
+          url = '/clients/' + clientId + '/exam/approval';
           setButtonEnable(btnId,url)
         }
         function setButtonEnable(btnId,url){
