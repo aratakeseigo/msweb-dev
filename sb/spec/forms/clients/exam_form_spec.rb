@@ -10,21 +10,23 @@ RSpec.describe Client::ExamForm, type: :model do
 
   describe "初期化" do
     context "初期表示" do
-      let(:form) { Client::ExamForm.new(nil, client) }
+      let(:form) { Client::ExamForm.new(nil, client_has_file) }
       it "一覧画面で選択されたデータのsb_clientが表示される" do
-        expect(form.area_id).to eq client.area_id
-        expect(form.sb_tanto_id).to eq client.sb_tanto_id
-        expect(form.name).to eq client.name
-        expect(form.daihyo_name).to eq client.daihyo_name
-        expect(form.zip_code).to eq client.zip_code
-        expect(form.prefecture_code).to eq client.prefecture_code
-        expect(form.address).to eq client.address
-        expect(form.tel).to eq client.tel
-        expect(form.industry_id).to eq client.industry_id
-        expect(form.industry_optional).to eq client.industry_optional
-        expect(form.established_in).to eq client.established_in
-        expect(form.annual_sales).to eq client.annual_sales
-        expect(form.capital).to eq client.capital
+        expect(form.area_id).to eq client_has_file.area_id
+        expect(form.sb_tanto_id).to eq client_has_file.sb_tanto_id
+        expect(form.name).to eq client_has_file.name
+        expect(form.daihyo_name).to eq client_has_file.daihyo_name
+        expect(form.zip_code).to eq client_has_file.zip_code
+        expect(form.prefecture_code).to eq client_has_file.prefecture_code
+        expect(form.address).to eq client_has_file.address
+        expect(form.tel).to eq client_has_file.tel
+        expect(form.industry_id).to eq client_has_file.industry_id
+        expect(form.industry_optional).to eq client_has_file.industry_optional
+        expect(form.established_in).to eq client_has_file.established_in
+        expect(form.annual_sales).to eq client_has_file.annual_sales
+        expect(form.capital).to eq client_has_file.capital
+        expect(form.output_registration_form_file.filename).to eq "registration_form_file1.pdf"
+        expect(form.output_other_files.first.filename).to eq "other_file1.pdf"
       end
     end
 
@@ -63,7 +65,57 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.communicate_memo).to eq "社内連絡メモ"
       end
     end
+  end
 
+  describe "can_applyの設定" do
+    context "sb_approvalのstatusが0（申請中）の場合" do
+      let!(:client_has_approval_apply) { create :sb_client, :has_approval_apply }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_apply) }
+      it "can_applyがfalseに設定される" do
+        expect(form.can_apply).to eq false
+      end
+    end
+
+    context "sb_approvalのstatusが1（承認）の場合" do
+      let!(:client_has_approval_approved) { create :sb_client, :has_approval_approved }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_approved) }
+      it "can_applyがfalseに設定される" do
+        expect(form.can_apply).to eq false
+      end
+    end
+
+    context "sb_approvalのstatusが8（取り下げ）の場合" do
+      let!(:client_has_approval_withdrawed) { create :sb_client, :has_approval_withdrawed }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_withdrawed) }
+      it "can_applyがtrueに設定される" do
+        expect(form.can_apply).to eq true
+      end
+    end
+
+    context "sb_approvalのstatusが9（差し戻し）の場合" do
+      let!(:client_has_approval_remand) { create :sb_client, :has_approval_remand }
+      let(:form) { Client::ExamForm.new(nil, client_has_approval_remand) }
+      it "can_applyがtrueに設定される" do
+        expect(form.can_apply).to eq true
+      end
+    end
+
+    context "sb_approvalが存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client_has_exam) }
+      it "can_applyがtrueに設定される" do
+        expect(form.can_apply).to eq true
+      end
+    end
+
+    context "sb_client_examが存在しない場合" do
+      let(:form) { Client::ExamForm.new(nil, client) }
+      it "can_applyがnilに設定される" do
+        expect(form.can_apply).to eq false
+      end
+    end
+  end
+
+  describe "各情報有無設定" do
     context "ab情報が存在する場合" do
       let!(:customer) { create :customer_master, house_company_code: client_has_exam.entity.house_company_code }
       let(:form) { Client::ExamForm.new(nil, client_has_exam) }
@@ -134,7 +186,9 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(form.bl_info).to eq nil
       end
     end
+  end
 
+  describe "データ更新" do
     context "バリデーションエラーがない更新時" do
       let(:params) {
         { area_id: "2",
@@ -150,10 +204,16 @@ RSpec.describe Client::ExamForm, type: :model do
           established_in: "202106",
           annual_sales: "33000000",
           capital: "10000000",
+          tsr_score: "77",
+          tdb_score: "88",
+          anti_social: "false",
+          anti_social_memo: "反社メモ変更",
+          reject_reason: "否決理理由変更",
+          communicate_memo: "社内連絡メモ変更",
           registration_form_file: nil,
           other_files: nil }
       }
-      let(:form) { Client::ExamForm.new(params, client) }
+      let(:form) { Client::ExamForm.new(params, client_has_exam) }
       before {
         form.current_user = user
         form.to_sb_client
@@ -163,7 +223,7 @@ RSpec.describe Client::ExamForm, type: :model do
       }
       it "対象データが更新される" do
         # 更新されているか確認の為client.idでsb_clientを検索
-        new_sb_client = SbClient.find(client.id)
+        new_sb_client = SbClient.find(client_has_exam.id)
         expect(form.invalid?).to eq false
         expect(form.area_id).to eq "2"
         expect(new_sb_client.area_id).to eq 2
@@ -193,6 +253,112 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(new_sb_client.capital).to eq 10000000
         expect(form.current_user).to eq user
         expect(new_sb_client.updated_user).to eq user
+        # sb_client_exam
+        expect(form.tsr_score).to eq "77"
+        expect(new_sb_client.sb_client_exam.tsr_score).to eq "77"
+        expect(form.tdb_score).to eq "88"
+        expect(new_sb_client.sb_client_exam.tdb_score).to eq "88"
+        expect(form.anti_social).to eq "false"
+        expect(new_sb_client.sb_client_exam.anti_social).to eq false
+        expect(form.anti_social_memo).to eq "反社メモ変更"
+        expect(new_sb_client.sb_client_exam.anti_social_memo).to eq "反社メモ変更"
+        expect(form.reject_reason).to eq "否決理理由変更"
+        expect(new_sb_client.sb_client_exam.reject_reason).to eq "否決理理由変更"
+        expect(form.communicate_memo).to eq "社内連絡メモ変更"
+        expect(new_sb_client.sb_client_exam.communicate_memo).to eq "社内連絡メモ変更"
+      end
+
+      it "status_idの変更がされていない" do
+        new_sb_client = SbClient.find(client.id)
+        expect(form.status_id).to eq 1
+        expect(new_sb_client.status_id).to eq 1
+      end
+    end
+
+    context "稟議申請ボタン押下時" do
+      let(:params) {
+        { area_id: "2",
+         sb_tanto_id: "2",
+         name: "西東京株式会社",
+         daihyo_name: "武田　太郎",
+         zip_code: "9012102",
+         prefecture_code: "14",
+         address: "川崎市高津区北見方9-9-9",
+         tel: "12345678901",
+         industry_id: "2",
+         industry_optional: "ブランド品",
+         established_in: "202106",
+         annual_sales: "33000000",
+         capital: "10000000",
+         tsr_score: "77",
+         tdb_score: "88",
+         anti_social: "false",
+         anti_social_memo: "反社メモ変更",
+         reject_reason: "否決理理由変更",
+         communicate_memo: "社内連絡メモ変更",
+         registration_form_file: nil,
+         other_files: nil }
+      }
+      let(:form) { Client::ExamForm.new(params, client_has_exam) }
+      before {
+        form.current_user = user
+        form.to_sb_client
+        form.other_files_invalid?
+        form.invalid?
+        form.sb_client_exam_apply
+        form.save_client
+      }
+
+      it "対象データが更新される" do
+        # 更新されているか確認の為client.idでsb_clientを検索
+        new_sb_client = SbClient.find(client_has_exam.id)
+        expect(form.invalid?).to eq false
+        expect(form.area_id).to eq "2"
+        expect(new_sb_client.area_id).to eq 2
+        expect(form.sb_tanto_id).to eq "2"
+        expect(new_sb_client.sb_tanto_id).to eq 2
+        expect(form.name).to eq "西東京株式会社"
+        expect(new_sb_client.name).to eq "西東京株式会社"
+        expect(form.daihyo_name).to eq "武田　太郎"
+        expect(new_sb_client.daihyo_name).to eq "武田　太郎"
+        expect(form.zip_code).to eq "9012102"
+        expect(new_sb_client.zip_code).to eq "9012102"
+        expect(form.prefecture_code).to eq "14"
+        expect(new_sb_client.prefecture_code).to eq 14
+        expect(form.address).to eq "川崎市高津区北見方9-9-9"
+        expect(new_sb_client.address).to eq "川崎市高津区北見方9-9-9"
+        expect(form.tel).to eq "12345678901"
+        expect(new_sb_client.tel).to eq "12345678901"
+        expect(form.industry_id).to eq "2"
+        expect(new_sb_client.industry_id).to eq 2
+        expect(form.industry_optional).to eq "ブランド品"
+        expect(new_sb_client.industry_optional).to eq "ブランド品"
+        expect(form.established_in).to eq "202106"
+        expect(new_sb_client.established_in).to eq "202106"
+        expect(form.annual_sales).to eq "33000000"
+        expect(new_sb_client.annual_sales).to eq 33000000
+        expect(form.capital).to eq "10000000"
+        expect(new_sb_client.capital).to eq 10000000
+        expect(form.current_user).to eq user
+        expect(new_sb_client.updated_user).to eq user
+        # sb_client_exam
+        expect(form.tsr_score).to eq "77"
+        expect(new_sb_client.sb_client_exam.tsr_score).to eq "77"
+        expect(form.tdb_score).to eq "88"
+        expect(new_sb_client.sb_client_exam.tdb_score).to eq "88"
+        expect(form.anti_social).to eq "false"
+        expect(new_sb_client.sb_client_exam.anti_social).to eq false
+        expect(form.anti_social_memo).to eq "反社メモ変更"
+        expect(new_sb_client.sb_client_exam.anti_social_memo).to eq "反社メモ変更"
+        expect(form.reject_reason).to eq "否決理理由変更"
+        expect(new_sb_client.sb_client_exam.reject_reason).to eq "否決理理由変更"
+        expect(form.communicate_memo).to eq "社内連絡メモ変更"
+        expect(new_sb_client.sb_client_exam.communicate_memo).to eq "社内連絡メモ変更"
+      end
+
+      it "status_idが3(決裁待ち)に更新される" do
+        new_sb_client = SbClient.find(client_has_exam.id)
+        expect(new_sb_client.status).to eq Status::ClientStatus::READY_FOR_APPROVAL
       end
     end
   end

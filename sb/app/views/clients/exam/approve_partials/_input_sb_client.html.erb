@@ -1,0 +1,60 @@
+<div class="row">
+  <div class="form-group col">
+    <%= f.label :area_id, "エリア", class: "col-form-label col-form-label-sm" %>
+    <%= f.collection_select :area_id, Area.all, :id, :name, { include_blank: "-- 選択してください --", selected: @sb_client.area_id }, { class: "custom-select col", disabled: true } %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :sb_tanto_id, "SB担当名", class: "col-form-label col-form-label-sm" %>
+    <%= f.collection_select :sb_tanto_id, InternalUser.all, :id, :name, { include_blank: "-- 選択してください --", selected: @sb_client.sb_tanto_id }, { class: "custom-select col", disabled: true } %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :name, "クライアント名", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :name, value: @sb_client.name, class: "form-control form-control-sm", disabled: true %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :daihyo_name, "代表者名", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :daihyo_name, value: @sb_client.daihyo_name, class: "form-control form-control-sm", disabled: true %>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col">
+    <%= f.label :zip_code, "郵便番号", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :zip_code, value: @sb_client.zip_code, class: "form-control form-control-sm", disabled: true %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :prefecture_code, "都道府県", class: "col-form-label col-form-label-sm" %>
+    <%= f.collection_select :prefecture_code, Prefecture.all, :code, :name, { include_blank: "-- 選択してください --", selected: @sb_client.prefecture_code }, { class: "custom-select col", disabled: true } %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :address, "住所", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :address, value: @sb_client.address, class: "form-control form-control-sm", disabled: true %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :tel, "電話番号", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :tel, value: @sb_client.tel, class: "form-control form-control-sm", disabled: true %>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col">
+    <%= f.label :industry_id, "業種", class: "col-form-label col-form-label-sm" %>
+    <%= f.collection_select :industry_id, Industry.all, :id, :name, { include_blank: "-- 選択してください --", selected: @sb_client.industry_id }, { class: "custom-select col", disabled: true } %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :industry_optional, "業種(補足)", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :industry_optional, value: @sb_client.industry_optional, class: "form-control form-control-sm", disabled: true %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :established_in, "設立年月", class: "col-form-label col-form-label-sm" %>
+    <%= f.text_field :established_in, value: @sb_client.established_in, class: "form-control form-control-sm", disabled: true %>
+  </div>
+  <div class="form-group col">
+    <%= f.label :annual_sales, "年商", class: "col-form-label col-form-label-sm" %>
+    <%= f.number_field :annual_sales, value: @sb_client.annual_sales, class: "form-control form-control-sm", disabled: true %>
+  </div>
+</div>
+<div class="row">
+  <div class="form-group col-3">
+    <%= f.label :capital, "資本金", class: "col-form-label col-form-label-sm" %>
+    <%= f.number_field :capital, value: @sb_client.capital, class: "form-control form-control-sm", disabled: true %>
+  </div>
+</div>
