@@ -31,7 +31,7 @@ function setButtonStatus(statusId, clientId){
         if(statusId == 3 ){
           //CL決裁
           btnId = 'btn-ready-for-cl-approval';
-          url = '/clients/' + clientId + '/exam/approval';
+          url = '/clients/' + clientId + '/exam/approve';
           setButtonEnable(btnId,url)
         }
         function setButtonEnable(btnId,url){
