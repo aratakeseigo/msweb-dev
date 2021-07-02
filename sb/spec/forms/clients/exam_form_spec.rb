@@ -202,7 +202,7 @@ RSpec.describe Client::ExamForm, type: :model do
           established_in: "202106",
           annual_sales: "33000000",
           capital: "10000000",
-          tsr_score: "77" ,
+          tsr_score: "77",
           tdb_score: "88",
           anti_social: "false",
           anti_social_memo: "反社メモ変更",
@@ -253,17 +253,17 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(new_sb_client.updated_user).to eq user
         # sb_client_exam
         expect(form.tsr_score).to eq "77"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tsr_score).to eq "77"
+        expect(new_sb_client.sb_client_exam.tsr_score).to eq "77"
         expect(form.tdb_score).to eq "88"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tdb_score).to eq "88"
+        expect(new_sb_client.sb_client_exam.tdb_score).to eq "88"
         expect(form.anti_social).to eq "false"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social).to eq false
+        expect(new_sb_client.sb_client_exam.anti_social).to eq false
         expect(form.anti_social_memo).to eq "反社メモ変更"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social_memo).to eq "反社メモ変更"
+        expect(new_sb_client.sb_client_exam.anti_social_memo).to eq "反社メモ変更"
         expect(form.reject_reason).to eq "否決理理由変更"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).reject_reason).to eq "否決理理由変更"
+        expect(new_sb_client.sb_client_exam.reject_reason).to eq "否決理理由変更"
         expect(form.communicate_memo).to eq "社内連絡メモ変更"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).communicate_memo).to eq "社内連絡メモ変更"
+        expect(new_sb_client.sb_client_exam.communicate_memo).to eq "社内連絡メモ変更"
       end
 
       it "status_idの変更がされていない" do
@@ -274,29 +274,30 @@ RSpec.describe Client::ExamForm, type: :model do
     end
 
     context "稟議申請ボタン押下時" do
-      let(:params) {{area_id: "2",
-                      sb_tanto_id: "2",
-                      name: "西東京株式会社",
-                      daihyo_name: "武田　太郎",
-                      zip_code: "9012102",
-                      prefecture_code: "14",
-                      address: "川崎市高津区北見方9-9-9",
-                      tel: "12345678901",
-                      industry_id: "2",
-                      industry_optional: "ブランド品",
-                      established_in: "202106",
-                      annual_sales: "33000000",
-                      capital: "10000000",
-                      tsr_score: "77" ,
-                      tdb_score: "88",
-                      anti_social: "false",
-                      anti_social_memo: "反社メモ変更",
-                      reject_reason: "否決理理由変更",
-                      communicate_memo: "社内連絡メモ変更",            
-                      registration_form_file: nil,
-                      other_files: nil
-      }}
-      let(:form) {Client::ExamForm.new(params, client_has_exam)}
+      let(:params) {
+        { area_id: "2",
+         sb_tanto_id: "2",
+         name: "西東京株式会社",
+         daihyo_name: "武田　太郎",
+         zip_code: "9012102",
+         prefecture_code: "14",
+         address: "川崎市高津区北見方9-9-9",
+         tel: "12345678901",
+         industry_id: "2",
+         industry_optional: "ブランド品",
+         established_in: "202106",
+         annual_sales: "33000000",
+         capital: "10000000",
+         tsr_score: "77",
+         tdb_score: "88",
+         anti_social: "false",
+         anti_social_memo: "反社メモ変更",
+         reject_reason: "否決理理由変更",
+         communicate_memo: "社内連絡メモ変更",
+         registration_form_file: nil,
+         other_files: nil }
+      }
+      let(:form) { Client::ExamForm.new(params, client_has_exam) }
       before {
         form.current_user = user
         form.to_sb_client
@@ -340,20 +341,19 @@ RSpec.describe Client::ExamForm, type: :model do
         expect(new_sb_client.updated_user).to eq user
         # sb_client_exam
         expect(form.tsr_score).to eq "77"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tsr_score).to eq "77"
+        expect(new_sb_client.sb_client_exam.tsr_score).to eq "77"
         expect(form.tdb_score).to eq "88"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).tdb_score).to eq "88"
+        expect(new_sb_client.sb_client_exam.tdb_score).to eq "88"
         expect(form.anti_social).to eq "false"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social).to eq false
+        expect(new_sb_client.sb_client_exam.anti_social).to eq false
         expect(form.anti_social_memo).to eq "反社メモ変更"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).anti_social_memo).to eq "反社メモ変更"
+        expect(new_sb_client.sb_client_exam.anti_social_memo).to eq "反社メモ変更"
         expect(form.reject_reason).to eq "否決理理由変更"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).reject_reason).to eq "否決理理由変更"
+        expect(new_sb_client.sb_client_exam.reject_reason).to eq "否決理理由変更"
         expect(form.communicate_memo).to eq "社内連絡メモ変更"
-        expect(new_sb_client.sb_client_exams.find_by(available_flag: true).communicate_memo).to eq "社内連絡メモ変更"
-
+        expect(new_sb_client.sb_client_exam.communicate_memo).to eq "社内連絡メモ変更"
       end
-      
+
       it "status_idが3(決裁待ち)に更新される" do
         new_sb_client = SbClient.find(client_has_exam.id)
         expect(new_sb_client.status).to eq Status::ClientStatus::READY_FOR_APPROVAL

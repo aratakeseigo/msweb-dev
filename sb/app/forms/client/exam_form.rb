@@ -29,7 +29,7 @@ module Client
 
     validate :sb_client_validate?
 
-    attr_accessor :area_id, 
+    attr_accessor :area_id,
                   :sb_tanto_id,
                   :name,
                   :daihyo_name,
@@ -68,7 +68,7 @@ module Client
 
     def initialize(attributes, sb_client)
       @sb_client = sb_client
-    
+
       # formのattirbutesにクライアント情報を設定
       @status_id = @sb_client.status_id
       @area_id = @sb_client.area_id
@@ -93,7 +93,7 @@ module Client
       @can_apply = false
 
       # sb_client_examが存在する場合、formのattribute,asに詰める
-      @sb_client_exam = @sb_client.sb_client_exams.find_by(available_flag: true)
+      @sb_client_exam = @sb_client.sb_client_exam
       if @sb_client_exam.present?
         @tsr_score = @sb_client_exam.tsr_score
         @tdb_score = @sb_client_exam.tdb_score
@@ -125,7 +125,7 @@ module Client
       end
 
       @sb_client.save!
-      
+
       if @sb_client_exam.present?
         @sb_client_exam.save
       end
@@ -188,8 +188,8 @@ module Client
     def search_infos(house_company_code)
       ab_info_exists = CustomerMaster.where(house_company_code: house_company_code).exists?
       bl_info_exists = AccsBlInfo.where(corporate_code: house_company_code).exists?
-      exam_info_exists = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code}).exists?
-      by_info_exists = ByCustomer.joins(:entity).where(entities:{house_company_code: house_company_code}).exists?
+      exam_info_exists = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities: { house_company_code: house_company_code }).exists?
+      by_info_exists = ByCustomer.joins(:entity).where(entities: { house_company_code: house_company_code }).exists?
 
       @ab_info = ab_info_exists ? EXIST : NOT_EXIST
       @bl_info = bl_info_exists ? EXIST : NOT_EXIST
