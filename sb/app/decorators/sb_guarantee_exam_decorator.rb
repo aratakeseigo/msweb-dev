@@ -11,7 +11,7 @@ class SbGuaranteeExamDecorator < Draper::Decorator
   #   end
 
   def sb_approval_applied_at
-    object.sb_approval&.applied_at.strftime("%Y/%m/%d %H:%M:%S")
+    object.sb_approval&.applied_at&.strftime("%Y/%m/%d %H:%M:%S")
   end
 
   def guarantee_amount_hope
