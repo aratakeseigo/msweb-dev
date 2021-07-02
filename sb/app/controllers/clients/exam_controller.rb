@@ -28,6 +28,33 @@ class Clients::ExamController < ApplicationController
     redirect_to clients_list_path
   end
 
+  def apply
+    load_client
+    @form = Client::ExamForm.new(client_params, @sb_client)
+    @form.current_user = current_internal_user
+    @form.to_sb_client
+
+    if @form.other_files_invalid?
+      render :edit and return
+    end
+
+    if @form.invalid?
+      render :edit and return
+    end
+
+    # 稟議申請済みの場合一覧へ戻る
+    unless @form.can_apply
+      flash[:warning] = "稟議申請済みです。"
+      redirect_to clients_list_path and return
+    end
+
+    # 決裁テーブル作成
+    @form.sb_client_exam_apply
+    @form.save_client
+    flash[:success] = "稟議申請が完了しました。"
+    redirect_to clients_list_path
+  end
+
   def download
     file = find_file
 
@@ -58,6 +85,12 @@ class Clients::ExamController < ApplicationController
                   :industry_optional,
                   :established_in,
                   :annual_sales, :capital,
+                  :tsr_score,
+                  :tdb_score,
+                  :anti_social,
+                  :anti_social_memo,
+                  :reject_reason,
+                  :communicate_memo,
                   :registration_form_file,
                   other_files: [])
   end

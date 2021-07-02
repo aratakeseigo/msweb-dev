@@ -16,11 +16,11 @@ build:  ## docker build
 update:
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle install
 
-.PHONY: db_create
-db_create:
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rails db:create
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --apply --dump-with-default-fk-name
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E test --apply --dump-with-default-fk-name
+
+
+.PHONY: migrate
+migrate:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake db:migrate
 
 .PHONY: run
 run:
@@ -33,13 +33,6 @@ stop:
 down:
 	docker compose -f ../docker-compose.sb.yml down
 
-.PHONY: recreate-db
-recreate-db:
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rails db:drop db:create
-
-.PHONY: migrate
-migrate:
-	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rake db:migrate
 
 .PHONY: seed
 seed:
@@ -68,3 +61,27 @@ test-with-prof:
 .PHONY: lint
 lint: ## docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rubocop  --display-cop-names --extra-details --display-style-guide --parallel
 	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rubocop  --fail-level W --display-only-fail-level-offense
+
+
+.PHONY: db_drop
+db_drop:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rails db:drop
+
+.PHONY: db_create
+db_create:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec rails db:create
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --apply --dump-with-default-fk-name
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E test --apply --dump-with-default-fk-name
+
+.PHONY: db_merge_schema
+db_merge_schema:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --merge
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E test --merge
+
+.PHONY: db_export_schema
+db_export_schema:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --export -o Schema.sb
+
+.PHONY: db_schema_diff
+db_schema_diff:
+	docker compose -f ../docker-compose.sb.yml run  --rm sb bundle exec ridgepole -c config/database.yml -E development --apply --dry-run -f Schemafile
