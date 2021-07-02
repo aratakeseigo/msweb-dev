@@ -108,7 +108,7 @@ RSpec.describe Client::ExamForm, type: :model do
     context "sb_client_examが存在しない場合" do
       let(:form) { Client::ExamForm.new(nil, client) }
       it "can_applyがnilに設定される" do
-        expect(form.can_apply).to eq nil
+        expect(form.can_apply).to eq false
       end
     end
   end
@@ -356,7 +356,7 @@ RSpec.describe Client::ExamForm, type: :model do
       
       it "status_idが3(決裁待ち)に更新される" do
         new_sb_client = SbClient.find(client_has_exam.id)
-        expect(new_sb_client.status_id).to eq 3
+        expect(new_sb_client.status).to eq Status::ClientStatus::READY_FOR_APPROVAL
       end
     end
   end

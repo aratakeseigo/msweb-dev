@@ -89,6 +89,9 @@ module Client
       @output_registration_form_file = @sb_client.registration_form_file
       @output_other_files = @sb_client.other_files
 
+      # can_applyの初期値を設定
+      @can_apply = false
+
       # sb_client_examが存在する場合、formのattribute,asに詰める
       @sb_client_exam = @sb_client.sb_client_exams.find_by(available_flag: true)
       if @sb_client_exam.present?
@@ -132,7 +135,7 @@ module Client
       # 稟議申請の場合、決裁テーブルを作成する
       @sb_client_exam.apply(@current_user)
       # ステータスの変更
-      @sb_client.status_id = Status::ClientStatus::READY_FOR_APPROVAL[:id]
+      @sb_client.status = Status::ClientStatus::READY_FOR_APPROVAL
     end
 
     def sb_client_validate?
