@@ -13,64 +13,19 @@ RSpec.describe Clients::ExamController, type: :controller do
       it "編集画面に遷移する" do
         expect(response).to render_template :edit
       end
-
-      it "一覧画面で選択されたデータの編集画面が表示される" do
-        expect(assigns(:form).name).to eq client.name
-        expect(assigns(:form).area_id).to eq client.area_id
-        expect(assigns(:form).sb_tanto_id).to eq client.sb_tanto_id
-        expect(assigns(:form).name).to eq client.name
-        expect(assigns(:form).daihyo_name).to eq client.daihyo_name
-        expect(assigns(:form).zip_code).to eq client.zip_code
-        expect(assigns(:form).prefecture_code).to eq client.prefecture_code
-        expect(assigns(:form).address).to eq client.address
-        expect(assigns(:form).tel).to eq client.tel
-        expect(assigns(:form).industry_id).to eq client.industry_id
-        expect(assigns(:form).industry_optional).to eq client.industry_optional
-        expect(assigns(:form).established_in).to eq client.established_in
-        expect(assigns(:form).annual_sales).to eq client.annual_sales
-        expect(assigns(:form).capital).to eq client.capital
-        # sb_client_exam
-        expect(assigns(:form).tsr_score).to eq client.sb_client_exams.find_by(available_flag: true).tsr_score
-        expect(assigns(:form).tdb_score).to eq client.sb_client_exams.find_by(available_flag: true).tdb_score
-        expect(assigns(:form).anti_social).to eq client.sb_client_exams.find_by(available_flag: true).anti_social
-        expect(assigns(:form).anti_social_memo).to eq client.sb_client_exams.find_by(available_flag: true).anti_social_memo
-        expect(assigns(:form).reject_reason).to eq client.sb_client_exams.find_by(available_flag: true).reject_reason
-        expect(assigns(:form).communicate_memo).to eq client.sb_client_exams.find_by(available_flag: true).communicate_memo
-      end
     end
+  end
 
-    context "存在するsb_client_examsが存在しないのidがパラメータで渡された場合" do
-      let(:client) { create :sb_client }
-      before { get :edit, params: { id: client.id } }
-      it "編集画面に遷移する" do
-        expect(response).to render_template :edit
-      end
-
-      it "一覧画面で選択されたデータの編集画面が表示される" do
-        expect(assigns(:form).name).to eq client.name
-        expect(assigns(:form).area_id).to eq client.area_id
-        expect(assigns(:form).sb_tanto_id).to eq client.sb_tanto_id
-        expect(assigns(:form).name).to eq client.name
-        expect(assigns(:form).daihyo_name).to eq client.daihyo_name
-        expect(assigns(:form).zip_code).to eq client.zip_code
-        expect(assigns(:form).prefecture_code).to eq client.prefecture_code
-        expect(assigns(:form).address).to eq client.address
-        expect(assigns(:form).tel).to eq client.tel
-        expect(assigns(:form).industry_id).to eq client.industry_id
-        expect(assigns(:form).industry_optional).to eq client.industry_optional
-        expect(assigns(:form).established_in).to eq client.established_in
-        expect(assigns(:form).annual_sales).to eq client.annual_sales
-        expect(assigns(:form).capital).to eq client.capital
-        # sb_client_exam
-        expect(assigns(:form).tsr_score).to eq nil
-        expect(assigns(:form).tdb_score).to eq nil
-        expect(assigns(:form).anti_social).to eq nil
-        expect(assigns(:form).anti_social_memo).to eq nil
-        expect(assigns(:form).reject_reason).to eq nil
-        expect(assigns(:form).communicate_memo).to eq nil
+  describe "GET #edit_approve" do
+    context "存在するsb_clientsのidがパラメータで渡された場合" do
+      let(:client) { create :sb_client, :has_exam }
+      before { get :edit_approve, params: { id: client.id } }
+      it "決裁画面に遷移する" do        
+        expect(response).to render_template :edit_approve
       end
     end
   end
+
 
   describe "POST #update" do
     let(:client) { create :sb_client, :has_exam }

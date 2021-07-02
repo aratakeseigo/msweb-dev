@@ -11,9 +11,9 @@
   </div>
 <% end %>
 
-<%= form_with url: clients_exam_update_path, method: "post", local: true, id: "client_exam_form" do |f| %>
-  <%= render :partial => "input_sb_client", :locals => { f: f } %>
-  <%= render :partial => "input_sb_client_exam", :locals => { f: f } %>
+<%= form_with url: clients_exam_update_path, method: "post", local: true do |f| %>
+  <%= render :partial => "clients/exam/edit_partials/input_sb_client", :locals => { f: f } %>
+  <%= render :partial => "clients/exam/edit_partials/input_sb_client_exam", :locals => { f: f } %>
   
   <!-- ファイルアップロード -->
   <div class="row">
