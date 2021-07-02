@@ -7,7 +7,6 @@ class Clients::ExamController < ApplicationController
   def edit_approve
     load_client
     @form = Client::ExamApproveForm.new(nil, @sb_client)
-    render :approve
   end
 
   def update
