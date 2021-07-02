@@ -1,5 +1,6 @@
 module Client
   class ExamForm < ApplicationForm
+    attribute :status_id, :integer
     attribute :area_id, :integer
     attribute :sb_tanto_id, :integer
     attribute :name, :string
@@ -24,10 +25,11 @@ module Client
     attribute :anti_social_memo, :string
     attribute :reject_reason, :string
     attribute :communicate_memo, :string
+    attribute :can_apply, :boolean
 
     validate :sb_client_validate?
 
-    attr_accessor :area_id, 
+    attr_accessor :area_id,
                   :sb_tanto_id,
                   :name,
                   :daihyo_name,
@@ -55,7 +57,9 @@ module Client
                   :anti_social,
                   :anti_social_memo,
                   :reject_reason,
-                  :communicate_memo
+                  :communicate_memo,
+                  :can_apply,
+                  :status_id
 
     ## 定数 ##
     MAX_OTHER_FILES_COUNT = 5
@@ -64,8 +68,9 @@ module Client
 
     def initialize(attributes, sb_client)
       @sb_client = sb_client
-    
+
       # formのattirbutesにクライアント情報を設定
+      @status_id = @sb_client.status_id
       @area_id = @sb_client.area_id
       @sb_tanto_id = @sb_client.sb_tanto_id
       @name = @sb_client.name
@@ -84,8 +89,11 @@ module Client
       @output_registration_form_file = @sb_client.registration_form_file
       @output_other_files = @sb_client.other_files
 
+      # can_applyの初期値を設定
+      @can_apply = false
+
       # sb_client_examが存在する場合、formのattribute,asに詰める
-      @sb_client_exam = @sb_client.sb_client_exams.find_by(available_flag: true)
+      @sb_client_exam = @sb_client.sb_client_exam
       if @sb_client_exam.present?
         @tsr_score = @sb_client_exam.tsr_score
         @tdb_score = @sb_client_exam.tdb_score
@@ -93,6 +101,8 @@ module Client
         @anti_social_memo = @sb_client_exam.anti_social_memo
         @reject_reason = @sb_client_exam.reject_reason
         @communicate_memo = @sb_client_exam.communicate_memo
+        # 初期表示時、稟議申請ボタンの非活性判別用にcan_applyを設定
+        @can_apply = @sb_client_exam.can_apply?
       end
 
       # entityが存在する場合
@@ -115,6 +125,17 @@ module Client
       end
 
       @sb_client.save!
+
+      if @sb_client_exam.present?
+        @sb_client_exam.save
+      end
+    end
+
+    def sb_client_exam_apply
+      # 稟議申請の場合、決裁テーブルを作成する
+      @sb_client_exam.apply(@current_user)
+      # ステータスの変更
+      @sb_client.status = Status::ClientStatus::READY_FOR_APPROVAL
     end
 
     def sb_client_validate?
@@ -152,18 +173,28 @@ module Client
       @sb_client.annual_sales = annual_sales
       @sb_client.capital = capital
       @sb_client.updated_user = @current_user
+      @sb_client.status_id = status_id
+
+      if @sb_client_exam.present?
+        @sb_client_exam.tsr_score = tsr_score
+        @sb_client_exam.tdb_score = tdb_score
+        @sb_client_exam.anti_social = anti_social
+        @sb_client_exam.anti_social_memo = anti_social_memo
+        @sb_client_exam.reject_reason = reject_reason
+        @sb_client_exam.communicate_memo = communicate_memo
+      end
     end
 
     def search_infos(house_company_code)
-      ab_info = CustomerMaster.where(house_company_code: house_company_code).exists?
-      bl_info = AccsBlInfo.where(corporate_code: house_company_code).exists?
-      exam_info = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities:{house_company_code: house_company_code}).exists?
-      by_info = ByCustomer.joins(:entity).where(entities:{house_company_code: house_company_code}).exists?
+      ab_info_exists = CustomerMaster.where(house_company_code: house_company_code).exists?
+      bl_info_exists = AccsBlInfo.where(corporate_code: house_company_code).exists?
+      exam_info_exists = SbGuaranteeExam.joins(sb_guarantee_customer: :entity).where(entities: { house_company_code: house_company_code }).exists?
+      by_info_exists = ByCustomer.joins(:entity).where(entities: { house_company_code: house_company_code }).exists?
 
-      @ab_info = ab_info.present? ? EXIST : NOT_EXIST
-      @bl_info = bl_info.present? ? EXIST : NOT_EXIST
-      @exam_info = exam_info.present? ? EXIST : NOT_EXIST
-      @by_info = by_info.present? ? EXIST : NOT_EXIST
+      @ab_info = ab_info_exists ? EXIST : NOT_EXIST
+      @bl_info = bl_info_exists ? EXIST : NOT_EXIST
+      @exam_info = exam_info_exists ? EXIST : NOT_EXIST
+      @by_info = by_info_exists ? EXIST : NOT_EXIST
       # 保証テーブル作成後に実装
       #@guarantee_info
     end

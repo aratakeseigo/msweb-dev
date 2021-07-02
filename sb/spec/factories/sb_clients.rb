@@ -20,8 +20,6 @@ FactoryBot.define do
 
     trait :has_no_agent do
       transient do
-        entity { build :entity }
-        sb_agent { create :sb_agent }
         internal_user { create :internal_user, name: "SB担当者１太郎", email: "sb_client_1@example.com" }
       end
       daihyo_name { "武田　浩和" }
@@ -130,6 +128,34 @@ FactoryBot.define do
 
     trait :has_no_entity do
       entity_id { nil }
+    end
+
+    trait :has_approval_apply do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_apply)
+      end
+    end
+
+    trait :has_approval_approved do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_approved)
+      end
+    end
+
+    trait :has_approval_withdrawed do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_withdrawed)
+      end
+    end
+
+    trait :has_approval_remand do
+      after(:build) do |sb_client|
+        sb_client.sb_client_exams = []
+        sb_client.sb_client_exams << build(:sb_client_exam, :has_approval_remand)
+      end
     end
   end
 end
