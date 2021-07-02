@@ -11,7 +11,7 @@
   </div>
 <% end %>
 
-<%= form_with url: clients_update_path, method: "post", local: true do |f| %>
+<%= form_with url: clients_exam_update_path, method: "post", local: true do |f| %>
   <%= render :partial => "clients/exam/approve_partials/input_sb_client", :locals => { f: f } %>
   <%= render :partial => "clients/exam/approve_partials/input_sb_client_exam", :locals => { f: f } %>
   
@@ -40,7 +40,7 @@
     <% @form.output_other_files.each do |file| %>
       <div class="row">
         <div class="form-group col">
-          <%= link_to file.filename, clients_download_path(file_id: file.id, type: file.name)  %>
+          <%= link_to file.filename, clients_exam_download_path(file_id: file.id, type: file.name)  %>
           <%= link_to "削除する", {controller: "exam", action: "delete_file", file_id: file.id, type: file.name}, method: "post", class: "m-5" %>
         </div>
       </div>

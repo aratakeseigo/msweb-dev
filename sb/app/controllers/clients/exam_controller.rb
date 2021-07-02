@@ -68,7 +68,7 @@ class Clients::ExamController < ApplicationController
     file = find_file
     file.purge
 
-    redirect_to clients_edit_path
+    redirect_to clients_exam_edit_path
 
   end
 
