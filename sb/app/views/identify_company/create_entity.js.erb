@@ -1,4 +1,10 @@
-<%  if @status == 'fail' %>
+<% if @status == 'fail' %>
     $("#error_explanation").html("<%= j(render 'error', { identify_company: @identify_company }) %>")
+    $("#entity-modal").modal("show");
+<% else %>
+    $("#entity-modal").modal("hide");
+    setTimeout("link()", 0);
+    function link(){
+        location.href="<%= @identify_company.redirect_path %>";
+    }
 <% end %>
-$("#entity-modal").modal("show");

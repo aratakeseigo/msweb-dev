@@ -1,6 +1,6 @@
 class IdentifyCompanyForm < ApplicationForm
 	include Rails.application.routes.url_helpers
-	CLASS_ID = { "client" => "1", "exam" => "2", "guarantee" => "3" }
+	CLASS_ID = { "client" => "1", "guarantee_client" => "2", "guarantee_customer" => "3" }
   
 	attribute :classification, :string
 	attribute :id, :integer
@@ -26,12 +26,12 @@ class IdentifyCompanyForm < ApplicationForm
   
 	def self.init(classification, params)
 	  case classification
-	  when CLASS_ID["client"]
+	  when CLASS_ID["client"] # SBクライアント
 		return IdentifyCompanyForm::Client.new(params)
-	  when CLASS_ID["exam"]
-		return IdentifyCompanyForm::Exam.new(params)
-	  when CLASS_ID["guarantee"]
-		return IdentifyCompanyForm::Guarantee.new(params)
+	  when CLASS_ID["guarantee_client"] # 保証元
+		return IdentifyCompanyForm::GuaranteeClient.new(params)
+	when CLASS_ID["guarantee_customer"] # 保証先
+		return IdentifyCompanyForm::GuaranteeCustomer.new(params)
 	  else
 		raise StandardError.new("request error")
 	  end
@@ -56,6 +56,7 @@ class IdentifyCompanyForm < ApplicationForm
 									taxagency_corporate_number: self.taxagency_corporate_number,
 									address: self.address, daihyo_tel: self.daihyo_tel, established: self.established,
 									zip_code: self.zip_code, prefecture: entity_prefecture)
+									
 	  entity.save!
 	  assign_entity(entity)
 	end
@@ -68,18 +69,19 @@ class IdentifyCompanyForm < ApplicationForm
 	  )
 	end
 end
-  
+ 
+
 class IdentifyCompanyForm::Client < IdentifyCompanyForm
 	def assign_default_values
-	  sb_client = SbClient.find(id)
-	  self.company_name = sb_client.name
-	  self.daihyo_name = sb_client.daihyo_name
-	  self.taxagency_corporate_number = sb_client.taxagency_corporate_number
-	  self.prefecture_code = sb_client.prefecture_code
-	  self.address = sb_client.address
-	  self.daihyo_tel = sb_client.tel
-	  self.established = sb_client.established_in
-	  self.zip_code = sb_client.zip_code
+		sb_client = SbClient.find(id)
+		self.company_name = sb_client.name
+		self.daihyo_name = sb_client.daihyo_name
+		self.taxagency_corporate_number = sb_client.taxagency_corporate_number
+		self.prefecture_code = sb_client.prefecture_code
+		self.address = sb_client.address
+		self.daihyo_tel = sb_client.tel
+		self.established = sb_client.established_in
+		self.zip_code = sb_client.zip_code
 	end
   
 	def assign_entity(entity)
@@ -91,9 +93,59 @@ class IdentifyCompanyForm::Client < IdentifyCompanyForm
 	  clients_list_path
 	end
 end
+
+# 保証元
+class IdentifyCompanyForm::GuaranteeClient < IdentifyCompanyForm
+
+	def assign_default_values
+		sb_guarantee_exam = SbGuaranteeExam.find(id)
+		sb_guarantee_client = sb_guarantee_exam.sb_guarantee_client
+		self.company_name = sb_guarantee_client.company_name
+		self.daihyo_name = sb_guarantee_client.daihyo_name
+		self.taxagency_corporate_number = sb_guarantee_client.taxagency_corporate_number
+		self.prefecture_code = sb_guarantee_client.prefecture_code
+		self.address = sb_guarantee_client.address
+		self.daihyo_tel = sb_guarantee_client.tel
+	end
+
+	def redirect_path
+	  exams_list_path
+	end
   
-class IdentifyCompanyForm::Exam < IdentifyCompanyForm
+	def assign_entity(entity)
+		exam = SbGuaranteeExam.find(id)
+		exam.sb_guarantee_client.update(entity: entity)
+		SbGuaranteeExam.joins(:sb_guarantee_customer, :sb_guarantee_client)
+			.where(status_id: Status::ExamStatus::COMPANY_NOT_DETECTED.id)
+			.where.not(sb_guarantee_clients: {entity_id: nil}, sb_guarantee_customers: {entity_id: nil})
+			.update_all(status_id: Status::ExamStatus::READY_FOR_EXAM.id)
+	end
 end
+
+# 保証先
+class IdentifyCompanyForm::GuaranteeCustomer < IdentifyCompanyForm
+
+	def assign_default_values
+		sb_guarantee_exam = SbGuaranteeExam.find(id)
+		sb_guarantee_customer = sb_guarantee_exam.sb_guarantee_customer
+		self.company_name = sb_guarantee_customer.company_name
+		self.daihyo_name = sb_guarantee_customer.daihyo_name
+		self.taxagency_corporate_number = sb_guarantee_customer.taxagency_corporate_number
+		self.prefecture_code = sb_guarantee_customer.prefecture_code
+		self.address = sb_guarantee_customer.address
+		self.daihyo_tel = sb_guarantee_customer.tel
+	end
+
+	def redirect_path
+	  exams_list_path
+	end
   
-class IdentifyCompanyForm::Guarantee < IdentifyCompanyForm
+	def assign_entity(entity)
+		exam = SbGuaranteeExam.find(id)
+		exam.sb_guarantee_customer.update(entity: entity)
+		SbGuaranteeExam.joins(:sb_guarantee_customer, :sb_guarantee_client)
+			.where(status_id: Status::ExamStatus::COMPANY_NOT_DETECTED.id)
+			.where.not(sb_guarantee_clients: {entity_id: nil}, sb_guarantee_customers: {entity_id: nil})
+			.update_all(status_id: Status::ExamStatus::READY_FOR_EXAM.id)
+	end
 end
