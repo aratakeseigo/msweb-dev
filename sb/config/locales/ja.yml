@@ -86,7 +86,16 @@ ja:
         exam_memo: "特記事項"
         other_guarantee_limits_sum: "他保証"
         risk_ammount: "リスク金額合計"
-
+        exam_search_key: "審査検索キー"
+      sb_guarantee:
+        exam_search_key: "審査検索キー"
+        accepted_at: "保証依頼日"
+        company_name: "法人名"
+        daihyo_name: "代表者名"
+        guarantee_start_at: "保証開始日"
+        guarantee_end_at: "保証終了日"
+        guarantee_amount_hope: "保証依頼額"
+        guarantee_amount: "保証額"
   activemodel:
     attributes:
       exam/registration_form:
