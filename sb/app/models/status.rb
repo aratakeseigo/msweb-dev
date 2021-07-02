@@ -38,10 +38,10 @@ end
 
 class Status::SbApproval < Status
   self.data = [
-    { :id => 0, :code => "APLYING", :name => "申請中" },
-    { :id => 1, :code => "APPROVED", :name => "承認" },
-    { :id => 8, :code => "WITHDRAWED", :name => "取り下げ" },
-    { :id => 9, :code => "REMAND", :name => "差し戻し" },
+    { :id => 0, :code => "applying", :name => "申請中" },
+    { :id => 1, :code => "approved", :name => "承認" },
+    { :id => 8, :code => "withdrawed", :name => "取り下げ" },
+    { :id => 9, :code => "remand", :name => "差し戻し" },
   ]
   enum_accessor :code
 end
