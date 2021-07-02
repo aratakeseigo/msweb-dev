@@ -17,6 +17,7 @@ FactoryBot.define do
     other_companies_ammount { 900000 } # 保証会社名
     other_guarantee_companies { "ＡＢ蛇内保証会社" } # 保証額
     guarantee_amount_hope { 5000000 } # 保証希望額
+    sequence(:exam_search_key) { |n| "EXAM-KEY#{n}" } # 審査検索キー
     sb_guarantee_client
     sb_guarantee_customer
     sb_guarantee_exam_request
