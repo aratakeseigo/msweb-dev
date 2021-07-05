@@ -5,10 +5,11 @@
     <div class="form-group col">
       <%= f.label :status_id_eq, "状態", class: "col-form-label col-form-label-sm" %>
       <div>
-        <%= f.collection_select :status_id_eq, Status::ExamStatus.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select col" } %>
+        <%= f.collection_select :status_id_eq_any, Status::ExamStatus.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select col", multiple: true } %>
       </div>
     </div>
   </div>
+
   <div class="form-group row text-center">
     <div class="col">
       <%= f.submit :class => "btn btn-secondary" %>
@@ -31,17 +32,16 @@
       <thead>
         <tr>
           <th>-</th>
-          <th><%= sort_link(@q, :id, "id") %></th> <!-- 後で消す -->
           <th><%= sort_link(@q, :status, "状態") %></th>
           <th><%= sort_link(@q, :sb_client_name , "クライアント名（保証元名）") %></th>
           <th><%= sort_link(@q, :sb_guarantee_customer_company_name, "保障先名") %></th>
           <th><%= sort_link(@q, :sb_guarantee_customer_daihyo_name, "保証先代表名") %></th>
           <th><%= sort_link(@q, :sb_approval_applied_at, "審査依頼日") %></th>
-          <th><%= sort_link(@q, :sb_approval_applied_at_applied_user_name, "審査担当者") %></th>
-          <th><%= sort_link(@q, :sb_approval_approved_by_applied_user_name, "決済担当者") %></th>
+          <th><%= sort_link(@q, :sb_approval_applied_user_name, "審査担当者") %></th>
+          <th><%= sort_link(@q, :sb_approval_approved_user_name, "決済担当者") %></th>
           <th><%= sort_link(@q, :guarantee_amount_hope, "希望金額") %></th>
           <th><%= sort_link(@q, :guarantee_amount_fix, "承認金額") %></th>
-          <th><%= sort_link(@q, :sb_approval_applied_at, "稟議承認日") %></th>
+          <th><%= sort_link(@q, :sb_approval_approved_at, "稟議承認日") %></th>
         </tr>
       </thead>
       <tbody>
@@ -51,14 +51,13 @@
               #{exam.sb_guarantee_client&.entity_id.present? ? exam.sb_guarantee_client&.entity_id : "null"},
               #{exam.sb_guarantee_customer&.entity_id.present? ? exam.sb_guarantee_customer&.entity_id : "null"},
               #{exam.id});" %></td>
-            <td><%= exam.id %></td> <!-- 後で消す -->
             <td><%= exam.status&.name %></td>
             <td><%= exam.sb_client.name + ((exam.sb_client.id != exam.sb_guarantee_client.id) ? "（" + exam.sb_guarantee_client.company_name + "）" : "") %></td>
             <td><%= exam.sb_guarantee_customer.company_name %></td>
             <td><%= exam.sb_guarantee_customer.daihyo_name %></td>
             <td><%= exam.sb_approval&.applied_at %></td>
-            <td><%= exam.sb_approval&.applied_by&.applied_user&.name %></td>
-            <td><%= exam.sb_approval&.approved_by&.applied_user&.name %></td>
+            <td><%= exam.sb_approval&.applied_user&.name %></td>
+            <td><%= exam.sb_approval&.approved_user&.name %></td>
             <td class="text-right"><%= exam.guarantee_amount_hope %></td>
             <td class="text-right"><%= exam.guarantee_amount_fix %></td>
             <td><%= exam.sb_approval&.approved_at %></td> <!--  -->
@@ -69,5 +68,4 @@
     <%= paginate @exams %>
   </div>
 </div>
-
 <%= javascript_include_tag "exams/button_status.js" %>
