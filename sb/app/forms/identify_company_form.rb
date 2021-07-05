@@ -1,6 +1,5 @@
 class IdentifyCompanyForm < ApplicationForm
 	include Rails.application.routes.url_helpers
-	CLASS_ID = { "client" => "1", "guarantee_client" => "2", "guarantee_customer" => "3" }
   
 	attribute :classification, :string
 	attribute :id, :integer
@@ -26,11 +25,11 @@ class IdentifyCompanyForm < ApplicationForm
   
 	def self.init(classification, params)
 	  case classification
-	  when CLASS_ID["client"] # SBクライアント
+	  when "client" # SBクライアント
 		return IdentifyCompanyForm::Client.new(params)
-	  when CLASS_ID["guarantee_client"] # 保証元
+	  when "guarantee_client" # 保証元
 		return IdentifyCompanyForm::GuaranteeClient.new(params)
-	when CLASS_ID["guarantee_customer"] # 保証先
+	when "guarantee_customer" # 保証先
 		return IdentifyCompanyForm::GuaranteeCustomer.new(params)
 	  else
 		raise StandardError.new("request error")

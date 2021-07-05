@@ -3,13 +3,48 @@
 <%= search_form_for(@q, url: exams_list_path) do |f| %>
   <div class="row">
     <div class="form-group col">
-      <%= f.label :status_id_eq, "状態", class: "col-form-label col-form-label-sm" %>
+      <%= f.label :status_id_eq_any, "状態", class: "col-form-label col-form-label-sm" %>
       <div>
         <%= f.collection_select :status_id_eq_any, Status::ExamStatus.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select col", multiple: true } %>
       </div>
     </div>
   </div>
 
+  <div class="row">
+    <div class="form-group col">
+      <%= f.label :sb_client_name_cont, "クライアント名", class: "col-form-label col-form-label-sm" %>
+      <%= f.search_field :sb_client_name_cont, class: " form-control form-control-sm" %>
+    </div>
+    <div class="form-group col">
+      <%= f.label :sb_guarantee_customer_company_name_cont, "保証先名", class: "col-form-label col-form-label-sm" %>
+      <%= f.search_field :sb_guarantee_customer_company_name_cont, class: " form-control form-control-sm" %>
+    </div>
+    <div class="form-group col">
+      <%= f.label :sb_guarantee_customer_daihyo_name_cont, "保証先代表名", class: "col-form-label col-form-label-sm" %>
+      <%= f.search_field :sb_guarantee_customer_daihyo_name_cont, class: " form-control form-control-sm" %>
+    </div>
+    <div class="form-group col">
+      <%= f.label :sb_approval_applied_at_cont, "審査依頼日", class: "col-form-label col-form-label-sm" %>
+          <%= f.datetime_field :sb_approval_applied_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col">
+      <%= f.label :sb_approval_applied_user_name_cont, "審査担当者", class: "col-form-label col-form-label-sm" %>
+      <%= f.search_field :sb_approval_applied_user_name_cont, class: " form-control form-control-sm" %>
+    </div>
+    <div class="form-group col">
+      <%= f.label :sb_approval_approved_user_name_cont, "決済担当者", class: "col-form-label col-form-label-sm" %>
+      <%= f.search_field :sb_approval_approved_user_name_cont, class: " form-control form-control-sm" %>
+    </div>
+    <div class="form-group col">
+      <%= f.label :sb_approval_approved_at_cont, "稟議承認日", class: "col-form-label col-form-label-sm" %>
+      <div>
+          <%= f.datetime_field :sb_approval_approved_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
+      </div>
+    </div>
+  </div>
+<!-- 検索ボタン -->
   <div class="form-group row text-center">
     <div class="col">
       <%= f.submit :class => "btn btn-secondary" %>
@@ -48,8 +83,8 @@
         <% @exams.each do |exam| %>
           <tr>
             <td><%= radio_button_tag "radio_id", exam.id, false, onclick: "setButtonStatus(#{exam.status_id},
-              #{exam.sb_guarantee_client&.entity_id.present? ? exam.sb_guarantee_client&.entity_id : "null"},
-              #{exam.sb_guarantee_customer&.entity_id.present? ? exam.sb_guarantee_customer&.entity_id : "null"},
+              #{exam.sb_guarantee_client&.entity_id.present? ? "true" : "false"},
+              #{exam.sb_guarantee_customer&.entity_id.present? ? "true" : "false"},
               #{exam.id});" %></td>
             <td><%= exam.status&.name %></td>
             <td><%= exam.sb_client.name + ((exam.sb_client.id != exam.sb_guarantee_client.id) ? "（" + exam.sb_guarantee_client.company_name + "）" : "") %></td>

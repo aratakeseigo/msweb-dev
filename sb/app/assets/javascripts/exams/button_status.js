@@ -1,21 +1,21 @@
-function setButtonStatus(statusId, guaranteeClilentEntityId, guaranteeCustomerEntityId, guaranteeExamId){
+function setButtonStatus(statusId, isSetGuaranteeClilentEntityId, isSetGuaranteeCustomerEntityId, guaranteeExamId){
     // いったんリンクを非活性にする
     document.getElementsByName('btn-ready-for').forEach(function(btn){
         btn.className = 'btn btn-primary btn-sm disabled';
     });
     // クライアントステータスと、リンクボタンの非活性→活性に変更しhref設定
-    (function(statusId, guaranteeClilentEntityId, guaranteeCustomerEntityId, guaranteeExamId){
+    (function(statusId, isSetGuaranteeClilentEntityId, isSetGuaranteeCustomerEntityId, guaranteeExamId){
         let btnId, url;
         // 保証元を特定
-        if(statusId == 1 && !Number.isInteger(guaranteeClilentEntityId)){
+        if(statusId == 1 && !isSetGuaranteeClilentEntityId){
           btnId = 'btn-sb-guarantee-client';
-          url = '/identify_company?id=' + guaranteeExamId + '&classification=2';
+          url = '/identify_company?id=' + guaranteeExamId + '&classification=guarantee_client';
           setButtonEnable(btnId,url)
         }
         // 保証先を特定
-        if(statusId == 1 && !Number.isInteger(guaranteeCustomerEntityId)){
+        if(statusId == 1 && !isSetGuaranteeCustomerEntityId){
           btnId = 'btn-sb-guarantee-customer';
-          url = '/identify_company?id=' + guaranteeExamId + '&classification=3';
+          url = '/identify_company?id=' + guaranteeExamId + '&classification=guarantee_customer';
           setButtonEnable(btnId,url)
         }
 
@@ -30,5 +30,5 @@ function setButtonStatus(statusId, guaranteeClilentEntityId, guaranteeCustomerEn
           document.getElementById(btnId).href = url;
         }
 
-    })(statusId, guaranteeClilentEntityId, guaranteeCustomerEntityId, guaranteeExamId);
+    })(statusId, isSetGuaranteeClilentEntityId, isSetGuaranteeCustomerEntityId, guaranteeExamId);
 }
