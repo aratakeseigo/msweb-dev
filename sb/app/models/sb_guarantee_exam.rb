@@ -22,6 +22,7 @@ class SbGuaranteeExam < ApplicationRecord
   validates :payment_method, allow_blank: true, inclusion: { in: PaymentMethod.all, message: :not_in_master }
   validates :transaction_contents, allow_blank: true, length: { maximum: 255 }
   validates :other_guarantee_companies, allow_blank: true, length: { maximum: 255 }
+  validates :exam_search_key, presence: true, length: { maximum: 255 }
 
   def set_default_values
     self.status ||= Status::ExamStatus::COMPANY_NOT_DETECTED

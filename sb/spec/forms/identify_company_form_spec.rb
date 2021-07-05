@@ -18,9 +18,9 @@ RSpec.describe IdentifyCompanyForm, type: :model do
       "taxagency_corporate_number" => "4444444444444"
         }
   }
-  let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
-  describe "バリデーション" do
 
+  describe "バリデーション" do
+    let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
     context "全て正常場合" do
       it "有効である" do
           expect(identify_company).not_to be_invalid
@@ -30,15 +30,28 @@ RSpec.describe IdentifyCompanyForm, type: :model do
 
   describe "起動元区分確認" do
     context "クライアント一覧（classification => '1'）" do
+      let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
       it "インスタンスがIdentifyCompanyForm::Clientである" do
         expect(identify_company.instance_of?(IdentifyCompanyForm::Client)).to eq(true)
+      end
+    end
+    context "保証審査一覧（保障元）（classification => '2'）" do
+      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      it "インスタンスがIdentifyCompanyForm::GuaranteeClientである" do
+        expect(identify_company.instance_of?(IdentifyCompanyForm::GuaranteeClient)).to eq(true)
+      end
+    end
+    context "保証審査一覧（保障先）（classification => '3'）" do
+      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      it "インスタンスがIdentifyCompanyForm::GuaranteeCustomerである" do
+        expect(identify_company.instance_of?(IdentifyCompanyForm::GuaranteeCustomer)).to eq(true)
       end
     end
   end
 
   describe "データ更新確認" do
     context "クライアント一覧からのステータス更新" do
-
+      let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
       before do
         identify_company.assign_entity(Entity.find entity.id)
         @updated_sb_client = SbClient.find(identify_company.id)
@@ -50,10 +63,101 @@ RSpec.describe IdentifyCompanyForm, type: :model do
           expect(@updated_sb_client.status_id).to eq Status::ClientStatus::READY_FOR_EXAM.id
       end
     end
+    context "保証審査一覧(保証元)からのentity登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      it "エンティティIDが登録される" do
+        identify_company.id = sb_guarantee_exam.id
+        entity_id = Entity.all.first.id
+        SbGuaranteeClient.where(id: sb_guarantee_exam.sb_guarantee_client_id).update_all(entity_id: nil)
+
+        identify_company.assign_entity(Entity.find entity_id)
+
+        expect(SbGuaranteeClient.find(sb_guarantee_exam.sb_guarantee_client_id).entity_id).to eq entity_id
+      end
+    end
+    context "保証審査一覧(保証先)からのentity登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      it "エンティティIDが登録される" do
+        identify_company.id = sb_guarantee_exam.id
+        entity_id = Entity.all.first.id
+        SbGuaranteeCustomer.where(id: sb_guarantee_exam.sb_guarantee_customer_id).update_all(entity_id: nil)
+        identify_company.assign_entity(Entity.find entity_id)
+
+        expect(SbGuaranteeCustomer.find(sb_guarantee_exam.sb_guarantee_customer_id).entity_id).to eq entity_id
+      end
+    end
+
+    context "保証審査一覧(保証元)からの保証元のみentity登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      it "ステータスが更新されずStatus::ExamStatus::COMPANY_NOT_DETECTEDままである" do
+        identify_company.id = sb_guarantee_exam.id
+        entity_id = Entity.all.first.id
+        sb_guarantee_exam.update(status: Status::ExamStatus::COMPANY_NOT_DETECTED )
+        SbGuaranteeClient.where(id: sb_guarantee_exam.sb_guarantee_client_id).update_all(entity_id: nil)
+        SbGuaranteeCustomer.where(id: sb_guarantee_exam.sb_guarantee_customer_id).update_all(entity_id: nil)
+
+        identify_company.assign_entity(Entity.find entity_id)
+
+        expect(SbGuaranteeExam.find(sb_guarantee_exam.id).status_id).to eq Status::ExamStatus::COMPANY_NOT_DETECTED.id
+      end
+    end
+
+    context "保証審査一覧(保証先)からの保証先のみentity登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      it "ステータスが更新されずStatus::ExamStatus::COMPANY_NOT_DETECTEDままである" do
+        identify_company.id = sb_guarantee_exam.id
+        sb_guarantee_exam.update(status: Status::ExamStatus::COMPANY_NOT_DETECTED )
+        entity_id = Entity.all.first.id
+        SbGuaranteeClient.where(id: sb_guarantee_exam.sb_guarantee_client_id).update_all(entity_id: nil)
+        SbGuaranteeCustomer.where(id: sb_guarantee_exam.sb_guarantee_customer_id).update_all(entity_id: nil)
+
+        identify_company.assign_entity(Entity.find entity_id)
+
+        expect(SbGuaranteeExam.find(sb_guarantee_exam.id).status_id).to eq Status::ExamStatus::COMPANY_NOT_DETECTED.id
+      end
+    end
+  
+    context "保証審査一覧(保証元)からの保証先特定済状態で保障元entity登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      it "ステータスがStatus::ExamStatus::READY_FOR_EXAMに更新される" do
+        identify_company.id = sb_guarantee_exam.id
+        sb_guarantee_exam.update(status: Status::ExamStatus::COMPANY_NOT_DETECTED )
+        entity_id = Entity.all.first.id
+        SbGuaranteeClient.where(id: sb_guarantee_exam.sb_guarantee_client_id).update_all(entity_id: nil)
+        SbGuaranteeCustomer.where(id: sb_guarantee_exam.sb_guarantee_customer_id).update_all(entity_id: entity_id)
+
+        identify_company.assign_entity(Entity.find entity_id)
+
+        expect(SbGuaranteeExam.find(sb_guarantee_exam.id).status_id).to eq Status::ExamStatus::READY_FOR_EXAM.id
+      end
+    end
+
+    context "保証審査一覧(保証先)からの保証元特定済状態で保障先entity登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      it "ステータスがStatus::ExamStatus::READY_FOR_EXAMに更新される" do
+        identify_company.id = sb_guarantee_exam.id
+        sb_guarantee_exam.update(status: Status::ExamStatus::COMPANY_NOT_DETECTED )
+        entity_id = Entity.all.first.id
+        SbGuaranteeClient.where(id: sb_guarantee_exam.sb_guarantee_client_id).update_all(entity_id: entity_id)
+        SbGuaranteeCustomer.where(id: sb_guarantee_exam.sb_guarantee_customer_id).update_all(entity_id: nil)
+
+        identify_company.assign_entity(Entity.find entity_id)
+
+        expect(SbGuaranteeExam.find(sb_guarantee_exam.id).status_id).to eq Status::ExamStatus::READY_FOR_EXAM.id
+      end
+    end
+
   end
 
   describe "データ登録確認" do
-      context "企業新規登録" do
+    context "クライアント一覧からの企業新規登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
       before {
         identify_company
         EntityProfile.delete_all
@@ -68,6 +172,41 @@ RSpec.describe IdentifyCompanyForm, type: :model do
         is_expected.to change { EntityProfile.all.size }.from(0).to(1)
       end
     end
+
+    context "保証審査一覧（保障元）からの企業新規登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      before {
+        identify_company.id = sb_guarantee_exam.id
+        EntityProfile.delete_all
+        Entity.delete_all
+      }
+
+      subject { -> {identify_company.create_entity} }
+      it "Entityテーブルのレコードが１件が登録される" do
+        is_expected.to change { Entity.all.size }.from(0).to(1)
+      end
+      it "EntityProfileテーブルのレコードが１件が登録される" do
+        is_expected.to change { EntityProfile.all.size }.from(0).to(1)
+      end
+    end
+
+    context "保証審査一覧（保障先）からの企業新規登録" do
+      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      before {
+        identify_company.id = sb_guarantee_exam.id
+        EntityProfile.delete_all
+        Entity.delete_all
+      }
+
+      subject { -> {identify_company.create_entity} }
+      it "Entityテーブルのレコードが１件が登録される" do
+        is_expected.to change { Entity.all.size }.from(0).to(1)
+      end
+      it "EntityProfileテーブルのレコードが１件が登録される" do
+        is_expected.to change { EntityProfile.all.size }.from(0).to(1)
+      end
+    end
   end
 end
-  

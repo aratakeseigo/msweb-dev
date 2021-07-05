@@ -13,36 +13,7 @@
  *= require_tree .
  *= require_self
  */
- @import "adminlte/adminlte.css";
  @import "bootstrap";
+ @import "adminlte/adminlte.css";
  @import "font-awesome-sprockets";
  @import "font-awesome";
-
-.maru {
-    height:40px;
-    width:40px;
-    border-radius:50%;
-    line-height:40px;
-    min-height: 40px;
-    min-width: 40px;
-    text-align:center;
-    background-color: #999;
-}
-
-
-/*　スクロールバーの実装 */
-.table-sticky {
-    display: block;
-    overflow-y: scroll;
-    height: calc(100vh/2);
-    border-collapse: collapse;
-}
-
-
-.table-sticky thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: #FFFFFF;
-    border-top:#FFFFFF;
-}

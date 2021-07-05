@@ -14,7 +14,7 @@ class Entity < ActiveRecord::Base
             address_before_choumei = Entity.sanitize_sql_like(address_before_choumei)
           end
           where(EntityProfile.arel_table[:address].matches("#{address_before_choumei}%"))
-          where(entity_profiles: { prefecture_code: prefecture&.code })
+            .where(entity_profiles: { prefecture_code: prefecture&.code })
         }
 
   def assign_house_company_code
@@ -117,6 +117,9 @@ class Entity < ActiveRecord::Base
                                                                          taxagency_corporate_number: nil,
                                                                          prefecture: nil,
                                                                          address: nil)
+    # 全部そろってない場合は検索しない
+    return {} if company_name.nil? or daihyo_name.nil? or taxagency_corporate_number.nil? or prefecture.nil? or address.nil?
+
     Entity.joins(:entity_profile)
       .select_adress_choumei(prefecture, address)
       .select_company_name_short(company_name)
@@ -126,7 +129,7 @@ class Entity < ActiveRecord::Base
 
   # 法人番号と住所の町名までで検索
   def self.select_by_company_no_and_address(taxagency_corporate_number: nil, prefecture: nil, address: nil)
-    return {} if taxagency_corporate_number.nil? or address.nil?
+    return {} if taxagency_corporate_number.nil? or address.nil? or prefecture.nil?
     Entity.joins(:entity_profile)
       .where(corporation_number: taxagency_corporate_number)
       .select_adress_choumei(prefecture, address)

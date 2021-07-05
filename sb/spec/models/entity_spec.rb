@@ -51,6 +51,7 @@ RSpec.describe Entity, type: :model do
         expect(
           Entity.select_by_company_no_and_address(
             taxagency_corporate_number: entity_other.corporation_number,
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
           ).count
         ).to eq 0
@@ -60,6 +61,7 @@ RSpec.describe Entity, type: :model do
       it "レコードが取得できない" do
         expect(
           Entity.select_by_company_no_and_address(
+            prefecture: entity.entity_profile.prefecture,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
           ).count
         ).to eq 0
@@ -84,6 +86,29 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity.corporation_number,
             prefecture: entity.entity_profile.prefecture,
             address: nil,
+          ).count
+        ).to eq 0
+      end
+    end
+    context "都道府県が一致しない場合" do
+      let(:entity_other) { build :entity } #保存しない
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_no_and_address(
+            taxagency_corporate_number: entity.corporation_number,
+            prefecture: entity_other.entity_profile.prefecture,
+            address: Utils::AddressUtils.substr_before_choumei("川崎市高津区９９－９９－９９"),
+          ).count
+        ).to eq 0
+      end
+    end
+    context "都道府県がnilの場合" do
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_no_and_address(
+            taxagency_corporate_number: entity.corporation_number,
+            prefecture: nil,
+            address: Utils::AddressUtils.substr_before_choumei("川崎市高津区９９－９９－９９"),
           ).count
         ).to eq 0
       end
@@ -226,25 +251,18 @@ RSpec.describe Entity, type: :model do
     let(:entity) { create :entity }
 
     context "全部一致する場合" do
+      let(:entities) {
+        Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+          taxagency_corporate_number: entity.corporation_number,
+          company_name: entity.entity_profile.corporation_name,
+          daihyo_name: entity.entity_profile.daihyo_name,
+          prefecture: entity.entity_profile.prefecture,
+          address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
+        )
+      }
       it "レコードが取得できる" do
-        expect(
-          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
-            taxagency_corporate_number: entity.corporation_number,
-            company_name: entity.entity_profile.corporation_name,
-            daihyo_name: entity.entity_profile.daihyo_name,
-            prefecture: entity.entity_profile.prefecture,
-            address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
-          ).count
-        ).to eq 1
-        expect(
-          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
-            taxagency_corporate_number: entity.corporation_number,
-            company_name: entity.entity_profile.corporation_name,
-            daihyo_name: entity.entity_profile.daihyo_name,
-            prefecture: entity.entity_profile.prefecture,
-            address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address + "９９－９９－９９"),
-          ).first.house_company_code
-        ).to eq entity.house_company_code
+        expect(entities.count).to eq 1
+        expect(entities.first.house_company_code).to eq entity.house_company_code
       end
     end
     context "法人番号だけ一致する場合" do
@@ -297,7 +315,83 @@ RSpec.describe Entity, type: :model do
             taxagency_corporate_number: entity_other.corporation_number,
             company_name: entity_other.entity_profile.corporation_name,
             daihyo_name: entity_other.entity_profile.daihyo_name,
+            prefecture: entity_other.entity_profile.prefecture,
+            address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address),
+          ).count
+        ).to eq 0
+      end
+    end
+    context "都道府県だけ一致する場合" do
+      let(:entity_other) { build :entity }
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+            taxagency_corporate_number: entity_other.corporation_number,
+            company_name: entity_other.entity_profile.corporation_name,
+            daihyo_name: entity_other.entity_profile.daihyo_name,
             prefecture: entity.entity_profile.prefecture,
+            address: Utils::AddressUtils.substr_before_choumei(entity_other.entity_profile.address),
+          ).count
+        ).to eq 0
+      end
+    end
+    context "法人番号だけnillの場合" do
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+            company_name: entity.entity_profile.corporation_name,
+            daihyo_name: entity.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
+            address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address),
+          ).count
+        ).to eq 0
+      end
+    end
+    context "会社名だけnillの場合" do
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+            taxagency_corporate_number: entity.corporation_number,
+            daihyo_name: entity.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
+            address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address),
+          ).count
+        ).to eq 0
+      end
+    end
+    context "代表名だけnillの場合" do
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+            taxagency_corporate_number: entity.corporation_number,
+            company_name: entity.entity_profile.corporation_name,
+            prefecture: entity.entity_profile.prefecture,
+            address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address),
+          ).count
+        ).to eq 0
+      end
+    end
+    context "住所だけnillの場合" do
+      let(:entity) { build :entity }
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+            taxagency_corporate_number: entity.corporation_number,
+            company_name: entity.entity_profile.corporation_name,
+            daihyo_name: entity.entity_profile.daihyo_name,
+            prefecture: entity.entity_profile.prefecture,
+            address: nil,
+          ).count
+        ).to eq 0
+      end
+    end
+    context "都道府県だけnillの場合" do
+      it "レコードが取得できない" do
+        expect(
+          Entity.select_by_company_name_and_daihyo_name_company_no_and_address(
+            taxagency_corporate_number: entity.corporation_number,
+            company_name: entity.entity_profile.corporation_name,
+            daihyo_name: entity.entity_profile.daihyo_name,
             address: Utils::AddressUtils.substr_before_choumei(entity.entity_profile.address),
           ).count
         ).to eq 0

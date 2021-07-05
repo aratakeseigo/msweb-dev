@@ -17,6 +17,8 @@ class SbClient < ApplicationRecord
   has_many :sb_guarantee_clients
   has_many :sb_guarantee_exams
   has_many :sb_guarantee_exam_requests
+  has_many :sb_guarantees
+  has_many :sb_guarantee_requests
 
   belongs_to :entity, optional: true
   belongs_to :sb_agent, optional: true
@@ -43,5 +45,9 @@ class SbClient < ApplicationRecord
 
   def set_default_values
     self.status ||= Status::ClientStatus::COMPANY_NOT_DETECTED
+  end
+
+  def sb_client_exam
+    sb_client_exams.available&.first
   end
 end
