@@ -34,98 +34,98 @@ RSpec.describe Guarantee::RegistrationForm, type: :model do
     }
   }
 
-  # describe "バリデーション" do
-  #   describe "審査依頼" do
-  #     context "審査依頼が０件の場合" do
-  #       # 何もしないでいきなりバリデーションをかける
-  #       it "無効である" do
-  #         expect(guarantee_form.valid?).to eq false
-  #         expect(guarantee_form.errors).to be_added(:exams, :not_empty)
-  #       end
-  #     end
-  #   end
-  #   context "審査の情報にバリデーションエラーがある場合" do
-  #     let(:exam_hash_over_words) {
-  #       exam_hash["transaction_contents"] = "あ" * 256
-  #       exam_hash
-  #     }
-  #     let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
-  #     it "無効である" do
-  #       expect(guarantee_form.valid?).to eq false
-  #       expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[1行目]"
-  #     end
-  #   end
-  #   context "保証元の情報にバリデーションエラーがある場合" do
-  #     let(:client_hash_ng) {
-  #       client_hash["cl_taxagency_corporate_number"] = "AAA"
-  #       client_hash
-  #     }
-  #     let!(:exam) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
-  #     it "無効である" do
-  #       expect(guarantee_form.valid?).to eq false
-  #       expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
-  #     end
-  #   end
-  #   context "保証先の情報にバリデーションエラーがある場合" do
-  #     let(:customer_hash_ng) {
-  #       customer_hash["tel"] = "神奈川県大和市福田４５００"
-  #       customer_hash
-  #     }
-  #     let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
-  #     it "無効である" do
-  #       expect(guarantee_form.valid?).to eq false
-  #       expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
-  #     end
-  #   end
-  #   describe "複数行にバリデーションエラーがある場合、エラー業を特定できるか" do
-  #     context "保証元の情報に複数のバリデーションエラーがある場合" do
-  #       let(:client_hash_ng) {
-  #         client_hash["cl_taxagency_corporate_number"] = "AAA"
-  #         client_hash
-  #       }
-  #       let!(:exam) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
-  #       let!(:exam2) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
-  #       let!(:exam3) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
-  #       it "行番号が指定されすべての行のエラーが表示される" do
-  #         expect(guarantee_form.valid?).to eq false
-  #         expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
-  #         expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[2行目]"
-  #         expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[3行目]"
-  #       end
-  #     end
-  #     context "保証先の情報に複数バリデーションエラーがある場合" do
-  #       let(:customer_hash_ng) {
-  #         customer_hash["tel"] = "神奈川県大和市福田４５００"
-  #         customer_hash
-  #       }
+  describe "バリデーション" do
+    describe "審査依頼" do
+      context "審査依頼が０件の場合" do
+        # 何もしないでいきなりバリデーションをかける
+        it "無効である" do
+          expect(guarantee_form.valid?).to eq false
+          expect(guarantee_form.errors).to be_added(:guarantees, :not_empty)
+        end
+      end
+    end
+    #   context "審査の情報にバリデーションエラーがある場合" do
+    #     let(:exam_hash_over_words) {
+    #       exam_hash["transaction_contents"] = "あ" * 256
+    #       exam_hash
+    #     }
+    #     let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+    #     it "無効である" do
+    #       expect(guarantee_form.valid?).to eq false
+    #       expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[1行目]"
+    #     end
+    #   end
+    #   context "保証元の情報にバリデーションエラーがある場合" do
+    #     let(:client_hash_ng) {
+    #       client_hash["cl_taxagency_corporate_number"] = "AAA"
+    #       client_hash
+    #     }
+    #     let!(:exam) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
+    #     it "無効である" do
+    #       expect(guarantee_form.valid?).to eq false
+    #       expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
+    #     end
+    #   end
+    #   context "保証先の情報にバリデーションエラーがある場合" do
+    #     let(:customer_hash_ng) {
+    #       customer_hash["tel"] = "神奈川県大和市福田４５００"
+    #       customer_hash
+    #     }
+    #     let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
+    #     it "無効である" do
+    #       expect(guarantee_form.valid?).to eq false
+    #       expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
+    #     end
+    #   end
+    #   describe "複数行にバリデーションエラーがある場合、エラー業を特定できるか" do
+    #     context "保証元の情報に複数のバリデーションエラーがある場合" do
+    #       let(:client_hash_ng) {
+    #         client_hash["cl_taxagency_corporate_number"] = "AAA"
+    #         client_hash
+    #       }
+    #       let!(:exam) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
+    #       let!(:exam2) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
+    #       let!(:exam3) { guarantee_form.add_exam(client_hash_ng, customer_hash, exam_hash) }
+    #       it "行番号が指定されすべての行のエラーが表示される" do
+    #         expect(guarantee_form.valid?).to eq false
+    #         expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[1行目]"
+    #         expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[2行目]"
+    #         expect(guarantee_form.errors.full_messages).to be_include "法人番号は数字のみで入力してください[3行目]"
+    #       end
+    #     end
+    #     context "保証先の情報に複数バリデーションエラーがある場合" do
+    #       let(:customer_hash_ng) {
+    #         customer_hash["tel"] = "神奈川県大和市福田４５００"
+    #         customer_hash
+    #       }
 
-  #       let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
-  #       let!(:exam2) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
-  #       let!(:exam3) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
-  #       it "行番号が指定されすべての行のエラーが表示される" do
-  #         expect(guarantee_form.valid?).to eq false
-  #         expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
-  #         expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[2行目]"
-  #         expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[3行目]"
-  #       end
-  #     end
-  #     context "審査の情報に複数バリデーションエラーがある場合" do
-  #       let(:exam_hash_over_words) {
-  #         exam_hash["transaction_contents"] = "あ" * 256
-  #         exam_hash
-  #       }
-  #       let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
-  #       let!(:exam2) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
-  #       let!(:exam3) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
-  #       it "無効である" do
-  #         expect(guarantee_form.valid?).to eq false
-  #         expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[1行目]"
-  #         expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[2行目]"
-  #         expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[3行目]"
-  #       end
-  #     end
-  #   end
-  # end
+    #       let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
+    #       let!(:exam2) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
+    #       let!(:exam3) { guarantee_form.add_exam(client_hash, customer_hash_ng, exam_hash) }
+    #       it "行番号が指定されすべての行のエラーが表示される" do
+    #         expect(guarantee_form.valid?).to eq false
+    #         expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[1行目]"
+    #         expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[2行目]"
+    #         expect(guarantee_form.errors.full_messages).to be_include "電話番号は10桁または11桁で入力してください[3行目]"
+    #       end
+    #     end
+    #     context "審査の情報に複数バリデーションエラーがある場合" do
+    #       let(:exam_hash_over_words) {
+    #         exam_hash["transaction_contents"] = "あ" * 256
+    #         exam_hash
+    #       }
+    #       let!(:exam) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+    #       let!(:exam2) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+    #       let!(:exam3) { guarantee_form.add_exam(client_hash, customer_hash, exam_hash_over_words) }
+    #       it "無効である" do
+    #         expect(guarantee_form.valid?).to eq false
+    #         expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[1行目]"
+    #         expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[2行目]"
+    #         expect(guarantee_form.errors.full_messages).to be_include "取り扱い商品は255文字以内で入力してください[3行目]"
+    #       end
+    #     end
+    #   end
+  end
 
   describe "ファイル読み込み" do
     let(:current_user) { create :internal_user }
