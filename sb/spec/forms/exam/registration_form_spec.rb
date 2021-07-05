@@ -38,6 +38,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       "other_companies_ammount" => "ＡＢ蛇内保証会社", # 保証会社名
       "other_guarantee_companies" => 900000, # 保証額
       "guarantee_amount_hope" => 5000000, # 保証希望額
+      "exam_search_key" => "AB1000",
     }
   }
 
@@ -418,6 +419,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
           expect(exam.other_companies_ammount).to eq 900000
           expect(exam.other_guarantee_companies).to eq "保証会社名"
           expect(exam.guarantee_amount_hope).to eq 5000000
+          expect(exam.exam_search_key).to eq "CI001"
         end
         it "保証先がファイルから正しく格納されている" do
           customer = form.exams.first.sb_guarantee_customer

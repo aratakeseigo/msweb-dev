@@ -10,17 +10,6 @@ create_table "ab_alarm_mail_settings", id: :integer, comment: "ID", options: "EN
   t.index ["user_id"], name: "user_id", unique: true
 end
 
-create_table "ab_alarm_monthly_totals", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "マスター毎の月次アラーム数合計", force: :cascade do |t|
-  t.integer "customer_master_id", null: false, comment: "取引先マスターID"
-  t.integer "alarm_level_1", comment: "アラームレベル1合計"
-  t.integer "alarm_level_2", comment: "アラームレベル2合計"
-  t.integer "alarm_level_3", comment: "アラームレベル3合計"
-  t.date "target_month", comment: "対象月"
-  t.datetime "created_at", null: false, comment: "登録日時"
-  t.datetime "updated_at", null: false, comment: "更新日時"
-  t.index ["customer_master_id", "target_month"], name: "cmid_tm_index", unique: true
-end
-
 create_table "ab_alarm_totals", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "半期ごとの取引先別アラーム数合計", force: :cascade do |t|
   t.integer "customer_master_id", null: false, comment: "取引先ID"
   t.integer "alarm_level_1", comment: "アラームレベル1合計"
@@ -153,6 +142,7 @@ create_table "accs_hosho_masters", id: :integer, comment: "ID", options: "ENGINE
   t.integer "hosho_ryo", comment: "保証料（円）"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["client_no", "customer_no"], name: "IDX_ACS_HSO_KG"
   t.index ["customer_no"], name: "IDX_ACCS_HOSHO_KG"
   t.index ["hosho_no"], name: "IDX_ACCS_HOSHO"
 end
@@ -237,7 +227,9 @@ create_table "accs_sinsa_kekkas", primary_key: "ID", id: :integer, comment: "ID"
   t.string "oys_hp", comment: "親会社HP"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["client_code", "corporate_code"], name: "IDX_ACS_SK_KG"
   t.index ["corporate_code"], name: "IDX_ACCS_SK"
+  t.index ["shinsa_code"], name: "IDX_ACS_SK_CD"
 end
 
 create_table "alarm_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報の候補", force: :cascade do |t|
@@ -248,6 +240,8 @@ create_table "alarm_candidates", id: :integer, comment: "ID", options: "ENGINE=I
   t.integer "alarm_id", comment: "承認後のアラームのID"
   t.integer "candidate_status", default: 0, comment: "承認ステータス 0:未承認 1:アラーム承認 2:アラーム破棄"
   t.integer "alarm_level", comment: "アラームレベル"
+  t.string "association_code_1", limit: 4, comment: "関連付けコード１"
+  t.string "association_code_2", limit: 4, comment: "関連付けコード２"
   t.string "alarm_source_code", limit: 4, comment: "アラームソースコード"
   t.string "detail_code_1", limit: 4, comment: "内容コード１"
   t.string "detail_code_2", limit: 4, comment: "内容コード２"
@@ -264,6 +258,8 @@ create_table "alarm_candidates", id: :integer, comment: "ID", options: "ENGINE=I
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.boolean "review_check_flag", default: false, null: false, comment: "レビューを確認したかどうか 0:未確認 1:確認済み"
   t.integer "reviewer_judge_id", comment: "レビューを実行した人の judge.id"
+  t.text "title", comment: "タイトル"
+  t.text "sub_title", comment: "サブタイトル"
   t.index ["customer_master_id"], name: "customer_master_id"
   t.index ["judge_id"], name: "judge_id"
 end
@@ -288,11 +284,11 @@ end
 create_table "alarms", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "アラーム情報", force: :cascade do |t|
   t.integer "customer_master_id", comment: "取引先マスターID"
   t.integer "alarm_level", comment: "アラームレベル"
+  t.string "association_code_1", limit: 4, comment: "関連付けコード１"
+  t.string "association_code_2", limit: 4, comment: "関連付けコード２"
   t.string "alarm_source_code", limit: 4, comment: "アラームソースコード"
   t.string "detail_code_1", limit: 4, comment: "内容コード１"
   t.string "detail_code_2", limit: 4, comment: "内容コード２"
-  t.string "association_code_1", limit: 4, comment: "関連コード１"
-  t.string "association_code_2", limit: 4, comment: "関連コード２"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.text "link", comment: "リンク"
@@ -304,6 +300,8 @@ create_table "alarms", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFA
   t.boolean "text_extraction_executed_flag", default: false, null: false, comment: "本文抽出実行フラグ（1:実行済み、0:未実行)"
   t.text "text_extraction_value", comment: "本文自体を保持"
   t.text "text_extraction_word_set", comment: "カンマ区切りwordセット（名詞、動詞、形容詞）"
+  t.index ["alarm_level"], name: "idx_as_al"
+  t.index ["created_at"], name: "idx_as_c"
   t.index ["customer_master_id"], name: "fk_rails_3ee6a3ebcd"
 end
 
@@ -324,6 +322,19 @@ create_table "alliance_members", id: :integer, comment: "ID", options: "ENGINE=I
   t.index ["member_id"], name: "member_id"
 end
 
+create_table "api_access_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "APIアクセスログ", force: :cascade do |t|
+  t.datetime "called_at", comment: "呼び出し日時"
+  t.string "token", comment: "トークン"
+  t.string "ip_address", comment: "IPアドレス"
+  t.integer "user_id", comment: "ユーザーID"
+  t.integer "member_id", comment: "会員ID"
+  t.string "method", comment: "HTTPメソッド"
+  t.string "path", comment: "アクセス先パス"
+  t.text "parameters", comment: "リクエストパラメータ"
+  t.integer "response_code", comment: "レスポンスコード"
+  t.datetime "created_at", comment: "作成日時"
+end
+
 create_table "blogs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ブログ", force: :cascade do |t|
   t.string "title", limit: 40, null: false, comment: "タイトル"
   t.text "link", null: false, comment: "リンク"
@@ -336,7 +347,7 @@ end
 
 create_table "by_agents", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY取次店", force: :cascade do |t|
   t.string "agent_code", limit: 3, comment: "取次店コード"
-  t.string "agent_name", limit: 50, null: false, comment: "取次店名"
+  t.string "agent_name", limit: 100, null: false, comment: "取次店名"
   t.integer "agent_type", null: false, comment: "取次店区分\t1:一般・共同商品、2:再保証"
   t.float "init_charge_rate", comment: "初回保証料 率"
   t.integer "init_charge_min", comment: "初回保証料 最低額"
@@ -344,6 +355,7 @@ create_table "by_agents", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.float "init_reassurance_rate", comment: "初回再保証料 率"
   t.integer "init_reassurance_min", comment: "初回再保証料 最低額"
   t.integer "init_reassurance_default", comment: "初回再保証料 固定額"
+  t.float "fee_rate", comment: "手数料 率"
   t.float "yearly_charge_rate", comment: "年間保証料 率"
   t.integer "yearly_charge_min", comment: "年間保証料 最低額"
   t.integer "yearly_charge_def", comment: "年間保証料 固定額"
@@ -354,10 +366,21 @@ create_table "by_agents", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.integer "restoration_costs", comment: "原状回復費用"
   t.integer "removal_remnant_costs", comment: "残置物撤去費用"
   t.integer "litigation_costs", comment: "訴訟費用"
-  t.boolean "num_set_flag", comment: "番号設定フラグ\ttrue:必須"
+  t.boolean "num_set_flag", default: false, comment: "番号設定フラグ\ttrue:必須"
+  t.boolean "charge_advance_flag", default: false, comment: "保証料前受フラグ\ttrue:前受"
   t.integer "approval_num", comment: "稟議/承認番号"
   t.text "mail_address", comment: "メール送付先"
   t.string "zip_password", limit: 20, comment: "ZIPパスワード"
+  t.integer "month_term", comment: "期間月数"
+  t.integer "guarantee_term", comment: "保証期間月数"
+  t.string "init_billing_target", limit: 1, comment: "初回請求 対象項目\t1:発行日、2:保証開始日"
+  t.integer "init_billing_month", comment: "初回請求 月数"
+  t.string "init_billing_day_type", limit: 1, comment: "初回請求 日種別\t0：入力値、1：末日、2：当日"
+  t.integer "init_billing_day", comment: "初回請求 日"
+  t.string "year_billing_target", limit: 1, comment: "年間請求 対象項目\t1:発行日、2:保証開始日"
+  t.integer "year_billing_month", comment: "年間請求 月数"
+  t.string "year_billing_day_type", limit: 1, comment: "年間請求 日種別\t0：入力値、1：末日、2：当日"
+  t.integer "year_billing_day", comment: "年間請求 日"
   t.text "memo", comment: "メモ"
   t.integer "employee_id", comment: "入力者ID"
   t.boolean "delete_flag", comment: "削除フラグ"
@@ -366,10 +389,34 @@ create_table "by_agents", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.index ["employee_id"], name: "FK_BY_AGT_EMPLOYEE"
 end
 
+create_table "by_budgets", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY予算", force: :cascade do |t|
+  t.integer "agent_type", null: false, comment: "取次店区分    1:一般・共同商品、2:再保証"
+  t.string "budget_year_month", limit: 6, null: false, comment: "年月"
+  t.integer "budget_amount", comment: "予算金額"
+  t.integer "budget_number", comment: "予算件数"
+  t.integer "employee_id", comment: "入力者ID"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["agent_type", "budget_year_month"], name: "agent_type", unique: true
+  t.index ["employee_id"], name: "FK_BY_BUD_EMPLOYEE"
+end
+
+create_table "by_customer_urls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人URL", force: :cascade do |t|
+  t.integer "by_customer_id", comment: "申込人ID"
+  t.integer "url_type", null: false, comment: "URL区分\t1：ホームページ"
+  t.string "url", limit: 1000, null: false, comment: "URL"
+  t.text "memo", comment: "メモ"
+  t.integer "employee_id", comment: "入力者ID"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["by_customer_id"], name: "FK_BY_CST_URL_CUSTOMER"
+  t.index ["employee_id"], name: "FK_BY_CST_URL_EMPLOYEE"
+end
+
 create_table "by_customers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人", force: :cascade do |t|
   t.integer "entity_id", comment: "エンティティID"
   t.string "customer_name", limit: 50, null: false, comment: "申込人名(顧客入力)"
-  t.integer "prefecture_code", comment: "都道県コード"
+  t.integer "prefecture_code", default: 0, comment: "都道県コード"
   t.string "address", comment: "住所"
   t.string "daihyo_name", limit: 30, comment: "代表者名"
   t.string "daihyo_name2", limit: 30, comment: "代表者名2"
@@ -377,6 +424,7 @@ create_table "by_customers", id: :integer, comment: "ID", options: "ENGINE=InnoD
   t.string "daihyo_name4", limit: 30, comment: "代表者名4"
   t.string "daihyo_name5", limit: 30, comment: "代表者名5"
   t.string "daihyo_tel", limit: 11, comment: "代表電話番号"
+  t.string "daihyo_tel2", limit: 11, comment: "代表電話番号2"
   t.string "established", limit: 20, comment: "設立年月"
   t.bigint "capital", comment: "資本金"
   t.bigint "annual_sales", comment: "年商"
@@ -390,12 +438,25 @@ create_table "by_customers", id: :integer, comment: "ID", options: "ENGINE=InnoD
   t.text "memo", comment: "メモ"
   t.integer "employee_id", comment: "入力者ID"
   t.integer "lock_employee_id", comment: "ロック保持者ID"
+  t.integer "created_employee_id", comment: "登録者ID"
   t.boolean "temporarily_save_flag", comment: "一時保存フラグ"
   t.boolean "delete_flag", comment: "削除フラグ"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.index ["employee_id"], name: "FK_BY_CST_EMPLOYEE"
   t.index ["entity_id"], name: "FK_BY_CST_ENTITY"
+end
+
+create_table "by_examination_urls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY申込人調査URL", force: :cascade do |t|
+  t.integer "by_examination_id", comment: "申込人調査ID"
+  t.integer "url_type", null: false, comment: "URL区分    1：BL情報、2：破産等情報、3：反社情報"
+  t.string "url", limit: 1000, null: false, comment: "URL"
+  t.text "memo", comment: "メモ"
+  t.integer "employee_id", comment: "入力者ID"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["by_examination_id"], name: "FK_BY_EXM_URL_EXAMINATION"
+  t.index ["employee_id"], name: "FK_BY_EXM_URL_EMPLOYEE"
 end
 
 create_table "by_examinations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY審査", force: :cascade do |t|
@@ -445,6 +506,7 @@ create_table "by_examinations", id: :integer, comment: "ID", options: "ENGINE=In
   t.integer "fin3_profits", comment: "財務３純利益(万円)"
   t.integer "employee_id", comment: "入力者ID"
   t.integer "lock_employee_id", comment: "ロック保持者ID"
+  t.integer "created_employee_id", comment: "登録者ID"
   t.boolean "delete_flag", comment: "削除フラグ"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
@@ -455,6 +517,7 @@ end
 create_table "by_guarantees", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY保証", force: :cascade do |t|
   t.integer "by_thing_id", null: false, comment: "物件ID"
   t.integer "by_customer_id", null: false, comment: "申込人ID"
+  t.integer "renewal_id", comment: "更新保証ID"
   t.date "start_date", comment: "保証開始日"
   t.date "end_date", comment: "保証終了日"
   t.string "accounting_month", limit: 6, comment: "売上計上年月"
@@ -464,15 +527,40 @@ create_table "by_guarantees", id: :integer, comment: "ID", options: "ENGINE=Inno
   t.integer "deposit_ammount", comment: "入金額"
   t.date "delivery_date", comment: "請求書送付日"
   t.date "deposit_date", comment: "入金日"
+  t.integer "sep_deposit_ammount_1", comment: "分割入金額１"
+  t.date "sep_delivery_date_1", comment: "分割請求書送付日１"
+  t.date "sep_deposit_date_1", comment: "分割入金日１"
+  t.integer "sep_deposit_ammount_2", comment: "分割入金額２"
+  t.date "sep_delivery_date_2", comment: "分割請求書送付日２"
+  t.date "sep_deposit_date_2", comment: "分割入金日２"
+  t.integer "sep_deposit_ammount_3", comment: "分割入金額３"
+  t.date "sep_delivery_date_3", comment: "分割請求書送付日３"
+  t.date "sep_deposit_date_3", comment: "分割入金日３"
   t.string "deposit_status", limit: 1, default: "0", comment: "入金ステータス\t0:未、1:一部、2:全"
+  t.boolean "first_flag", default: false, comment: "初回保証フラグ\ttrue:初回分"
+  t.boolean "add_flag", default: false, comment: "追加保証フラグ\ttrue:追加分"
+  t.boolean "renewal_flag", default: false, null: false, comment: "更新済フラグ"
   t.text "memo", comment: "メモ"
   t.integer "employee_id", comment: "入力者ID"
   t.integer "lock_employee_id", comment: "ロック保持者ID"
+  t.integer "created_employee_id", comment: "登録者ID"
   t.boolean "delete_flag", comment: "削除フラグ"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.index ["by_thing_id"], name: "FK_BY_GRT_THING"
   t.index ["employee_id"], name: "FK_BY_GRT_EMPLOYEE"
+end
+
+create_table "by_thing_urls", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY物件URL", force: :cascade do |t|
+  t.integer "by_thing_id", comment: "物件ID"
+  t.integer "url_type", null: false, comment: "URL区分    1：緊急連絡先、2：連帯保証人"
+  t.string "url", limit: 1000, null: false, comment: "URL"
+  t.text "memo", comment: "メモ"
+  t.integer "employee_id", comment: "入力者ID"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["by_thing_id"], name: "FK_BY_THN_URL_THING"
+  t.index ["employee_id"], name: "FK_BY_THN_URL_EMPLOYEE"
 end
 
 create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "BY物件", force: :cascade do |t|
@@ -481,7 +569,7 @@ create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.string "thing_name", limit: 50, comment: "物件名"
   t.string "base_agent_name", limit: 50, comment: "再保証取次店名"
   t.integer "thing_type", comment: "物件種別\t1:店舗、2:事務所"
-  t.integer "prefecture_code", comment: "都道県コード"
+  t.integer "prefecture_code", default: 0, comment: "都道県コード"
   t.string "address", comment: "住所"
   t.string "industry_code", limit: 2, comment: "業種コード"
   t.integer "deposit", comment: "保証金額"
@@ -498,8 +586,11 @@ create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.float "init_charge_rate", comment: "初回保証料 率"
   t.integer "init_reassurance", comment: "初回再保証料"
   t.float "init_reassurance_rate", comment: "初回再保証料 率"
+  t.integer "fee", comment: "手数料"
+  t.float "fee_rate", comment: "手数料 率"
   t.integer "yearly_charge", comment: "年間保証料"
   t.float "yearly_charge_rate", comment: "年間保証料 率"
+  t.boolean "yc_manual_def_flag", comment: "年間保証料固定フラグ"
   t.integer "yearly_reassurance", comment: "年間再保証料"
   t.float "yearly_reassurance_rate", comment: "年間再保証料 率"
   t.integer "restoration_costs", comment: "原状回復費用"
@@ -511,12 +602,18 @@ create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.string "emergency_contact", limit: 30, comment: "緊急連絡先"
   t.string "emergency_contact_tel", limit: 11, comment: "緊急連絡先電話番号"
   t.text "emergency_contact_memo", comment: "緊急連絡先メモ"
+  t.string "emergency_contact2", limit: 30, comment: "緊急連絡先2"
+  t.string "emergency_contact_tel2", limit: 11, comment: "緊急連絡先電話番号2"
+  t.text "emergency_contact_memo2", comment: "緊急連絡先メモ2"
   t.string "emergency_contact_url1", limit: 1000, comment: "緊急連絡先URL1"
   t.string "emergency_contact_url2", limit: 1000, comment: "緊急連絡先URL2"
   t.string "emergency_contact_url3", limit: 1000, comment: "緊急連絡先URL3"
   t.string "rentai_name", limit: 30, comment: "連帯保証人名"
   t.string "rentai_tel", limit: 11, comment: "連帯保証人電話番号"
   t.text "rentai_memo", comment: "連帯保証人メモ"
+  t.string "rentai_name2", limit: 30, comment: "連帯保証人名2"
+  t.string "rentai_tel2", limit: 11, comment: "連帯保証人電話番号2"
+  t.text "rentai_memo2", comment: "連帯保証人メモ2"
   t.string "rentai_url1", limit: 1000, comment: "連帯保証人URL1"
   t.string "rentai_url2", limit: 1000, comment: "連帯保証人URL2"
   t.string "rentai_url3", limit: 1000, comment: "連帯保証人URL3"
@@ -526,8 +623,10 @@ create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.text "communicate_memo", comment: "連絡メモ"
   t.float "substance_deposit", comment: "敷金/保証金額（実質）"
   t.boolean "pass_flag", comment: "可決フラグ\ttrue:可決、false:否決"
+  t.date "reception_date", comment: "受付日"
   t.date "approval_request_date", comment: "稟議申請日"
-  t.date "approval_date", comment: "承認日"
+  t.date "approval_date", comment: "決裁日"
+  t.date "guarantee_cancel_date", comment: "保証解約日"
   t.string "reject_reason_code1", limit: 2, comment: "否決理由コード1"
   t.string "reject_reason_code2", limit: 2, comment: "否決理由コード2"
   t.text "approval_reason_text", comment: "決済理由 文章"
@@ -535,14 +634,18 @@ create_table "by_things", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.string "agent_issue_num", limit: 20, comment: "取次店発行番号"
   t.boolean "combined_housing", default: false, comment: "兼住宅フラグ"
   t.text "approval_condition", comment: "決済条件"
+  t.boolean "approval_condition_only_flag", default: false, comment: "回答書：決裁条件のみ表示"
   t.boolean "export_flag", default: false, comment: "出力フラグ\ttrue:済、false:未"
   t.string "status", limit: 2, null: false, comment: "ステータス"
-  t.integer "approval_request_id", comment: "稟議申請者ID"
+  t.integer "first_approval_request_id", comment: "初回稟議申請者ID"
+  t.integer "latest_approval_request_id", comment: "直近稟議申請者ID"
   t.boolean "cancel_flag", comment: "キャンセルフラグ    true:キャンセル"
   t.integer "pre_by_customer_id", comment: "前回申込人ID"
-  t.integer "authorizer_id", comment: "決裁者ID"
+  t.integer "first_authorizer_id", comment: "初回決裁者ID"
+  t.integer "latest_authorizer_id", comment: "直近決裁者ID"
   t.integer "employee_id", comment: "入力者ID"
   t.integer "lock_employee_id", comment: "ロック保持者ID"
+  t.integer "created_employee_id", comment: "登録者ID"
   t.boolean "delete_flag", comment: "削除フラグ"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
@@ -620,6 +723,24 @@ create_table "company_scores", id: :integer, comment: "ID", options: "ENGINE=Inn
   t.index ["entity_id"], name: "IDX_CSCR_ENT_ID"
 end
 
+create_table "companyinfo_entity_delete_lists", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "companyinfo用entity非表示リスト", force: :cascade do |t|
+  t.integer "entity_id", null: false, comment: "entity_id"
+  t.boolean "delete_flag", default: true, comment: "削除フラグ"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["entity_id"], name: "entity_id", unique: true
+end
+
+create_table "companyinfo_task_es_updates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "companyinfo用EntitiesテーブルEs更新バッチ履歴", force: :cascade do |t|
+  t.datetime "started_at", null: false, comment: "開始日時"
+  t.datetime "ended_at", comment: "Entity更新終了日時"
+  t.integer "record_count", comment: "Entity更新件数"
+  t.integer "delete_record_count", comment: "Elasticsarch削除件数"
+  t.integer "update_record_count", comment: "Elasticsarch更新件数"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+end
+
 create_table "contact_sikihou_datas", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "上場四季報情報", force: :cascade do |t|
   t.integer "entity_id", comment: "エンティティID"
   t.integer "securities_code", comment: "証券コード"
@@ -632,6 +753,27 @@ create_table "contact_sikihou_datas", id: :integer, comment: "ID", options: "ENG
   t.string "memo", comment: "メモ"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
+end
+
+create_table "corporate_registration_histories", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人登記情報変更履歴(変更後の値)", force: :cascade do |t|
+  t.integer "entity_id", null: false, comment: "エンティティID"
+  t.integer "process", null: false, comment: "処理区分"
+  t.datetime "change_date", null: false, comment: "変更年月日"
+  t.string "corporation_name", null: false, comment: "法人名"
+  t.string "corporation_name_short", comment: "法人名略"
+  t.string "corporation_name_kana", comment: "会社名カナ"
+  t.string "corporation_name_compare", comment: "会社名比較用"
+  t.string "zip_code", comment: "郵便番号"
+  t.integer "prefecture_code", comment: "都道府県コード"
+  t.string "address", comment: "住所"
+  t.datetime "close_date", comment: "登記記録の閉鎖等年月日"
+  t.text "close_cause", comment: "登記記録の閉鎖等の事由"
+  t.string "successor_corporate_number", comment: "承継先法人番号"
+  t.text "change_cause", comment: "変更事由の詳細"
+  t.datetime "api_update_date", comment: "更新年月日(法人APIに登録された日)"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["entity_id", "updated_at"], name: "IDX_CRH_EI_UPDATED_AT"
 end
 
 create_table "corporation_watchers", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "法人ウォッチャー", force: :cascade do |t|
@@ -782,6 +924,14 @@ create_table "crawl_twitter_check_lists", id: :integer, comment: "ID", options: 
   t.index ["customer_master_id"], name: "fk_rails_c16ce0bdc2"
 end
 
+create_table "crawler_filter_words", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", force: :cascade do |t|
+  t.integer "customer_master_id", null: false, comment: "取引先マスターID"
+  t.boolean "is_remove_filter", default: false, null: false, comment: "除外フラグ 0:除外しない 1:除外する"
+  t.boolean "is_priority_filter", default: false, null: false, comment: "優先フラグ 0:優先しない 1:優先する"
+  t.string "word", limit: 128, null: false, comment: "フィルター対象とする文字列"
+  t.index ["customer_master_id"], name: "fk_cfw_customer_master_id"
+end
+
 create_table "crawler_logs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "クローラーログ", force: :cascade do |t|
   t.integer "crawler_type", null: false, comment: "クローラーの種類"
   t.string "exec_options", default: "", null: false, comment: "クローラー起動時のオプション"
@@ -917,10 +1067,10 @@ create_table "customers", id: :integer, comment: "ID", options: "ENGINE=InnoDB D
   t.boolean "recommended_flag", default: false, comment: "レコメンド判別フラグ"
   t.boolean "robo_past_flag", default: false, comment: "ロボロボ過去審査フラグ"
   t.datetime "related_to_cm_at", comment: "取引先設定完了日時"
-  t.datetime "alarm_investigate_limit", null: false, comment: "過去調査有効期限"
+  t.datetime "alarm_investigate_limit", default: "2000-01-01 00:00:00", null: false, comment: "過去調査有効期限"
   t.datetime "alarm_investigate_before_limit", comment: "過去調査有効期限(閲覧期限解除前)"
   t.index ["customer_master_id"], name: "idx_cs_cmi"
-  t.index ["member_id"], name: "fk_rails_ca7932d44f"
+  t.index ["member_id", "delete_flag"], name: "idx_cs_md"
 end
 
 create_table "dialogs", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "顧客対話", force: :cascade do |t|
@@ -953,8 +1103,10 @@ create_table "entities", id: :integer, comment: "ID", options: "ENGINE=InnoDB DE
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.index ["corporation_number"], name: "IDX_E_CORPORATION_NUMBER"
+  t.index ["created_at"], name: "IDX_E_CREATED_AT"
   t.index ["house_company_code"], name: "IDX_E_HOUSE_COMPANY_CODE"
   t.index ["securities_code"], name: "IDX_E_SECURITIES_CODE"
+  t.index ["updated_at"], name: "IDX_E_UPDATED_AT"
 end
 
 create_table "entity_candidates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "エンティティ候補", force: :cascade do |t|
@@ -1001,6 +1153,7 @@ create_table "entity_profiles", id: :integer, comment: "ID", options: "ENGINE=In
   t.index ["corporation_name_compare"], name: "IDX_EP_CORPORATION_NAME_COMPARE"
   t.index ["corporation_name_short"], name: "FIDX_EP_NAME", type: :fulltext
   t.index ["corporation_name_short"], name: "IDX_EP_NAME_SHORT"
+  t.index ["entity_id", "updated_at"], name: "IDX_EF_EI_UPDATED_AT"
   t.index ["entity_id"], name: "IDX_ENTITY_ID"
   t.index ["prefecture_code", "address"], name: "IDX_EP_ADDRESS"
 end
@@ -1029,10 +1182,9 @@ end
 
 create_table "entity_task_es_updates", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "EntitiesテーブルEs更新バッチ履歴", force: :cascade do |t|
   t.datetime "started_at", null: false, comment: "開始日時"
-  t.datetime "entity_ended_at", comment: "Entity更新終了日時"
   t.datetime "entity_profile_ended_at", comment: "EntityProfile更新終了日時"
-  t.integer "entity_count", comment: "Entity更新件数"
-  t.integer "entity_profile_count", comment: "EntityProfile更新件数"
+  t.integer "entity_profile_create_count", comment: "EntityProfile新規作成件数"
+  t.integer "entity_profile_update_count", comment: "EntityProfile更新件数"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
 end
@@ -1074,6 +1226,14 @@ create_table "exclude_entities", id: :integer, comment: "ID", options: "ENGINE=I
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.index ["entity_id"], name: "entity_id"
+end
+
+create_table "fixed_days", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "固定日", force: :cascade do |t|
+  t.integer "fix_type", null: false, comment: "種別\t1:祝日"
+  t.date "target_date", null: false, comment: "対象日"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["fix_type", "target_date"], name: "IDX_FIX_DAY"
 end
 
 create_table "fixed_phrase_masters", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "定型文マスター", force: :cascade do |t|
@@ -1298,10 +1458,12 @@ create_table "kr_sales", id: :integer, comment: "ID", options: "ENGINE=InnoDB DE
   t.integer "sale_type", null: false, comment: "売上種別\t1：MNT、2：PS定期、3：PS追加課金、9：その他"
   t.string "plan_name", limit: 30, comment: "プラン名"
   t.string "target_year_month", limit: 6, null: false, comment: "対象年月"
+  t.string "end_year_month", limit: 6, comment: "終了年月"
   t.integer "payment_type_code", null: false, comment: "支払方法コード\t1：カード、2：振替、3：振込"
   t.integer "payment_unit_type_code", null: false, comment: "支払単位\t1：月、2：年"
   t.integer "create_type", null: false, comment: "作成種別\t1：自動、2：手動"
   t.integer "sale_amount", null: false, comment: "売上額"
+  t.date "req_confirm_date", comment: "要求確定日"
   t.integer "ps_point_id", comment: "PSポイントID"
   t.date "sale_date", null: false, comment: "売上日"
   t.integer "status", default: 0, null: false, comment: "状態\t0：未入金、1：一部入金、2：入金済"
@@ -1476,6 +1638,51 @@ create_table "notifications", id: :integer, comment: "ID", options: "ENGINE=Inno
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
   t.index ["id", "start_date"], name: "IDX_NOTIFICATION"
+end
+
+create_table "oauth_access_grants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "oauth_access_grants", force: :cascade do |t|
+  t.integer "resource_owner_id", null: false, comment: "リソースオーナーID"
+  t.bigint "application_id", null: false, comment: "アプリケーションID"
+  t.string "token", null: false, comment: "トークン"
+  t.integer "expires_in", null: false, comment: "有効時間（秒）"
+  t.text "redirect_uri", null: false, comment: "リダイレクトURI"
+  t.datetime "created_at", null: false, comment: "作成日時"
+  t.datetime "revoked_at", comment: "更新日時"
+  t.string "scopes", null: false, comment: "スコープ"
+  t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
+  t.index ["resource_owner_id"], name: "fk_rails_330c32d8d9"
+  t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
+end
+
+create_table "oauth_access_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "oauth_access_tokens", force: :cascade do |t|
+  t.integer "resource_owner_id", comment: "リソースオーナーID"
+  t.bigint "application_id", null: false, comment: "アプリケーションID"
+  t.string "token", null: false, comment: "トークン"
+  t.string "refresh_token", comment: "リフレッシュトークン"
+  t.integer "expires_in", comment: "有効時間（秒）"
+  t.datetime "revoked_at", comment: "取消日時"
+  t.datetime "created_at", null: false, comment: "作成日時"
+  t.string "scopes", comment: "スコープ"
+  t.string "previous_refresh_token", default: "", null: false, comment: "前回リフレッシュトークン"
+  t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
+  t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
+  t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
+  t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+end
+
+create_table "oauth_applications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "oauth_applications", force: :cascade do |t|
+  t.string "name", null: false, comment: "アプリケーション名"
+  t.string "uid", null: false, comment: "アプリケーションID"
+  t.string "secret", null: false, comment: "クライアントシークレット"
+  t.text "redirect_uri", null: false, comment: "リダイレクトID"
+  t.string "scopes", null: false, comment: "スコープ"
+  t.boolean "confidential", default: true, null: false, comment: "機密フラグ"
+  t.datetime "created_at", null: false, comment: "作成日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.integer "owner_id", comment: "アプリケーションオーナーID"
+  t.string "owner_type", comment: "アプリケーションオーナータイプ（型）"
+  t.index ["owner_id", "owner_type"], name: "index_oauth_applications_on_owner_id_and_owner_type"
+  t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
 end
 
 create_table "out_sb_requests", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "外部ＳＢ審査要求情報", force: :cascade do |t|
@@ -1776,6 +1983,8 @@ create_table "relational_alarm_candidates", id: :integer, comment: "ID", options
   t.integer "candidate_status", default: 0, comment: "アラーム候補が承認されたかどうか"
   t.integer "customer_master_id", null: false, comment: "取引先マスターID"
   t.integer "alarm_level", comment: "アラームレベル"
+  t.string "association_code_1", limit: 4, comment: "関連付けコード１"
+  t.string "association_code_2", limit: 4, comment: "関連付けコード２"
   t.string "alarm_source_code", limit: 4, comment: "アラームソースコード"
   t.string "detail_code_1", limit: 4, comment: "内容コード１"
   t.string "detail_code_2", limit: 4, comment: "内容コード２"
@@ -1845,6 +2054,74 @@ create_table "salesforce_users", id: :integer, comment: "ID", options: "ENGINE=I
   t.boolean "available_flag", default: true, null: false, comment: "有効フラグ"
   t.datetime "created_at", null: false, comment: "登録日時"
   t.datetime "updated_at", null: false, comment: "更新日時"
+end
+
+create_table "sb_exam_requests", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ＳＢ審査依頼情報", force: :cascade do |t|
+  t.integer "customer_id", comment: "取引先ID"
+  t.string "client_code", limit: 11, null: false, comment: "クライアントコード"
+  t.string "outside_id", limit: 20, null: false, comment: "外部ID"
+  t.string "corporation_name", limit: 200, null: false, comment: "法人名"
+  t.string "corporation_number", limit: 13, comment: "法人番号"
+  t.string "house_company_code", comment: "内部企業コード"
+  t.integer "pref_code", comment: "都道府県コード"
+  t.string "address", comment: "住所"
+  t.string "daihyo", limit: 50, comment: "代表者名"
+  t.string "tel", limit: 11, comment: "電話番号"
+  t.string "product", comment: "商品"
+  t.string "payment_site", limit: 20, comment: "支払サイト"
+  t.string "transaction_history", limit: 20, comment: "取引歴"
+  t.string "delay_exist", limit: 1, comment: "遅延有無"
+  t.string "delay_content", limit: 100, comment: "遅延内容"
+  t.string "cond_change_exist", limit: 1, comment: "決済条件変更有無"
+  t.string "cond_change_content", limit: 100, comment: "決済条件変更内容"
+  t.string "client_memo", limit: 200, comment: "先方連絡"
+  t.integer "desired_amount_ref", comment: "参考希望額"
+  t.integer "desired_amount", comment: "希望額"
+  t.integer "other_amount", comment: "他社保証枠"
+  t.date "request_date", comment: "依頼日"
+  t.date "invoice_date", comment: "請求書発行日"
+  t.date "payment_date", comment: "支払日"
+  t.string "status", limit: 1, comment: "状態"
+  t.text "memo", comment: "メモ"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["client_code"], name: "IDX_SER_CLT_CD"
+  t.index ["corporation_name"], name: "IDX_SER_CORP_NM"
+  t.index ["customer_id"], name: "customer_id"
+end
+
+create_table "sb_examinations", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "ＳＢ審査情報", force: :cascade do |t|
+  t.integer "sb_exam_request_id", comment: "ＳＢ審査依頼情報ID"
+  t.integer "suggest_amount", comment: "限度額案"
+  t.integer "fix_amount", comment: "決定限度額"
+  t.string "pass_code", limit: 1, comment: "可決コード"
+  t.string "reassurance_exist", limit: 1, comment: "再保険有無"
+  t.integer "reassurance", comment: "再保険額"
+  t.string "reassurance_gmo_exist", limit: 1, comment: "GMO再保険有無"
+  t.integer "reassurance_gmo", comment: "GMO再保険額"
+  t.string "tsr_code", limit: 11, comment: "TSRコード"
+  t.string "tsr_attach", limit: 1, comment: "TSR添付"
+  t.string "tsr_scoer", limit: 10, comment: "TSR点数"
+  t.string "tsr_memo", comment: "TSR備考"
+  t.string "tsr_doc_path", comment: "TSR資料パス"
+  t.string "touki_memo", comment: "登記備考"
+  t.string "touki_doc_path", comment: "登記資料パス"
+  t.string "tdb_report", limit: 20, comment: "帝国情報"
+  t.string "tdb_scoer", limit: 20, comment: "帝国点数"
+  t.string "tdb_memo", comment: "帝国備考"
+  t.string "tdb_doc_path", comment: "帝国資料パス"
+  t.string "corp_number_memo", comment: "法人番号備考"
+  t.string "bl_exist", limit: 1, comment: "BL情報有無"
+  t.string "bl_info", comment: "BL情報"
+  t.string "hp_type", limit: 1, comment: "ホームページ種別"
+  t.string "hp_url", comment: "ホームページURL"
+  t.string "special_note", comment: "特記事項"
+  t.string "enrolled", limit: 30, comment: "在籍"
+  t.date "answer_date", comment: "回答日"
+  t.string "memo", comment: "メモ"
+  t.datetime "created_at", null: false, comment: "登録日時"
+  t.datetime "updated_at", null: false, comment: "更新日時"
+  t.index ["sb_exam_request_id"], name: "sb_exam_request_id"
 end
 
 create_table "screening_statuses", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "審査期間", force: :cascade do |t|
@@ -1957,6 +2234,7 @@ create_table "site_watchers", id: :integer, comment: "ID", options: "ENGINE=Inno
   t.boolean "available_flag", default: true, comment: "有効フラグ"
   t.datetime "delay_check_time", comment: "遅延確認した日時"
   t.index ["check_flag"], name: "index_site_watchers_check_flag"
+  t.index ["house_company_code"], name: "IDX_SW_HOUSE_COMPANY_CD"
 end
 
 create_table "tags", id: :integer, comment: "ID", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC", comment: "タグ", force: :cascade do |t|
@@ -2011,6 +2289,8 @@ create_table "tmp_alarms", id: :integer, comment: "ID", options: "ENGINE=InnoDB 
   t.integer "purchase_id", comment: "企業購入情報ID"
   t.integer "disp_order", null: false, comment: "表示順"
   t.integer "alarm_level", comment: "アラームレベル"
+  t.string "association_code_1", limit: 4, comment: "関連付けコード１"
+  t.string "association_code_2", limit: 4, comment: "関連付けコード２"
   t.string "alarm_source_code", limit: 4, comment: "アラームソースコード"
   t.string "detail_code_1", limit: 4, comment: "内容コード１"
   t.string "detail_code_2", limit: 4, comment: "内容コード２"
@@ -2267,67 +2547,7 @@ create_table "word_category_masters", id: :integer, comment: "ID", options: "ENG
   t.index ["word_code"], name: "IDX_WCM_CODE"
 end
 
-  create_table "oauth_access_grants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.integer "resource_owner_id", null: false
-    t.bigint "application_id", null: false
-    t.string "token", null: false
-    t.integer "expires_in", null: false
-    t.text "redirect_uri", null: false
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
-    t.string "scopes", default: "", null: false
-    t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
-    t.index ["resource_owner_id"], name: "fk_rails_330c32d8d9"
-    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
-  end
-
-  create_table "oauth_access_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.integer "resource_owner_id"
-    t.bigint "application_id", null: false
-    t.string "token", null: false
-    t.string "refresh_token"
-    t.integer "expires_in"
-    t.datetime "revoked_at"
-    t.datetime "created_at", null: false
-    t.string "scopes"
-    t.string "previous_refresh_token", default: "", null: false
-    t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
-    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
-    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
-    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
-  end
-
-  create_table "oauth_applications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "uid", null: false
-    t.string "secret", null: false
-    t.text "redirect_uri", null: false
-    t.string "scopes", default: "", null: false
-    t.boolean "confidential", default: true, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "owner_id"
-    t.string "owner_type"
-    t.index ["owner_id", "owner_type"], name: "index_oauth_applications_on_owner_id_and_owner_type"
-    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
-  end
-
-  create_table "api_access_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", comment: "APIのアクセスログ", force: :cascade do |t|
-    t.datetime "called_at", comment: "呼び出し日時"
-    t.string "token", comment: "トークン"
-    t.string "ip_address", comment: "IPアドレス"
-    t.integer "user_id", comment: "ユーザーID"
-    t.integer "member_id", comment: "会員ID"
-    t.string "method", comment: "HTTPメソッド"
-    t.string "path", comment: "アクセス先パス"
-    t.text "parameters", comment: "リクエストパラメータ"
-    t.integer "response_code", comment: "レスポンスコード"
-    t.datetime "created_at", comment: "作成日時"
-  end
-
-
 add_foreign_key "ab_alarm_mail_settings", "users", name: "fk_abms_user_id"
-add_foreign_key "ab_alarm_monthly_totals", "customer_masters", name: "ab_alarm_monthly_totals_ibfk_1"
 add_foreign_key "ab_alarm_totals", "customer_masters", name: "ab_alarm_totals_ibfk_1"
 add_foreign_key "ab_credit_mail_lists", "credits", column: "after_credit_id", name: "FK_ACML_ACID"
 add_foreign_key "ab_credit_mail_lists", "credits", column: "before_credit_id", name: "FK_ACML_BCID"
@@ -2343,18 +2563,27 @@ add_foreign_key "alarm_prtimes", "crawl_prtimes_check_lists", name: "alarm_prtim
 add_foreign_key "alarms", "customer_masters"
 add_foreign_key "alliance_members", "members", name: "alliance_members_ibfk_1"
 add_foreign_key "by_agents", "employees", name: "FK_BY_AGT_EMPLOYEE"
+add_foreign_key "by_budgets", "employees", name: "FK_BY_BUD_EMPLOYEE"
+add_foreign_key "by_customer_urls", "by_customers", name: "FK_BY_CST_URL_CUSTOMER"
+add_foreign_key "by_customer_urls", "employees", name: "FK_BY_CST_URL_EMPLOYEE"
 add_foreign_key "by_customers", "employees", name: "FK_BY_CST_EMPLOYEE"
 add_foreign_key "by_customers", "entities", name: "FK_BY_CST_ENTITY"
+add_foreign_key "by_examination_urls", "by_examinations", name: "FK_BY_EXM_URL_EXAMINATION"
+add_foreign_key "by_examination_urls", "employees", name: "FK_BY_EXM_URL_EMPLOYEE"
 add_foreign_key "by_examinations", "by_customers", name: "FK_BY_EXM_CUSTOMER"
 add_foreign_key "by_examinations", "employees", name: "FK_BY_EXM_EMPLOYEE"
 add_foreign_key "by_guarantees", "by_things", name: "FK_BY_GRT_THING"
 add_foreign_key "by_guarantees", "employees", name: "FK_BY_GRT_EMPLOYEE"
+add_foreign_key "by_thing_urls", "by_things", name: "FK_BY_THN_URL_THING"
+add_foreign_key "by_thing_urls", "employees", name: "FK_BY_THN_URL_EMPLOYEE"
 add_foreign_key "by_things", "by_agents", name: "FK_BY_THN_AGENT"
 add_foreign_key "by_things", "by_customers", name: "FK_BY_THN_CUSTOMER"
 add_foreign_key "by_things", "employees", name: "FK_BY_THN_EMPLOYEE"
 add_foreign_key "card_masters", "members"
 add_foreign_key "cards", "card_masters"
 add_foreign_key "code_prtimes", "crawl_prtimes_check_lists", name: "code_prtimes_ibfk_1"
+add_foreign_key "companyinfo_entity_delete_lists", "entities", name: "companyinfo_entity_delete_lists_ibfk_1"
+add_foreign_key "corporate_registration_histories", "entities", name: "corporate_registration_histories_ibfk_1"
 add_foreign_key "corporation_watchers", "customer_masters", name: "corporation_watchers_ibfk_2"
 add_foreign_key "corporation_watchers", "entities", name: "corporation_watchers_ibfk_1", on_update: :cascade, on_delete: :cascade
 add_foreign_key "crawl_google_check_lists", "customer_masters"
@@ -2365,6 +2594,7 @@ add_foreign_key "crawl_prtimes_check_lists", "customer_masters", name: "crawl_pr
 add_foreign_key "crawl_tdnet_check_lists", "customer_masters", name: "fk_customer_master"
 add_foreign_key "crawl_tenshokukaigi_check_lists", "customer_masters", name: "crawl_tenshokukaigi_check_lists_ibfk_1"
 add_foreign_key "crawl_twitter_check_lists", "customer_masters"
+add_foreign_key "crawler_filter_words", "customer_masters", name: "fk_cfw_customer_master_id"
 add_foreign_key "credits", "customer_masters"
 add_foreign_key "crm_kairos_lead_infos", "employees", name: "FK_KAIROS_LEAD_EMPLOYEE"
 add_foreign_key "crm_kairos_lead_infos", "members", name: "FK_KAIROS_LEAD_MEMBER"
@@ -2415,6 +2645,8 @@ add_foreign_key "ps_usage_points", "ps_points", column: "point_id", name: "FK_PS
 add_foreign_key "relational_alarm_candidates", "customer_masters", name: "fk_rel_alarm_candidate_customer_master_id"
 add_foreign_key "rpa_exam_results", "customers", name: "FK_RPA_RESULT_CUSTOMER"
 add_foreign_key "rpa_exam_targets", "customers", name: "FK_RPA_TARGET_CUSTOMER"
+add_foreign_key "sb_exam_requests", "customers", name: "sb_exam_requests_ibfk_1"
+add_foreign_key "sb_examinations", "sb_exam_requests", name: "sb_examinations_ibfk_1"
 add_foreign_key "site_watcher_histories", "site_watchers", name: "site_watcher_histories_ibfk_1"
 add_foreign_key "tenshokukaigi_candidates", "tenshokukaigi_masters", name: "tenshokukaigi_candidates_ibfk_1"
 add_foreign_key "tenshokukaigi_masters", "customer_masters", name: "tenshokukaigi_masters_ibfk_1"
