@@ -6,7 +6,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
   let(:sb_client) { create :sb_client }
   let(:params_hash) {
     {
-      "classification" => "1",
+      "classification" => "client",
       "id" => sb_client.id,
       "company_name" => "未特定企業５",
       "daihyo_name" => "企業未特定　太郎５",
@@ -20,7 +20,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
   }
 
   describe "バリデーション" do
-    let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
+    let(:identify_company) { IdentifyCompanyForm.init("client", params_hash) }
     context "全て正常場合" do
       it "有効である" do
           expect(identify_company).not_to be_invalid
@@ -29,20 +29,20 @@ RSpec.describe IdentifyCompanyForm, type: :model do
   end
 
   describe "起動元区分確認" do
-    context "クライアント一覧（classification => '1'）" do
-      let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
+    context "クライアント一覧（classification => 'client'）" do
+      let(:identify_company) { IdentifyCompanyForm.init("client", params_hash) }
       it "インスタンスがIdentifyCompanyForm::Clientである" do
         expect(identify_company.instance_of?(IdentifyCompanyForm::Client)).to eq(true)
       end
     end
-    context "保証審査一覧（保障元）（classification => '2'）" do
-      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+    context "保証審査一覧（保障元）（classification => 'guarantee_client'）" do
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
       it "インスタンスがIdentifyCompanyForm::GuaranteeClientである" do
         expect(identify_company.instance_of?(IdentifyCompanyForm::GuaranteeClient)).to eq(true)
       end
     end
-    context "保証審査一覧（保障先）（classification => '3'）" do
-      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+    context "保証審査一覧（保障先）（classification => 'guarantee_customer'）" do
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
       it "インスタンスがIdentifyCompanyForm::GuaranteeCustomerである" do
         expect(identify_company.instance_of?(IdentifyCompanyForm::GuaranteeCustomer)).to eq(true)
       end
@@ -51,7 +51,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
 
   describe "データ更新確認" do
     context "クライアント一覧からのステータス更新" do
-      let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("client", params_hash) }
       before do
         identify_company.assign_entity(Entity.find entity.id)
         @updated_sb_client = SbClient.find(identify_company.id)
@@ -64,7 +64,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
       end
     end
     context "保証審査一覧(保証元)からのentity登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       it "エンティティIDが登録される" do
         identify_company.id = sb_guarantee_exam.id
@@ -77,7 +77,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
       end
     end
     context "保証審査一覧(保証先)からのentity登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       it "エンティティIDが登録される" do
         identify_company.id = sb_guarantee_exam.id
@@ -90,7 +90,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
 
     context "保証審査一覧(保証元)からの保証元のみentity登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       it "ステータスが更新されずStatus::ExamStatus::COMPANY_NOT_DETECTEDままである" do
         identify_company.id = sb_guarantee_exam.id
@@ -106,7 +106,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
 
     context "保証審査一覧(保証先)からの保証先のみentity登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       it "ステータスが更新されずStatus::ExamStatus::COMPANY_NOT_DETECTEDままである" do
         identify_company.id = sb_guarantee_exam.id
@@ -122,7 +122,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
   
     context "保証審査一覧(保証元)からの保証先特定済状態で保障元entity登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       it "ステータスがStatus::ExamStatus::READY_FOR_EXAMに更新される" do
         identify_company.id = sb_guarantee_exam.id
@@ -138,7 +138,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
 
     context "保証審査一覧(保証先)からの保証元特定済状態で保障先entity登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       it "ステータスがStatus::ExamStatus::READY_FOR_EXAMに更新される" do
         identify_company.id = sb_guarantee_exam.id
@@ -157,7 +157,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
 
   describe "データ登録確認" do
     context "クライアント一覧からの企業新規登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("1", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("client", params_hash) }
       before {
         identify_company
         EntityProfile.delete_all
@@ -174,7 +174,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
 
     context "保証審査一覧（保障元）からの企業新規登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("2", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       before {
         identify_company.id = sb_guarantee_exam.id
@@ -192,7 +192,7 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
 
     context "保証審査一覧（保障先）からの企業新規登録" do
-      let(:identify_company) { IdentifyCompanyForm.init("3", params_hash) }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
       let(:sb_guarantee_exam) { create :sb_guarantee_exam }
       before {
         identify_company.id = sb_guarantee_exam.id
