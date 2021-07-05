@@ -8,7 +8,7 @@ function setButtonStatus(statusId, clientId){
         let btnId, url;
         if(statusId == 1){
           btnId = 'btn-company-not-detected';
-          url = '/identify_company?id=' + clientId + '&classification=1';
+          url = '/identify_company?id=' + clientId + '&classification=client';
           setButtonEnable(btnId,url)
         }
         //TODO 本来は契約済みだけだが、テストのため、ノーチェック
