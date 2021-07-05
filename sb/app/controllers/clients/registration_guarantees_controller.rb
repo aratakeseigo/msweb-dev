@@ -24,14 +24,14 @@ class Clients::RegistrationGuaranteesController < ApplicationController
 
   def create
     begin
-      @form = Guarantee::RegistrationForm.initFromGuaranteeExamRequestId(@sb_client,
-                                                                         current_internal_user,
-                                                                         create_params[:guarantee_request_id])
+      @form = Guarantee::RegistrationForm.initFromGuaranteeRequestId(@sb_client,
+                                                                     current_internal_user,
+                                                                     create_params[:guarantee_request_id])
       if @form.invalid?
         render :index
         return
       end
-      @form.saves
+      # @form.save_guarantees
       flash[:success] = "保証依頼の登録が完了しました。"
       redirect_to exams_path
     rescue ArgumentError => e
