@@ -20,12 +20,12 @@ class IdentifyCompanyController < ApplicationController
   
     def create_entity
       if @identify_company.invalid?
-        respond_to do |format|
-          format.js { @status = "fail" }
-        end
+        @status = "fail"
+        render fomat: :js
       else
         @identify_company.create_entity
-        redirect_to @identify_company.redirect_path
+        @status = "success"
+        render fomat: :js
       end
     end
   

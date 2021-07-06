@@ -11,7 +11,7 @@ RSpec.describe IdentifyCompanyController do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client1)
                 FactoryBot.create(:identify_company_entity1)
-                get :index, params: {id:  @sb_client.id, classification: '1'}
+                get :index, params: {id:  @sb_client.id, classification: 'client'}
             end
             it "リストに法人番号が一致する企業が１件ヒットする" do
                 expect(assigns(:entities).size).to eq 1
@@ -23,7 +23,7 @@ RSpec.describe IdentifyCompanyController do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client2)
                 FactoryBot.create(:identify_company_entity2)
-                get :index, params: {id: @sb_client.id, classification: '1'}
+                get :index, params: {id: @sb_client.id, classification: 'client'}
             end
             it "リストに企業名が一致する企業が１件ヒットする" do
                 expect(assigns(:entities).size).to eq 1
@@ -35,7 +35,7 @@ RSpec.describe IdentifyCompanyController do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client3)
                 FactoryBot.create(:identify_company_entity3)
-                get :index, params: {id: @sb_client.id, classification: '1'}
+                get :index, params: {id: @sb_client.id, classification: 'client'}
             end
             it "リストに代表者名が一致する企業が１件ヒットする" do
                 expect(assigns(:entities).size).to eq 1
@@ -47,7 +47,7 @@ RSpec.describe IdentifyCompanyController do
             before do
                 @sb_client = FactoryBot.create(:identify_company_sb_client4)
                 @entity = FactoryBot.create(:identify_company_entity4)
-                post :update, params: {id: @sb_client.id, classification: '1', entity_id: @entity.id}
+                post :update, params: {id: @sb_client.id, classification: 'client', entity_id: @entity.id}
                 @updated_sb_client = SbClient.find(@sb_client.id)
             end
             it "SBクライアントのエンティティIDに登録される" do
