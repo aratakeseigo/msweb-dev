@@ -24,6 +24,10 @@ class SbGuaranteeExam < ApplicationRecord
   validates :other_guarantee_companies, allow_blank: true, length: { maximum: 255 }
   validates :exam_search_key, presence: true, length: { maximum: 255 }
 
+  scope :approved, ->() {
+          where(status_id: Status::ExamStatus::APPROVED.id)
+        }
+
   def set_default_values
     self.status ||= Status::ExamStatus::COMPANY_NOT_DETECTED
   end

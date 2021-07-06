@@ -1,0 +1,81 @@
+<% provide :title, "保証依頼登録-確認" %>
+<% provide :breadcrumb_items, "Home クライアント" %>
+
+<div class="row">
+    <div class="col">
+        <p class="h2">クライアント：<%= @form.client_name %></p>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">保証元</th>
+                    <th scope="col">保証先</th>
+                    <th scope="col">保証開始日</th>
+                    <th scope="col">保証終了日</th>
+                    <th scope="col">希望保証額</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% # 10件以下なら全部 ここから# %>
+                <% guarantees = SbGuaranteeDecorator.decorate_collection(@form.guarantees) %>
+                <% if guarantees.size <= 10 %>
+                    <% guarantees.each.with_index(1) do |guarantee, index| %>
+                        <tr>
+                            <td><%= index %></td>
+                            <td><%= guarantee.sb_guarantee_client.company_name %></td>
+                            <td><%= guarantee.sb_guarantee_customer.company_name %></td>
+                            <td><%= guarantee.guarantee_start_at_formatted %></td>
+                            <td><%= guarantee.guarantee_end_at_formatted %></td>
+                            <td><%= guarantee.guarantee_amount_hope_delimited %></td>
+                        </tr>
+                    <% end %>
+                <% end %>
+                <% # 10件以下なら全部 ここまで# %>
+                <% # 11件以上なら最初の3件と最後の3件 ここから# %>
+                <% if guarantees.size > 10 %>
+                    <% guarantees.first(3).each.with_index(1) do |guarantee, index| %>
+                    <tr>
+                        <td><%= index %></td>
+                        <td><%= guarantee.sb_guarantee_client.company_name %></td>
+                        <td><%= guarantee.sb_guarantee_customer.company_name %></td>
+                        <td><%= guarantee.guarantee_start_at_formatted %></td>
+                        <td><%= guarantee.guarantee_end_at_formatted %></td>
+                        <td><%= guarantee.guarantee_amoguarantee_amount_hope_delimitedunt_hope %></td>
+                    </tr>
+                    <% end %>
+                    <tr><td colspan=7 class="text-center">:</td></tr>
+                    <% guarantees.last(3).each.with_index(guarantees.size - 2) do |guarantee, index| %>
+                   <tr>
+                        <td><%= index %></td>
+                        <td><%= guarantee.sb_guarantee_client.company_name %></td>
+                        <td><%= guarantee.sb_guarantee_customer.company_name %></td>
+                        <td><%= guarantee.guarantee_start_at_formatted %></td>
+                        <td><%= guarantee.guarantee_end_at_formatted %></td>
+                        <td><%= guarantee.guarantee_amount_hope_delimited %></td>
+                    </tr>
+                    <% end %>
+                <% end %>
+                <% # 11件以上なら最初の3件と最後の3件 ここまで# %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col text-center">
+        <p><strong>全 <%= guarantees.size %> 件</strong></p>
+    </div>
+</div>
+<%= form_with url: clients_registration_guarantees_create_path, method: "post", local: true do %>
+    <%= hidden_field_tag "guarantee_request_id", @form.sb_guarantee_request.id %>
+    <div class="form-group text-center">
+        ファイル内容を確認して送信ボタンを押してください。
+    </div>
+    <div class="form-group text-center">
+        <a href="<%= clients_registration_guarantees_index_path %>" class="btn btn-secondary" role="button" aria-pressed="true">キャンセル</a>
+        <%= submit_tag "送信", class: "btn btn-primary" %>
+    </div>
+<% end %>

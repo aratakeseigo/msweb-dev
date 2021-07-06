@@ -501,7 +501,7 @@ RSpec.describe Exam::RegistrationForm, type: :model do
       end
       it "受付日以外の生成結果が同じである" do
         exam_rev = form_rev.exams.first
-        exam = form_rev.exams.first
+        exam = form.exams.first
         expect(exam_rev.accepted_at).to be_present
         expect(exam_rev.transaction_contents).to eq exam.transaction_contents
         expect(exam_rev.payment_method_id).to eq exam.payment_method_id

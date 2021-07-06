@@ -27,7 +27,7 @@ end
 
 class Status::GuaranteeStatus < Status
   self.data = [
-    { :id => 1, :code => "exam_not_detected", :name => "企業未特定" },
+    { :id => 1, :code => "exam_not_detected", :name => "審査未特定" }, #実際にはエラーになるのでない
     { :id => 2, :code => "ready_for_confirm", :name => "確認待ち" },
     { :id => 3, :code => "ready_for_approval", :name => "決裁待ち" },
     { :id => 4, :code => "approved", :name => "決裁完了" },
