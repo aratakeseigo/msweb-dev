@@ -129,6 +129,15 @@ ja:
         established_in: "設立"
         capital: "資本金（千円）"
         annual_sales: "年商（千円）"
+      identify_company_form:
+        company_name: "法人名"
+        daihyo_name: "代表者名"
+        taxagency_corporate_number: "法人番号"
+        zip_code: "郵便番号"
+        prefecture_code: "都道府県"
+        address: "住所"
+        daihyo_tel: "代表電話番号"
+        established: "設立"
   date:
     abbr_day_names:
     - 日
