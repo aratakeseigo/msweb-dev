@@ -5,12 +5,9 @@
     <div class="form-group col">
       <%= f.label :status_id_eq_any, "状態", class: "col-form-label col-form-label-sm" %>
       <div>
-        <%= f.collection_select :status_id_eq_any, Status::ExamStatus.all, :id, :name, { include_blank: "-- 選択してください --" }, { class: "custom-select col", multiple: true } %>
+        <%= f.collection_select :status_id_eq_any, Status::ExamStatus.all, :id, :name, {}, { class: "select2 col", multiple: true } %>
       </div>
     </div>
-  </div>
-
-  <div class="row">
     <div class="form-group col">
       <%= f.label :sb_client_name_cont, "クライアント名", class: "col-form-label col-form-label-sm" %>
       <%= f.search_field :sb_client_name_cont, class: " form-control form-control-sm" %>
@@ -23,12 +20,14 @@
       <%= f.label :sb_guarantee_customer_daihyo_name_cont, "保証先代表名", class: "col-form-label col-form-label-sm" %>
       <%= f.search_field :sb_guarantee_customer_daihyo_name_cont, class: " form-control form-control-sm" %>
     </div>
-    <div class="form-group col">
-      <%= f.label :sb_approval_applied_at_cont, "審査依頼日", class: "col-form-label col-form-label-sm" %>
-          <%= f.datetime_field :sb_approval_applied_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
-    </div>
   </div>
   <div class="row">
+    <div class="form-group col">
+      <%= f.label :sb_approval_applied_at_cont, "審査依頼日", class: "col-form-label col-form-label-sm" %>
+        <div>
+          <%= f.date_field :sb_approval_applied_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
+        </div>
+    </div>
     <div class="form-group col">
       <%= f.label :sb_approval_applied_user_name_cont, "審査担当者", class: "col-form-label col-form-label-sm" %>
       <%= f.search_field :sb_approval_applied_user_name_cont, class: " form-control form-control-sm" %>
@@ -40,7 +39,7 @@
     <div class="form-group col">
       <%= f.label :sb_approval_approved_at_cont, "稟議承認日", class: "col-form-label col-form-label-sm" %>
       <div>
-          <%= f.datetime_field :sb_approval_approved_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
+          <%= f.date_field :sb_approval_approved_at_gteq, include_blank: true, class: "form-control", style: "width:300px;display:inline-block" %>
       </div>
     </div>
   </div>

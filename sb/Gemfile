@@ -69,3 +69,6 @@ gem "draper"
 
 # aws-sdk-s3
 gem "aws-sdk-s3", require: false
+
+# Select2 for rails asset pipeline
+gem "select2-rails"

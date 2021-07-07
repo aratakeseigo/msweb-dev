@@ -16,5 +16,7 @@
 //= require jquery3
 //= require popper
 //= require bootstrap-sprockets
+//= require select2
 //= require_tree ./adminlte
 //= require_tree ./bs-custom-file-input
+//= require_tree ./bs-custom-multiselect

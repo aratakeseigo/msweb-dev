@@ -49,7 +49,7 @@ Rails.application.routes.draw do
   end
 
   namespace :exams do
-    get "/", action: "list"
+    get "/", action: "index"
     get "/list", action: "list"
   end
 end

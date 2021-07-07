@@ -11,11 +11,11 @@ class SbApprovalDecorator < Draper::Decorator
   #   end
 
   def applied_at
-    object.applied_at.strftime("%Y/%m/%d %H:%M:%S")
+    object.applied_at.strftime("%Y/%m/%d %H:%M")
   end
 
   def approved_at
-    object.approved_at.strftime("%Y/%m/%d %H:%M:%S")
+    object.approved_at.strftime("%Y/%m/%d %H:%M")
   end
 
 end

@@ -48,6 +48,7 @@ RSpec.describe IdentifyCompanyController do
                 @sb_client = FactoryBot.create(:identify_company_sb_client4)
                 @entity = FactoryBot.create(:identify_company_entity4)
                 post :update, params: {id: @sb_client.id, classification: 'client', entity_id: @entity.id}
+              
                 @updated_sb_client = SbClient.find(@sb_client.id)
             end
             it "SBクライアントのエンティティIDに登録される" do
@@ -58,6 +59,36 @@ RSpec.describe IdentifyCompanyController do
             end
             it "パラーメータパスで指定された画面へリダイレクトされる" do
                 expect(response).to redirect_to clients_list_path
+            end
+        end
+        context "企業特定画面で企業登録を表示する場合" do
+            before do
+                @sb_client = FactoryBot.create(:identify_company_sb_client4)
+                get :new_entity, params: {id: @sb_client.id, classification: 'client'}, xhr: true
+            end
+            
+            it "レスポンスがjavascriptである" do
+                expect(response.content_type).to eq('text/javascript')
+            end
+        end
+        context "企業特定画面で企業作成する場合（正常）" do
+            before do
+                @sb_client = FactoryBot.create(:identify_company_sb_client4)
+                post :create_entity, params: {classification: "client", id: @sb_client.id, company_name: "株式会社 〇〇〇", daihyo_name: "本間　省三", taxagency_corporate_number: "1234657890123", zip_code: "1234567", prefecture_code: "13", address: "東京都新宿区１－１－１", daihyo_tel: "0311112222", established: "200001"}, xhr: true
+            end
+            
+            it "レスポンスがjavascriptである" do
+                expect(response.content_type).to eq('text/javascript')
+            end
+        end
+        context "企業特定画面で企業作成する場合（エラー）" do
+            before do
+                @sb_client = FactoryBot.create(:identify_company_sb_client4)
+                post :create_entity, params: {classification: "client", id: @sb_client.id, company_name: "株式会社 〇〇〇", daihyo_name: "本間　省三", taxagency_corporate_number: "1234657890123111", zip_code: "1234567", prefecture_code: "13", address: "東京都新宿区１－１－１", daihyo_tel: "0311112222", established: "200001"}, xhr: true
+            end
+            
+            it "レスポンスがjavascriptである" do
+                expect(response.content_type).to eq('text/javascript')
             end
         end
     end    

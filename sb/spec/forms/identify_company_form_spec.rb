@@ -28,6 +28,47 @@ RSpec.describe IdentifyCompanyForm, type: :model do
     end
   end
 
+  describe "リダイレクトパス" do
+    let(:identify_company1) { IdentifyCompanyForm.init("client", params_hash) }
+    context "クライアント一覧のパスが取得できる" do
+      it "/clients/listが取得できる" do
+        expect(identify_company1.redirect_path).to eq "/clients/list"
+      end
+    end
+    let(:identify_company2) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
+    context "保証審査一覧（保障元）のパスが取得できる" do
+      it "/examsが取得できる" do
+        expect(identify_company2.redirect_path).to eq "/exams"
+      end
+    end
+    let(:identify_company3) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
+    context "保証審査一覧（保障先）のパスが取得できる" do
+      it "/examsが取得できる" do
+        expect(identify_company3.redirect_path).to eq "/exams"
+      end
+    end
+  end
+
+  describe "例外の場合" do
+    context "区分が未定義" do
+      it "request errorの例外が発生する" do
+        expect{IdentifyCompanyForm.init("aaaa", params_hash)}.to raise_error("request error")
+      end
+    end
+    context "redirect_pathが未定義" do
+      let(:identify_company) { IdentifyCompanyForm.new }
+      it "サブクラスで実装してくださいの例外が発生する" do
+        expect{identify_company.redirect_path}.to raise_error("サブクラスで実装してください")
+      end
+      it "サブクラスで実装してくださいの例外が発生する" do
+        expect{identify_company.assign_default_values}.to raise_error("サブクラスで実装してください")
+      end
+      it "サブクラスで実装してくださいの例外が発生する" do
+        expect{identify_company.assign_entity(1)}.to raise_error("サブクラスで実装してください")
+      end
+    end
+  end
+
   describe "起動元区分確認" do
     context "クライアント一覧（classification => 'client'）" do
       let(:identify_company) { IdentifyCompanyForm.init("client", params_hash) }
@@ -209,4 +250,85 @@ RSpec.describe IdentifyCompanyForm, type: :model do
       end
     end
   end
+
+  describe "特定対象を既存企業から取得する" do
+    context "クライアント一覧からの企業情報取得" do
+      let(:sb_client) { create :sb_client }
+      let(:identify_company) { IdentifyCompanyForm.init("client", params_hash) }
+      before {
+        identify_company.company_name = nil
+        identify_company.daihyo_name = nil
+        identify_company.taxagency_corporate_number = nil
+        identify_company.prefecture_code = nil
+        identify_company.address = nil
+        identify_company.daihyo_tel = nil
+        identify_company.established = nil
+        identify_company.zip_code = nil
+        identify_company.id = sb_client.id
+        identify_company.assign_default_values
+      }
+      it "各項目が設定される" do
+        expect( identify_company.company_name).to eq  sb_client.name
+        expect( identify_company.daihyo_name ).to eq  sb_client.daihyo_name
+        expect( identify_company.taxagency_corporate_number ).to eq  sb_client.taxagency_corporate_number
+        expect( identify_company.prefecture_code ).to eq  sb_client.prefecture_code
+        expect( identify_company.address ).to eq  sb_client.address
+        expect( identify_company.daihyo_tel ).to eq  sb_client.tel
+        expect( identify_company.established ).to eq  sb_client.established_in
+        expect( identify_company.zip_code  ).to eq  sb_client.zip_code
+      end
+    end
+    context "保証審査一覧（保障元）からの企業情報取得" do
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_client", params_hash) }
+      before {
+        identify_company.company_name = nil
+        identify_company.daihyo_name = nil
+        identify_company.taxagency_corporate_number = nil
+        identify_company.prefecture_code = nil
+        identify_company.address = nil
+        identify_company.daihyo_tel = nil
+        identify_company.established = nil
+        identify_company.zip_code = nil
+        identify_company.id = sb_guarantee_exam.id
+        identify_company.assign_default_values
+        @guarantee_client = SbGuaranteeClient.find(sb_guarantee_exam.sb_guarantee_client_id)
+      }
+      it "各項目が設定される" do
+        expect( identify_company.company_name).to eq  @guarantee_client.company_name
+        expect( identify_company.daihyo_name ).to eq  @guarantee_client.daihyo_name
+        expect( identify_company.taxagency_corporate_number ).to eq  @guarantee_client.taxagency_corporate_number
+        expect( identify_company.prefecture_code ).to eq  @guarantee_client.prefecture_code
+        expect( identify_company.address ).to eq  @guarantee_client.address
+        expect( identify_company.daihyo_tel ).to eq  @guarantee_client.tel
+      end
+    end
+    context "保証審査一覧（保障先）からの企業情報取得" do
+      let(:sb_guarantee_exam) { create :sb_guarantee_exam }
+      let(:identify_company) { IdentifyCompanyForm.init("guarantee_customer", params_hash) }
+      before {
+        identify_company.company_name = nil
+        identify_company.daihyo_name = nil
+        identify_company.taxagency_corporate_number = nil
+        identify_company.prefecture_code = nil
+        identify_company.address = nil
+        identify_company.daihyo_tel = nil
+        identify_company.established = nil
+        identify_company.zip_code = nil
+        identify_company.id = sb_guarantee_exam.id
+        identify_company.assign_default_values
+        @guarantee_customer = SbGuaranteeCustomer.find(sb_guarantee_exam.sb_guarantee_customer_id)
+      }
+      it "各項目が設定される" do
+        expect( identify_company.company_name).to eq  @guarantee_customer.company_name
+        expect( identify_company.daihyo_name ).to eq  @guarantee_customer.daihyo_name
+        expect( identify_company.taxagency_corporate_number ).to eq  @guarantee_customer.taxagency_corporate_number
+        expect( identify_company.prefecture_code ).to eq  @guarantee_customer.prefecture_code
+        expect( identify_company.address ).to eq  @guarantee_customer.address
+        expect( identify_company.daihyo_tel ).to eq  @guarantee_customer.tel
+      end
+    end
+
+  end
+
 end

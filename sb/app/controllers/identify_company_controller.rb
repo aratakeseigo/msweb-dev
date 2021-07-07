@@ -41,8 +41,4 @@ class IdentifyCompanyController < ApplicationController
                     :address, :daihyo_tel, :taxagency_corporate_number,
                     :established)
     end
-  
-    def entity_params
-      params.permit(:entity_id)
-    end
 end

@@ -108,7 +108,7 @@ class IdentifyCompanyForm::GuaranteeClient < IdentifyCompanyForm
 	end
 
 	def redirect_path
-	  exams_list_path
+	  exams_path
 	end
   
 	def assign_entity(entity)
@@ -136,7 +136,7 @@ class IdentifyCompanyForm::GuaranteeCustomer < IdentifyCompanyForm
 	end
 
 	def redirect_path
-	  exams_list_path
+	  exams_path
 	end
   
 	def assign_entity(entity)
